@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "101202551639",
+    "project_id": "almshouse-239005",
+    "storage_bucket": "almshouse-239005.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:101202551639:android:4f533bf6266a1b768b9412",
+        "android_client_info": {
+          "package_name": "com.carebox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "101202551639-pqsm2dpqedfar6np3s7d1iropokoeina.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlqdt2KhGQfEB2wGQ0mvn3nKphR5EehZY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "101202551639-pqsm2dpqedfar6np3s7d1iropokoeina.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "101202551639-vdfojkj3ej4tm6us0cl34rsbvggdcn8p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.carebox"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
