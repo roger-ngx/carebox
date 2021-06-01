@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>101202551639-vdfojkj3ej4tm6us0cl34rsbvggdcn8p.apps.googleusercontent.com</string>
+	<string>483145928892-r2rog30o1b98ft58gbptouimlhbb53rj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.101202551639-vdfojkj3ej4tm6us0cl34rsbvggdcn8p</string>
+	<string>com.googleusercontent.apps.483145928892-r2rog30o1b98ft58gbptouimlhbb53rj</string>
 	<key>API_KEY</key>
-	<string>AIzaSyBVYviFFyVAADy3dGQdn9hV86RLi3-jnUI</string>
+	<string>AIzaSyAnh8kY7FbPeZFMiYQ3R-0oPOqVYqIKYX0</string>
 	<key>GCM_SENDER_ID</key>
-	<string>101202551639</string>
+	<string>483145928892</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>com.carebox</string>
 	<key>PROJECT_ID</key>
-	<string>almshouse-239005</string>
+	<string>carebox-263b9</string>
 	<key>STORAGE_BUCKET</key>
-	<string>almshouse-239005.appspot.com</string>
+	<string>carebox-263b9.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:101202551639:ios:99d63ca9d3d15f488b9412</string>
+	<string>1:483145928892:ios:114abb0cd8ddc507e300b9</string>
 </dict>
 </plist>
