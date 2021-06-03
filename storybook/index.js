@@ -1,7 +1,6 @@
 // if you use expo remove this line
 import { AppRegistry } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
 import { withKnobs } from '@storybook/addon-knobs';
 
@@ -12,8 +11,7 @@ addDecorator(withKnobs);
 
 // import stories
 configure(() => {
-  require('./stories');
-  require('../components/Task.stories.tsx');
+  require('../components/Components.stories.tsx');
 }, module);
 
 // Refer to https://github.com/storybookjs/storybook/tree/master/app/react-native#start-command-parameters
