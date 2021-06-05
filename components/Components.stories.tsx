@@ -12,6 +12,9 @@ import NewIdea from './Idea/NewIdea';
 import StepIndicator from './StepIndicator';
 import CBDropDownPicker from './CBDropDownPicker';
 import PhotoUploadButton from './PhotoUploadButton';
+import UploadedPhoto from './UploadedPhoto';
+import CBTextInput from './CBTextInput';
+import Rating from './Rating';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{padding: 20}}>{getStory()}</View>)
@@ -32,5 +35,8 @@ storiesOf('IdeaHead', module)
     { label:'외래', value:'외래' }
 ]}/>)
 .add('Photo Upload Button', () => <PhotoUploadButton />)
+.add('Uploaded Photo', () => <UploadedPhoto uri='https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/36780761_1780160235386232_7123462079440224256_n.jpg?_nc_cat=106&ccb=1-3&_nc_sid=09cbfe&_nc_ohc=88CvYZIrIckAX-acn_S&_nc_ht=scontent-ssn1-1.xx&oh=10750a9a852cbcd497208e704fa56e87&oe=60E0ED17'/>)
+.add('CB Text Input', () => <CBTextInput title='*아이디어 코멘트를 남겨주세요.' placeholder='입력해 주새요.' maxLength={50} />)
+.add('Rating', () => <Rating title='실용성' />)
 
 
