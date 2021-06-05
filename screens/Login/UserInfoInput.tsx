@@ -4,6 +4,7 @@ import { CheckBox, Icon } from 'react-native-elements';
 import DropDownPicker from 'react-native-dropdown-picker';
 import InfoModal from '../../modals/InfoModal';
 import IdeaRegistrationModal from '../../modals/IdeaRegistrationModal';
+import CBDropDownPicker from '../../components/CBDropDownPicker';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -81,28 +82,13 @@ const UserInfoInput = () => {
                             </TouchableOpacity>
                         </View>
 
-                        <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8, marginTop: 32}}>직군</Text>
-                        <DropDownPicker
+                        <CBDropDownPicker
+                            title='직군'
                             items={JOBS}
-                            placeholder="사무(행정)"
                             value={jobType}
                             setValue={setJobType}
                             open={openJobSelection}
                             setOpen={() => setOpenJobSelection(!openJobSelection)}
-                            closeAfterSelecting={true}
-                            disableBorderRadius={true}
-                            style={{
-                                borderColor: '#9C9C9C',
-                                borderRadius: 0
-                            }}
-                            dropDownContainerStyle={{
-                                borderColor: '#9C9C9C',
-                                borderRadius: 0
-                            }}
-                            textStyle={{
-                                fontSize: 15,
-                                color: '#7d7d7d'
-                            }}
                         />
 
                         <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8, marginTop: 32}}>연차</Text>
