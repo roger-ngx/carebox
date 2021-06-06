@@ -1,10 +1,17 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
+
+import functions from '@react-native-firebase/functions';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
 export default function TabOneScreen() {
+
+  useEffect(() => {
+    functions().httpsCallable('helloWorld')().then(res => console.log(res.data));
+  }, [])
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>

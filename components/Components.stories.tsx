@@ -15,9 +15,12 @@ import PhotoUploadButton from './PhotoUploadButton';
 import UploadedPhoto from './UploadedPhoto';
 import CBTextInput from './CBTextInput';
 import Rating from './Rating';
+import CommentRegistrationModal from '../modals/CommentRegistrationModal';
+import IdeaDetailScreen from '../screens/IdeaDetailScreen';
+import CommentInputModal from '../modals/CommentInputModal';
 
 storiesOf('IdeaHead', module)
-.addDecorator((getStory) => <View style={{padding: 20}}>{getStory()}</View>)
+.addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
 .add('New', () => <NewIdeaHead />)
 .add('Picked', () => <PickedIdeaHead />)
 .add('ContainedTag', () => <ContainedTag text='기계'/>)
@@ -38,5 +41,8 @@ storiesOf('IdeaHead', module)
 .add('Uploaded Photo', () => <UploadedPhoto uri='https://scontent-ssn1-1.xx.fbcdn.net/v/t1.6435-9/36780761_1780160235386232_7123462079440224256_n.jpg?_nc_cat=106&ccb=1-3&_nc_sid=09cbfe&_nc_ohc=88CvYZIrIckAX-acn_S&_nc_ht=scontent-ssn1-1.xx&oh=10750a9a852cbcd497208e704fa56e87&oe=60E0ED17'/>)
 .add('CB Text Input', () => <CBTextInput title='*아이디어 코멘트를 남겨주세요.' placeholder='입력해 주새요.' maxLength={50} />)
 .add('Rating', () => <Rating title='실용성' />)
+.add('Comment Registration Modal', () => <CommentRegistrationModal />)
+.add('Idea Detail Screen', () => <IdeaDetailScreen />)
+.add('Comment Input Modal', () => <CommentInputModal />)
 
 
