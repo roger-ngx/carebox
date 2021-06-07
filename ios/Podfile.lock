@@ -212,6 +212,7 @@ PODS:
     - abseil/base/base_internal
     - abseil/base/config
     - abseil/meta/type_traits
+  - Alamofire (5.4.3)
   - boost-for-react-native (1.63.0)
   - BoringSSL-GRPC (0.0.7):
     - BoringSSL-GRPC/Implementation (= 0.0.7)
@@ -409,6 +410,48 @@ PODS:
     - gRPC-Core/Interface (= 1.28.2)
   - gRPC-Core/Interface (1.28.2)
   - GTMSessionFetcher/Core (1.5.0)
+  - kakao-login (3.3.2):
+    - KakaoSDK (~> 2.4.0)
+    - KakaoSDKAuth (~> 2.4.0)
+    - KakaoSDKCommon (~> 2.4.0)
+    - KakaoSDKTalk (~> 2.4.0)
+    - KakaoSDKUser (~> 2.4.0)
+    - React
+  - KakaoSDK (2.4.1):
+    - KakaoSDKAuth (= 2.4.1)
+    - KakaoSDKCommon (= 2.4.1)
+    - KakaoSDKLink (= 2.4.1)
+    - KakaoSDKNavi (= 2.4.1)
+    - KakaoSDKStory (= 2.4.1)
+    - KakaoSDKTalk (= 2.4.1)
+    - KakaoSDKTemplate (= 2.4.1)
+    - KakaoSDKUser (= 2.4.1)
+  - KakaoSDKAuth (2.4.1):
+    - KakaoSDKCommon (= 2.4.1)
+  - KakaoSDKCommon (2.4.1):
+    - KakaoSDKCommon/Common (= 2.4.1)
+    - KakaoSDKCommon/Network (= 2.4.1)
+  - KakaoSDKCommon/Common (2.4.1)
+  - KakaoSDKCommon/Network (2.4.1):
+    - Alamofire (~> 5.1)
+    - KakaoSDKCommon/Common (= 2.4.1)
+  - KakaoSDKLink (2.4.1):
+    - KakaoSDKCommon (= 2.4.1)
+    - KakaoSDKTemplate (= 2.4.1)
+  - KakaoSDKNavi (2.4.1):
+    - KakaoSDKCommon/Common (= 2.4.1)
+  - KakaoSDKStory (2.4.1):
+    - KakaoSDKAuth (= 2.4.1)
+    - KakaoSDKCommon (= 2.4.1)
+  - KakaoSDKTalk (2.4.1):
+    - KakaoSDKAuth (= 2.4.1)
+    - KakaoSDKCommon (= 2.4.1)
+    - KakaoSDKTemplate (= 2.4.1)
+  - KakaoSDKTemplate (2.4.1):
+    - KakaoSDKCommon/Common (= 2.4.1)
+  - KakaoSDKUser (2.4.1):
+    - KakaoSDKAuth (= 2.4.1)
+    - KakaoSDKCommon (= 2.4.1)
   - leveldb-library (1.22.1)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
@@ -741,6 +784,7 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Folly (from `../node_modules/react-native/third-party-podspecs/Folly.podspec`)
   - glog (from `../node_modules/react-native/third-party-podspecs/glog.podspec`)
+  - "kakao-login (from `../node_modules/@react-native-seoul/kakao-login`)"
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -792,6 +836,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - Alamofire
     - boost-for-react-native
     - BoringSSL-GRPC
     - Firebase
@@ -808,6 +853,15 @@ SPEC REPOS:
     - "gRPC-C++"
     - gRPC-Core
     - GTMSessionFetcher
+    - KakaoSDK
+    - KakaoSDKAuth
+    - KakaoSDKCommon
+    - KakaoSDKLink
+    - KakaoSDKNavi
+    - KakaoSDKStory
+    - KakaoSDKTalk
+    - KakaoSDKTemplate
+    - KakaoSDKUser
     - leveldb-library
     - nanopb
     - PromisesObjC
@@ -847,6 +901,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/Folly.podspec"
   glog:
     :podspec: "../node_modules/react-native/third-party-podspecs/glog.podspec"
+  kakao-login:
+    :path: "../node_modules/@react-native-seoul/kakao-login"
   RCTRequired:
     :path: "../node_modules/react-native/Libraries/RCTRequired"
   RCTTypeSafety:
@@ -940,6 +996,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
+  Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   DoubleConversion: cde416483dac037923206447da6e1454df403714
@@ -973,6 +1030,16 @@ SPEC CHECKSUMS:
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
+  kakao-login: f545fda326cdf9419645abb7c8f36ec97132c26b
+  KakaoSDK: 1e80d6877c0eac6a310f93c73fb15ca56c05f2bd
+  KakaoSDKAuth: fcba1c9ede431683f5bdd84c835a96981cb115a5
+  KakaoSDKCommon: 0912aa0c7db051ae8dc07a35395cf644f7728f95
+  KakaoSDKLink: fe6f2ca19092836f8af2a9d7fabe60fd67740104
+  KakaoSDKNavi: c138bce799ebdac6811b56453de5326e49ca5925
+  KakaoSDKStory: cb33db9a04c7c44746b3662991234f52ab61961a
+  KakaoSDKTalk: 749828662e4ac7a9f17bb1664b58526da289d18c
+  KakaoSDKTemplate: 8bb288765bfc0195631da809b2d707f09495acdf
+  KakaoSDKUser: 11955811d99d1ff1f1dfd5428afe69937e31ccef
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
