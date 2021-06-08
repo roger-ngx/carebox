@@ -2,7 +2,6 @@ import React from 'react';
 import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 import NewIdeaHead from './Idea/NewIdeaHead';
-import PickedIdeaHead from './Idea/PickedIdeaHead';
 import ContainedTag from './ContainedTag';
 import OutlinedTag from './OutlinedTag';
 import IdeaHeart from './Idea/IdeaHeart';
@@ -18,11 +17,15 @@ import Rating from './Rating';
 import CommentRegistrationModal from '../modals/CommentRegistrationModal';
 import IdeaDetailScreen from '../screens/IdeaDetailScreen';
 import CommentInputModal from '../modals/CommentInputModal';
+import Profile from './Profile';
+import ProfileChange from './ProfileChange';
+import IdeaImageAdd from './IdeaImageAdd';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
 .add('New', () => <NewIdeaHead />)
-.add('Picked', () => <PickedIdeaHead />)
+.add('Profile', () => <Profile />)
+.add('Profile Change', () => <ProfileChange />)
 .add('ContainedTag', () => <ContainedTag text='기계'/>)
 .add('OutlinedTag', () => <OutlinedTag sign='P' text='용도의 전환'/>)
 .add('Idea Heart', () => <IdeaHeart count={13} />)
@@ -44,5 +47,6 @@ storiesOf('IdeaHead', module)
 .add('Comment Registration Modal', () => <CommentRegistrationModal />)
 .add('Idea Detail Screen', () => <IdeaDetailScreen />)
 .add('Comment Input Modal', () => <CommentInputModal />)
+.add('Idea Image Add', () => <IdeaImageAdd />)
 
 

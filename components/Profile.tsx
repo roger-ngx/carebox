@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 
-const PickedIdeaHead = () => {
+const Profile = () => {
 
     return (
         <View
@@ -23,4 +23,4 @@ const PickedIdeaHead = () => {
     )
 }
 
-export default PickedIdeaHead;
+export default Profile;
