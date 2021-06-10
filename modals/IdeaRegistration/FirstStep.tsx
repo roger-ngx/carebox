@@ -13,7 +13,9 @@ const IDEA_TYPES=[
     '기타'
 ]
 
-const FirstStep = () => {
+const FirstStep = ({idea}) => {
+
+    idea.setCategory('category 1');
 
     return(
         <View>

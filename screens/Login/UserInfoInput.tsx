@@ -5,6 +5,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import InfoModal from '../../modals/InfoModal';
 import IdeaRegistrationModal from '../../modals/IdeaRegistrationModal';
 import CBDropDownPicker from '../../components/CBDropDownPicker';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -23,6 +24,9 @@ const UserInfoInput = () => {
     const [ timeOnJob, setTimeOnJob ] = useState(1);
 
     const [ isOpenConfirmModal, setOpenConfirmModal ] = useState(false);
+
+    const message = useSelector((state: RootStateOrAny) => state.message);
+    console.log('message', message);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>

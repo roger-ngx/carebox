@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
-const ThirdStep = () => {
+const ThirdStep = ({idea}) => {
+
+    idea.setSubject('novice');
 
     return(
         <View>

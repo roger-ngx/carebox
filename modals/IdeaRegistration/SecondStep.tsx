@@ -17,8 +17,10 @@ const SCAMPERS =[
     '스캠퍼 기법을 사용하지 않고 진행할게요.'
 ]
 
-const SecondStep = () => {
+const SecondStep = ({idea}) => {
     const [ showModal, setShowModal ] = useState(false);
+
+    idea.setScamper('S : 대체하기(소재, 방식, 원리)');
 
     return(
         <View>

@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements'
 
-const ForthStep = () => {
+const ForthStep = ({idea}) => {
+    idea.setImages(['image1']);
+    idea.setLinks('link1');
 
     return(
         <ScrollView

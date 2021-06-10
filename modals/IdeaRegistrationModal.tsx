@@ -1,17 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
 import { View, SafeAreaView, Text, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 
 import FirstStep from './IdeaRegistration/FirstStep';
 import RoundButton from '../components/RoundButton';
 import SecondStep from './IdeaRegistration/SecondStep';
 import ThirdStep from './IdeaRegistration/ThirdStep';
 import ForthStep from './IdeaRegistration/ForthStep';
+import Idea from '../models/Idea';
 
 const IdeaRegistrationModal = () => {
 
     const [ currentStep, setCurrentStep ] = useState(1);
+    const [idea] = useState(new Idea());
+
+    useEffect(() => {
+        if(currentStep == 5){
+            console.log(idea);
+        }
+    }, [currentStep]);
 
     return (
         <Modal
@@ -54,20 +61,20 @@ const IdeaRegistrationModal = () => {
                         >
                             {
                                 currentStep === 1 &&
-                                <FirstStep />
+                                <FirstStep idea={idea}/>
                             }
                             {
                                 currentStep === 2 &&
-                                <SecondStep />
+                                <SecondStep idea={idea} />
                             }
                             {
                                 currentStep === 3 &&
-                                <ThirdStep />
+                                <ThirdStep idea={idea} />
                             }
 
                             {
                                 currentStep === 4 &&
-                                <ForthStep />
+                                <ForthStep idea={idea} />
                             }
                         </KeyboardAvoidingView>
                     </ScrollView>
