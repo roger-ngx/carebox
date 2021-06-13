@@ -20,6 +20,7 @@ import CommentInputModal from '../modals/CommentInputModal';
 import Profile from './Profile';
 import ProfileChange from './ProfileChange';
 import IdeaImageAdd from './IdeaImageAdd';
+import SplashScreen from '../screens/SplashScreen';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
@@ -48,5 +49,6 @@ storiesOf('IdeaHead', module)
 .add('Idea Detail Screen', () => <IdeaDetailScreen />)
 .add('Comment Input Modal', () => <CommentInputModal />)
 .add('Idea Image Add', () => <IdeaImageAdd />)
+.add('Splash', () => <SplashScreen />)
 
 

@@ -1,34 +1,10 @@
 import React, { useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 
-import functions from '@react-native-firebase/functions';
-
-
-import {
-  KakaoOAuthToken,
-  KakaoProfile,
-  getProfile as getKakaoProfile,
-  login,
-  logout,
-  unlink,
-} from '@react-native-seoul/kakao-login';
-
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
 
 export default function TabOneScreen() {
-
-  useEffect(() => {
-    // functions().httpsCallable('helloWorld')().then(res => console.log(res.data));
-    signInWithKakao();
-  }, [])
-
-  const signInWithKakao = async (): Promise<void> => {
-    const token: KakaoOAuthToken = await login();
-
-    console.log(token);
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>

@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, StyleSheet } from 'react-native';
-import { CheckBox, Icon } from 'react-native-elements';
-import DropDownPicker from 'react-native-dropdown-picker';
-import InfoModal from '../../modals/InfoModal';
-import IdeaRegistrationModal from '../../modals/IdeaRegistrationModal';
-import CBDropDownPicker from '../../components/CBDropDownPicker';
-import { useSelector, RootStateOrAny } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { Text, View, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Icon, Input } from 'react-native-elements';
+import functions from '@react-native-firebase/functions';
+import { isEmpty } from 'lodash';
+import auth from '@react-native-firebase/auth';
+import * as SecureStore from 'expo-secure-store';
+
+import InfoModal from 'modals/InfoModal';
+import CBDropDownPicker from 'components/CBDropDownPicker';
+import { ActivityIndicator } from 'react-native-paper';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -15,18 +18,60 @@ const JOBS = [
     { label:'외래', value:'외래' }
 ]
 
-const UserInfoInput = () => {
+const UserInfoInput = ({uid}) => {
     const [ openJobSelection, setOpenJobSelection ] = useState(false);
 
     const [ nickName, setNickName ] = useState();
     const [ gender, setGender ] = useState();
-    const [ jobType, setJobType ] = useState();
-    const [ timeOnJob, setTimeOnJob ] = useState(1);
+    const [ department, setDepartment ] = useState();
+    const [ yearsOnJob, setYearsOnJob ] = useState(1);
+
+    const [ loading, setLoading ] = useState(false);
+
+    const [ isNicknameExists, setNicknameExists ] = useState();
+    const [ nickNameVerifiedIcon, setNickNameVerifiedIcon ] = useState();
 
     const [ isOpenConfirmModal, setOpenConfirmModal ] = useState(false);
 
-    const message = useSelector((state: RootStateOrAny) => state.message);
-    console.log('message', message);
+    useEffect(() => {
+        if(isNicknameExists === false){
+            setNickNameVerifiedIcon(<Icon name='check' color='green' />)
+        }
+        if(isNicknameExists === true){
+            setNickNameVerifiedIcon(<Icon name='close' color='red' />)
+        }
+    }, [isNicknameExists])
+
+    const signUp = async() => {
+        setLoading(true);
+
+        try{
+            const signUp = functions().httpsCallable('signUp');
+            const ret = await signUp({
+                uid, nickName, gender, department, yearsOnJob
+            })
+            console.log(ret);
+            const { authToken } = ret.data;
+
+            if(authToken){
+                await auth().signInWithCustomToken(authToken);
+                await SecureStore.setItemAsync('userToken', authToken);
+                setOpenConfirmModal(true);
+            }
+        }catch(ex){
+            console.log('signUp', ex);
+        }
+        setLoading(false);
+    }
+
+    const checkNicknameExists = async() => {
+        const checkNicknameExists = functions().httpsCallable('checkNicknameExists');
+        const ret = await checkNicknameExists({nickName});
+
+        console.log(ret);
+
+        setNicknameExists(ret.data.isExists);
+    }
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -50,25 +95,35 @@ const UserInfoInput = () => {
 
                         <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8}}>닉네임</Text>
 
-                        <TextInput
-                            style={{
+                        <Input
+                            inputStyle={{
                                 fontSize: 18,
-                                backgroundColor: '#F1F1F1',
                                 padding: 16,
                                 alignSelf: 'flex-start',
                                 alignItems: 'center',
-                                width: '100%'
+                                width: '100%',
+                                borderWidth: 0
                             }}
+                            inputContainerStyle={{borderBottomWidth: 0, backgroundColor: '#F1F1F1',}}
+                            containerStyle={{paddingHorizontal: 0, borderBottomWidth: 0}}
                             placeholder='-를 제외하고 입력해 주세요'
                             value={nickName}
                             onChangeText={setNickName}
+                            onBlur={() => {
+                                if(!isEmpty(nickName)){
+                                    checkNicknameExists();
+                                }
+                            }}
+                            rightIcon={nickNameVerifiedIcon}
+                            errorStyle={{display: 'none'}}
                         />
 
                         <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8, marginTop: 32}}>성별</Text>
 
                         <View
                             style={{
-                                flexDirection: 'row'
+                                flexDirection: 'row',
+                                marginBottom: 32
                             }}
                         >
                             <TouchableOpacity
@@ -88,9 +143,10 @@ const UserInfoInput = () => {
 
                         <CBDropDownPicker
                             title='직군'
+                            placeholder='선택해 주세요.'
                             items={JOBS}
-                            value={jobType}
-                            setValue={setJobType}
+                            value={department}
+                            setValue={setDepartment}
                             open={openJobSelection}
                             setOpen={() => setOpenJobSelection(!openJobSelection)}
                         />
@@ -105,17 +161,17 @@ const UserInfoInput = () => {
                         >
                             <TouchableOpacity
                                 style={{padding: 16}}   
-                                onPress={() => timeOnJob>1&&setTimeOnJob(timeOnJob-1)}                       
+                                onPress={() => yearsOnJob>1&&setYearsOnJob(yearsOnJob-1)}                       
                             >
                                 <Icon
                                     name='remove-circle-outline'
                                     size={32}
                                 />
                             </TouchableOpacity>
-                            <Text style={{flex: 1, textAlign: 'center', fontSize: 18}}>{timeOnJob} 년</Text>
+                            <Text style={{flex: 1, textAlign: 'center', fontSize: 18}}>{yearsOnJob} 년</Text>
                             <TouchableOpacity
                                 style={{padding: 16}} 
-                                onPress={() => setTimeOnJob(timeOnJob+1)}                               
+                                onPress={() => setYearsOnJob(yearsOnJob+1)}                               
                             >
                                 <Icon
                                     name='add-circle-outline'
@@ -132,51 +188,57 @@ const UserInfoInput = () => {
                             paddingVertical: 16,
                             borderRadius: 50,
                             width: '100%',
-                            alignSelf: 'flex-end'
+                            alignSelf: 'flex-end',
+                            justifyContent: 'center'
                         }}
-                        onPress={() => setOpenConfirmModal(true)}
+                        disabled={loading}
+                        onPress={signUp}
                     >
-                        <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
-                            다음
-                        </Text>
+                        {
+                            loading ?
+                            <ActivityIndicator size='small' color='#4A7CFF' />
+                            :
+                            <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
+                                다음
+                            </Text>
+                        }
                     </TouchableOpacity>
                 </View>
             </View>
             {
                 isOpenConfirmModal &&
-                <IdeaRegistrationModal />
-                // <InfoModal
-                //     isVisible={isOpenConfirmModal}
-                //     onClose={() => setOpenConfirmModal(false)}
-                // >
-                //     <View
-                //         style={{
-                //             width: '80%',
-                //             padding: 24,
-                //             borderRadius: 36,
-                //             backgroundColor: 'white',
-                //             alignItems: 'center'
-                //         }}
-                //     >
-                //         <Icon name='mood' size={48} color='oreange'/>
-                //         <Text style={{fontSize: 15, marginTop: 24}}><Text style={{fontWeight: 'bold', fontSize: 15}}>{nickName}</Text> 간호사님, 축하합니다!</Text>
-                //         <Text style={{fontSize: 15, marginTop: 16}}><Text style={{fontWeight: 'bold', fontSize: 15}}>carebox</Text>에 가입되셨습니다.</Text>
+                <InfoModal
+                    isVisible={isOpenConfirmModal}
+                    onClose={() => setOpenConfirmModal(false)}
+                >
+                    <View
+                        style={{
+                            width: '80%',
+                            padding: 24,
+                            borderRadius: 36,
+                            backgroundColor: 'white',
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Icon name='mood' size={48} color='oreange'/>
+                        <Text style={{fontSize: 15, marginTop: 24}}><Text style={{fontWeight: 'bold', fontSize: 15}}>{nickName}</Text> 간호사님, 축하합니다!</Text>
+                        <Text style={{fontSize: 15, marginTop: 16}}><Text style={{fontWeight: 'bold', fontSize: 15}}>carebox</Text>에 가입되셨습니다.</Text>
 
-                //         <TouchableOpacity
-                //             style={{
-                //                 width: '100%',
-                //                 borderRadius: 50,
-                //                 paddingVertical: 16,
-                //                 backgroundColor: '#1379FF',
-                //                 alignItems: 'center',
-                //                 marginTop: 48
-                //             }}
-                //             onPress={() => setOpenConfirmModal(false)}
-                //         >
-                //             <Text style={{fontSize: 20, fontWeight: '500', color: 'white'}}>확인</Text>
-                //         </TouchableOpacity>
-                //     </View>
-                // </InfoModal>
+                        <TouchableOpacity
+                            style={{
+                                width: '100%',
+                                borderRadius: 50,
+                                paddingVertical: 16,
+                                backgroundColor: '#1379FF',
+                                alignItems: 'center',
+                                marginTop: 48
+                            }}
+                            onPress={() => setOpenConfirmModal(false)}
+                        >
+                            <Text style={{fontSize: 20, fontWeight: '500', color: 'white'}}>확인</Text>
+                        </TouchableOpacity>
+                    </View>
+                </InfoModal>
             }
         </SafeAreaView>
     )

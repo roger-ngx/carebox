@@ -5,7 +5,7 @@ import { View, Text } from 'react-native';
 const CBDropDownPicker = ({title, items, value, setValue, open, setOpen, placeholder}) => {
 
     return (
-        <View>
+        <View style={{zIndex: 999}}>
             <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8}}>
                 {title}
             </Text>
@@ -20,11 +20,11 @@ const CBDropDownPicker = ({title, items, value, setValue, open, setOpen, placeho
                 disableBorderRadius={true}
                 style={{
                     borderColor: '#9C9C9C',
-                    borderRadius: 0
+                    borderRadius: 0,
                 }}
                 dropDownContainerStyle={{
                     borderColor: '#9C9C9C',
-                    borderRadius: 0
+                    borderRadius: 0,
                 }}
                 textStyle={{
                     fontSize: 15,

@@ -1,3 +1,13 @@
+interface IIdea {
+    category: string,
+    type: string,
+    scamper: string,
+    subject: string,
+    detail: object,
+    images: string[],
+    links: string[]
+}
+
 export default class Idea {
     idea = {
         category: '',
@@ -10,7 +20,7 @@ export default class Idea {
     };
 
     constructor()
-    constructor(idea?: object){
+    constructor(idea?: IIdea){
         idea && (this.idea = idea);
     }
 
@@ -52,14 +62,14 @@ export default class Idea {
     get images(){
         return this.idea.images;
     }
-    setImages(images: Array<string>){
+    setImages(images: string[]){
         return this.idea.images = images;
     }
 
     get links(){
         return this.idea.links;
     }
-    setLinks(links: Array<string>){
+    setLinks(links: string[]){
         return this.idea.links = links;
     }
 }

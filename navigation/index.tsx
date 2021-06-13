@@ -14,6 +14,8 @@ import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
 import PhoneNumberVerification from '../screens/Login/PhoneNumberVerification';
 import Login from '../screens/Login/Login';
+import { useSelector, RootStateOrAny } from 'react-redux';
+import SplashScreen from '../screens/SplashScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -30,10 +32,14 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const message = useSelector((state: RootStateOrAny) => state.message);
+  console.log('message', message);
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='Splash' component={SplashScreen} />
       <Stack.Screen name="Login" component={Login} />
-      {/* <Stack.Screen name="Root" component={BottomTabNavigator} /> */}
+      <Stack.Screen name="Home" component={BottomTabNavigator} />
       <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
     </Stack.Navigator>
   );
