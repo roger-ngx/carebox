@@ -7,15 +7,15 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
+import { useSelector, RootStateOrAny } from 'react-redux';
 
 import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
 import PhoneNumberVerification from '../screens/Login/PhoneNumberVerification';
-import Login from '../screens/Login/Login';
-import { useSelector, RootStateOrAny } from 'react-redux';
-import SplashScreen from '../screens/SplashScreen';
+import Login from 'screens/Login/Login';
+import SplashScreen from 'screens/SplashScreen';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -32,15 +32,21 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const message = useSelector((state: RootStateOrAny) => state.message);
-  console.log('message', message);
+  const auth = useSelector((state: RootStateOrAny) => state.auth);
+  console.log('auth', auth);
+
+  if(auth.isLoading){
+    return <SplashScreen />
+  }
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name='Splash' component={SplashScreen} />
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Home" component={BottomTabNavigator} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+      {
+        !!auth.authToken ?
+        <Stack.Screen name="Home" component={BottomTabNavigator} />
+        :
+        <Stack.Screen name="Login" component={Login} />
+      }
     </Stack.Navigator>
   );
 }

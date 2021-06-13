@@ -21,6 +21,9 @@ import Profile from './Profile';
 import ProfileChange from './ProfileChange';
 import IdeaImageAdd from './IdeaImageAdd';
 import SplashScreen from '../screens/SplashScreen';
+import PickedIdeaListHeader from './PickedIdeaListHeader';
+import FilterItem from './FilterItem';
+import Filter from './Filter';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
@@ -50,5 +53,10 @@ storiesOf('IdeaHead', module)
 .add('Comment Input Modal', () => <CommentInputModal />)
 .add('Idea Image Add', () => <IdeaImageAdd />)
 .add('Splash', () => <SplashScreen />)
+.add('Pick Header', () => <PickedIdeaListHeader />)
+.add('Filter active Item', () => <FilterItem active={true} text='전체' />)
+.add('Filter deactive Item', () => <FilterItem active={false} text='전체' />)
+.add('Filter', () => <Filter current='전체'/>)
+
 
 

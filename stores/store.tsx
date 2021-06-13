@@ -1,8 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import messageReducer from './slices/messageSlice';
+import tokenReducer from './slices/tokenSlice';
+import devToolsEnhancer from "remote-redux-devtools";
 
 export const store = configureStore({
     reducer: {
-        message: messageReducer
-    }
+        auth: tokenReducer
+    },
+    devTools: true,
+    enhancers: [devToolsEnhancer({ realtime: true, port: 8000, hostname: 'localhost' })]
 })

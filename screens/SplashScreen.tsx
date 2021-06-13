@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import { View, Image } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import auth from '@react-native-firebase/auth';
+import { useDispatch } from 'react-redux';
+import { setAuthToken, setLoadingToken } from '../stores/slices/tokenSlice';
 
-const SplashScreen = ({navigation}) => {
+const SplashScreen = () => {
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         getToken();
@@ -13,11 +17,9 @@ const SplashScreen = ({navigation}) => {
         try{
             console.log(auth().currentUser);
             const userToken = await SecureStore.getItemAsync('userToken');
-            if(userToken == null){
-                navigation.navigate('Login');
-            } else {
-                navigation.navigate('Home');
-            }
+            
+            dispatch(setAuthToken(userToken));
+            dispatch(setLoadingToken(false));
         }catch(ex){
             console.log(ex);
         }
