@@ -5,7 +5,7 @@ import FilterItem from './FilterItem';
 
 const FILTERS = [ '전체', '의료기기', '의료용품', '서비스', '업무', '기타' ];
 
-const Filter = ({current}) => {
+const Filter = ({current, containerStyle}) => {
 
     const [ selectedFilter, setSelectedFilter ] = useState(current);
 
@@ -13,6 +13,7 @@ const Filter = ({current}) => {
         <ScrollView
             horizontal
             bounces={false}
+            style={{...containerStyle}}
         >
             {
                 map(FILTERS, filter => (

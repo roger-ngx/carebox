@@ -2,8 +2,11 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Image, ScrollView, SafeAreaView, Text, View } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import Filter from '../components/Filter';
+import PickedIdeaListHeader from '../components/PickedIdeaListHeader';
+import { Divider } from 'react-native-paper';
+import NewIdea from '../components/Idea/NewIdea';
 
-export default function Home() {
+export default function Home({navigation}) {
   return (
     <SafeAreaView style={styles.container}>
       <Image style={{marginBottom: 16}} source={require('assets/images/carebox.png')} />
@@ -27,12 +30,20 @@ export default function Home() {
         <View style={{backgroundColor: 'white', padding: 20}}>
           <Filter current='전체'/>
         </View>
-        <PickedIdea />
-        <PickedIdea />
-        <PickedIdea />
-        <PickedIdea />
-        <PickedIdea />
-        <PickedIdea />
+        <View style={{paddingHorizontal: 20}}>
+          <PickedIdeaListHeader
+            containerStyle={{paddingVertical: 20}}
+            onPress={() => navigation.navigate('PickedIdeas')}
+          />
+          <PickedIdea />
+
+          <Divider style={{marginVertical: 20, color: '#B7BCC9'}} />
+          <View>
+            <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 20}}>New Idea</Text>
+            <NewIdea containerStyle={{marginBottom: 20}}/>
+            <NewIdea containerStyle={{marginBottom: 20}}/>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -43,6 +54,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: '#EFF4F5'
   },
   title: {
     fontSize: 20,
