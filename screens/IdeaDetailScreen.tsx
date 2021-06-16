@@ -7,36 +7,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const IdeaDetailScreen = ({navigation}) => {
 
     return (
-        <SafeAreaView
-            edges={['top']}
+        <View
             style={{flex: 1, backgroundColor: 'white'}}
         >
-            <View
-                style={{
-                    paddingHorizontal: 20,
-                    flexDirection: 'row',
-                    width: '100%',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
-                }}
-            >
-                <TouchableOpacity
-                    onPress={() => navigation.pop()}
-                >
-                    <Icon
-                        name='arrow-back-ios'
-                        color='black'
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={() => navigation.pop()}
-                >
-                    <Icon
-                        name='notifications-none'
-                        color='black'
-                    />
-                </TouchableOpacity>
-            </View>
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
                 <PickedIdea />
                 <Divider/>
@@ -71,7 +44,7 @@ const IdeaDetailScreen = ({navigation}) => {
                     </Text>
                 </View>
             </ScrollView>
-        </SafeAreaView>
+        </View>
     )
 }
 

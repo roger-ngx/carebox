@@ -16,7 +16,8 @@ import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
 import LinksScreen from 'screens/LinksScreen';
 import Home from 'screens/Home';
 import IdeaDetailScreen from 'screens/IdeaDetailScreen';
-import PickedIdeasScreen from '../screens/PickedIdeasScreen';
+import PickedIdeasScreen from 'screens/PickedIdeasScreen';
+import IdeaScreen from 'screens/IdeaScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -70,8 +71,8 @@ function TabOneNavigator() {
         options={{ headerShown: false }}
       />
       <TabOneStack.Screen
-        name='IdeaDetail'
-        component={IdeaDetailScreen}
+        name='Idea'
+        component={IdeaScreen}
         options={{ headerShown: false }}
       />
     </TabOneStack.Navigator>

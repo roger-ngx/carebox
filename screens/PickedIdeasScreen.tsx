@@ -34,25 +34,25 @@ export default function PickedIdeasScreen({navigation}) {
         >
             <TouchableOpacity
                 style={{marginBottom: 20}}
-                onPress={() => navigation.navigate('IdeaDetail')}
+                onPress={() => navigation.navigate('Idea')}
             >
                 <PickedIdea />
             </TouchableOpacity>
             <TouchableOpacity
                 style={{marginBottom: 20}}
-                onPress={() => navigation.navigate('IdeaDetail')}
+                onPress={() => navigation.navigate('Idea')}
             >
                 <PickedIdea />
             </TouchableOpacity>
             <TouchableOpacity
                 style={{marginBottom: 20}}
-                onPress={() => navigation.navigate('IdeaDetail')}
+                onPress={() => navigation.navigate('Idea')}
             >
                 <PickedIdea />
             </TouchableOpacity>
             <TouchableOpacity
                 style={{marginBottom: 20}}
-                onPress={() => navigation.navigate('IdeaDetail')}
+                onPress={() => navigation.navigate('Idea')}
             >
                 <PickedIdea />
             </TouchableOpacity>

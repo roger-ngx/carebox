@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
+
 import NewIdeaHead from './Idea/NewIdeaHead';
 import ContainedTag from './ContainedTag';
 import OutlinedTag from './OutlinedTag';
@@ -24,6 +25,8 @@ import SplashScreen from '../screens/SplashScreen';
 import PickedIdeaListHeader from './PickedIdeaListHeader';
 import FilterItem from './FilterItem';
 import Filter from './Filter';
+import IdeaOverallRating from './IdeaOverallRating';
+import ExpandableText from './ExpandableText';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
@@ -57,6 +60,8 @@ storiesOf('IdeaHead', module)
 .add('Filter active Item', () => <FilterItem active={true} text='전체' />)
 .add('Filter deactive Item', () => <FilterItem active={false} text='전체' />)
 .add('Filter', () => <Filter current='전체'/>)
+.add('Idea Overall Rating', () => <IdeaOverallRating />)
+.add('expandable text', () => <ExpandableText text='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'/>)
 
 
 
