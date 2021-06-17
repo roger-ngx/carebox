@@ -3,7 +3,7 @@ import Modal from 'react-native-modal';
 import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const CommentInputModal = ({onSubmitComment}) => {
+const CommentInputModal = ({onSubmitComment, onClose}) => {
 
     const [ comment, setComment ] = useState('');
 
@@ -17,6 +17,8 @@ const CommentInputModal = ({onSubmitComment}) => {
             style={{margin: 0, height: '100%'}}
             hasBackdrop={true}
             avoidKeyboard={true}
+            onBackButtonPress={onClose}
+            onBackdropPress={onClose}
         >
             <SafeAreaView style={{flex: 1, justifyContent: 'flex-end'}}>
                 <View
@@ -24,7 +26,8 @@ const CommentInputModal = ({onSubmitComment}) => {
                         flexDirection: 'row',
                         width: '100%',
                         backgroundColor: 'white',
-                        padding: 16
+                        padding: 16,
+                        alignItems: 'center'
                     }}
                 >
                     <Image source={require('assets/icons/person.png')} />
@@ -33,6 +36,7 @@ const CommentInputModal = ({onSubmitComment}) => {
                         placeholder='댓글 달기...'
                         value={comment}
                         onChangeText={setComment}
+                        autoFocus={true}
                     />
                     <TouchableOpacity
                         style={{

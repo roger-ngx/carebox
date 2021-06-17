@@ -42,10 +42,10 @@ function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {
-        !!auth.authToken ?
+        // !!auth.authToken ?
         <Stack.Screen name="Home" component={BottomTabNavigator} />
-        :
-        <Stack.Screen name="Login" component={Login} />
+        // :
+        // <Stack.Screen name="Login" component={Login} />
       }
     </Stack.Navigator>
   );

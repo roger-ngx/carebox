@@ -27,6 +27,7 @@ import FilterItem from './FilterItem';
 import Filter from './Filter';
 import IdeaOverallRating from './IdeaOverallRating';
 import ExpandableText from './ExpandableText';
+import LikeCommentNumber from './LikeCommentNumber';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
@@ -62,6 +63,6 @@ storiesOf('IdeaHead', module)
 .add('Filter', () => <Filter current='전체'/>)
 .add('Idea Overall Rating', () => <IdeaOverallRating />)
 .add('expandable text', () => <ExpandableText text='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'/>)
-
+.add('likes and comments', () => <LikeCommentNumber />)
 
 
