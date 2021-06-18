@@ -1,15 +1,23 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, ScrollView, SafeAreaView, Text, View } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import Filter from '../components/Filter';
 import PickedIdeaListHeader from '../components/PickedIdeaListHeader';
 import { Divider } from 'react-native-paper';
 import NewIdea from '../components/Idea/NewIdea';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import IdeaRegistrationModal from '../modals/IdeaRegistrationModal';
 
 export default function Home({navigation}) {
+
+  const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
+
+  const openModal = () => setOpenRegistrationModal(true)
+  const closeModal = () => setOpenRegistrationModal(false)
+
   return (
     <SafeAreaView style={styles.container}>
-      <Image style={{marginBottom: 16}} source={require('assets/images/carebox.png')} />
+      <Image style={{marginBottom: 16, alignSelf: 'center'}} source={require('assets/images/carebox.png')} />
       <ScrollView
         style={{width: '100%'}}
         showsVerticalScrollIndicator={false}
@@ -20,7 +28,7 @@ export default function Home({navigation}) {
             backgroundColor: '#1379FF',
             height: 100, width: '100%',
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
           }}
         >
           <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
@@ -30,7 +38,7 @@ export default function Home({navigation}) {
         <View style={{backgroundColor: 'white', padding: 20}}>
           <Filter current='전체'/>
         </View>
-        <View style={{paddingHorizontal: 20}}>
+        <View style={{paddingHorizontal: 20, marginBottom: 80}}>
           <PickedIdeaListHeader
             containerStyle={{paddingVertical: 20}}
             onPress={() => navigation.navigate('PickedIdeas')}
@@ -45,6 +53,30 @@ export default function Home({navigation}) {
           </View>
         </View>
       </ScrollView>
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 10,
+          width: '100%',
+          alignItems: 'center'
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#1379FF',
+            paddingVertical: 20,
+            paddingHorizontal: 32,
+            borderRadius: 32
+          }}
+          onPress={openModal}
+        >
+          <Text style={{fontWeight: 'bold', color: 'white', fontSize: 20}}>아이디어 등록하기</Text>
+        </TouchableOpacity>
+      </View>
+      {
+        openRegistrationModal &&
+        <IdeaRegistrationModal onClose={closeModal}/>
+      }
     </SafeAreaView>
   );
 }
@@ -52,8 +84,6 @@ export default function Home({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#EFF4F5'
   },
   title: {

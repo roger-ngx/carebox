@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { map } from 'lodash';
+import { map, includes, remove } from 'lodash';
 import { CheckBox, Icon } from 'react-native-elements';
 import InfoModal from '../InfoModal';
 import RoundButton from '../../components/RoundButton';
@@ -19,6 +19,7 @@ const SCAMPERS =[
 
 const SecondStep = ({idea}) => {
     const [ showModal, setShowModal ] = useState(false);
+    const [ ideaScampers, setIdeaScampers ] = useState([]);
 
     idea.setScamper('S : 대체하기(소재, 방식, 원리)');
 
@@ -48,6 +49,15 @@ const SecondStep = ({idea}) => {
                             }}
                             size={24}
                             textStyle={{fontSize: 15, fontWeight: 'normal', color: '#334F74'}}
+                            checked={includes(ideaScampers, scamper)}
+                            onPress={() => {
+                                if(includes(ideaScampers, scamper)){
+                                    remove(ideaScampers, is => is === scamper);
+                                    setIdeaScampers([...ideaScampers])
+                                }else{
+                                    setIdeaScampers([...ideaScampers, scamper]);
+                                }
+                            }}
                         />
                     ))
                 }

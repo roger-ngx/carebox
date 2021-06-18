@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
-import { View, SafeAreaView, Text, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { Icon } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import FirstStep from './IdeaRegistration/FirstStep';
 import RoundButton from '../components/RoundButton';
@@ -8,8 +10,9 @@ import SecondStep from './IdeaRegistration/SecondStep';
 import ThirdStep from './IdeaRegistration/ThirdStep';
 import ForthStep from './IdeaRegistration/ForthStep';
 import Idea from '../models/Idea';
+import StepIndicator from '../components/StepIndicator';
 
-const IdeaRegistrationModal = () => {
+const IdeaRegistrationModal = ({onClose}) => {
 
     const [ currentStep, setCurrentStep ] = useState(1);
     const [idea] = useState(new Idea());
@@ -24,60 +27,88 @@ const IdeaRegistrationModal = () => {
         <Modal
             isVisible={true}
             style={{margin: 0}}
-            avoidKeyboard={true}
+            onBackButtonPress={onClose}
         >
             <SafeAreaView
                 style={{
                     flex: 1,
-                    backgroundColor: 'white'
+                    backgroundColor: '#F1F7FF',
                 }}
             >
-                <Text
+                <View
                     style={{
-                        color: '#334F74',
-                        fontSize: 18,
-                        fontWeight: 'bold',
-                        textAlign: 'center',
-                        marginTop: 16,
-                        marginBottom: 24
+                        position: 'absolute',
+                        top: 40,
+                        zIndex: 999,
+                        width: '100%',
+                        backgroundColor: 'white'
                     }}
                 >
-                    아이디어 등록
-                </Text>
+                    <View 
+                        style={{
+                            flexDirection: 'row',
+                            marginTop: 16,
+                            marginBottom: 24,
+                            alignItems: 'center'
+                        }}
+                    >
+                        <Text
+                            style={{
+                                color: '#334F74',
+                                fontSize: 18,
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                flex: 1,
+                                marginRight: -70
+                            }}
+                        >
+                            아이디어 등록
+                        </Text>
+                        <TouchableOpacity
+                            style={{paddingHorizontal: 20}}
+                            onPress={onClose}
+                        >
+                            <Icon name='close' color='#AEAEAE' />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={{width: '100%', justifyContent: 'center', marginBottom: 20}}>
+                        <StepIndicator step={currentStep}/>
+                    </View>
+                </View>
+                <KeyboardAwareScrollView
+                    bounces={false}
+                    showsVerticalScrollIndicator={false}
+                >
                 <View
                     style={{
                         flex: 1,
-                        backgroundColor: '#F1F7FF',
-                        padding: 20
+                        padding: 20,
+                        marginTop: 120
                     }}
                 >
-                    <ScrollView
-                        style={{flex: 1}}
-                        showsVerticalScrollIndicator={false}
-                    >
-                        <KeyboardAvoidingView
-                            style = {{ flex: 1 }}
-                            behavior="position" enabled
-                        >
-                            {
-                                currentStep === 1 &&
-                                <FirstStep idea={idea}/>
-                            }
-                            {
-                                currentStep === 2 &&
-                                <SecondStep idea={idea} />
-                            }
-                            {
-                                currentStep === 3 &&
-                                <ThirdStep idea={idea} />
-                            }
+                    <ScrollView>
+                        {
+                            currentStep === 1 &&
+                            <FirstStep idea={idea}/>
+                        }
+                        {
+                            currentStep === 2 &&
+                            <SecondStep idea={idea} />
+                        }
+                        {
+                            currentStep === 3 &&
+                            <ThirdStep idea={idea} />
+                        }
 
-                            {
-                                currentStep === 4 &&
-                                <ForthStep idea={idea} />
-                            }
-                        </KeyboardAvoidingView>
+                        {
+                            currentStep === 4 &&
+                            <ForthStep idea={idea} />
+                        }
+                        <View style={{margin: 50}} />
                     </ScrollView>
+                </View>
+                </KeyboardAwareScrollView>
+                <View style={{margin: 20}}>
                     <RoundButton
                         text='저장하고 다음'
                         onPress={() => setCurrentStep(currentStep + 1)}

@@ -4,7 +4,7 @@ import PickedIdea from '../components/Idea/PickedIdea';
 import { Divider, Icon } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const IdeaDetailScreen = ({navigation}) => {
+const IdeaDetailScreen = () => {
 
     return (
         <View

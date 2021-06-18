@@ -14,13 +14,13 @@ const CommentInputModal = ({onSubmitComment, onClose}) => {
     return (
         <Modal
             isVisible={true}
-            style={{margin: 0, height: '100%'}}
+            style={{margin: 0, height: '100%', justifyContent: 'flex-end'}}
             hasBackdrop={true}
             avoidKeyboard={true}
             onBackButtonPress={onClose}
             onBackdropPress={onClose}
         >
-            <SafeAreaView style={{flex: 1, justifyContent: 'flex-end'}}>
+            <SafeAreaView>
                 <View
                     style={{
                         flexDirection: 'row',

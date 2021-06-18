@@ -7,7 +7,8 @@ const StepIndicator = ({step}) => {
         <View
             style={{
                 flexDirection: 'row',
-                alignItems: 'flex-end'
+                alignItems: 'flex-end',
+                justifyContent: 'center'
             }}
         >
             <View style={{alignItems: 'center'}}>

@@ -22,7 +22,7 @@ const renderTabBar = props => (
   />
 )
 
-export default function IdeaScreen() {
+export default function IdeaScreen({navigation}) {
   const layout = useWindowDimensions();
 
   const [index, setIndex] = React.useState(0);

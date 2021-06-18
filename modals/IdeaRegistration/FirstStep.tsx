@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import { map } from 'lodash';
 import TouchableTag from '../../components/TouchableTag';
 import { CheckBox } from 'react-native-elements';
 
-const CATEGORIES = ['의료기기', '의료용품', '서비스', '서비스', '업무', '기타'];
+const CATEGORIES = ['의료기기', '의료용품', '서비스', '업무', '기타'];
 
 const IDEA_TYPES=[
     '새로운 제안 또는 아이디어',
@@ -16,6 +16,9 @@ const IDEA_TYPES=[
 const FirstStep = ({idea}) => {
 
     idea.setCategory('category 1');
+
+    const [ category, setCategory ] = useState();
+    const [ ideaType, setIdeaType ] = useState();
 
     return(
         <View>
@@ -32,6 +35,10 @@ const FirstStep = ({idea}) => {
                         <View style={{margin: 4}}>
                             <TouchableTag
                                 title={cat}
+                                isSelected={category===cat}
+                                onPress={() => {
+                                    setCategory(category===cat ? '' : cat)
+                                }}
                             />
                         </View>
                     ))
@@ -55,6 +62,8 @@ const FirstStep = ({idea}) => {
                         }}
                         size={24}
                         textStyle={{fontSize: 15, fontWeight: 'normal', color: '#334F74'}}
+                        checked={ideaType===type}
+                        onPress={() => { setIdeaType(ideaType===type ? '' : type) }}
                     />
                 ))
             }
