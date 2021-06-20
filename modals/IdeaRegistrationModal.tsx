@@ -11,17 +11,39 @@ import ThirdStep from './IdeaRegistration/ThirdStep';
 import ForthStep from './IdeaRegistration/ForthStep';
 import Idea from '../models/Idea';
 import StepIndicator from '../components/StepIndicator';
+import { useDispatch, useSelector } from 'react-redux';
+import { addNewIdea } from '../firebase/IdeaRepository';
+import InfoModal from './InfoModal';
 
 const IdeaRegistrationModal = ({onClose}) => {
 
     const [ currentStep, setCurrentStep ] = useState(1);
     const [idea] = useState(new Idea());
+    const [ openResultModal, setOpenResultModal ] = useState(false);
+    const [ progressing, setProgressing ] = useState(false);
 
-    useEffect(() => {
-        if(currentStep == 5){
-            console.log(idea);
+    const user = useSelector(state => state.user.currentUser);
+    console.log('user', user);
+
+    const onNextStep = () => {
+        if(currentStep===4){
+            addIdea();
+        }else{
+            setCurrentStep(currentStep + 1)
         }
-    }, [currentStep]);
+    }
+
+    const addIdea = async () => {
+        idea.setOwnerId(user.uid);
+
+        setProgressing(true);
+
+        const ret = await addNewIdea(idea);
+        if(ret){
+            setOpenResultModal(true);
+        }
+        setProgressing(false);
+    }
 
     return (
         <Modal
@@ -52,6 +74,19 @@ const IdeaRegistrationModal = ({onClose}) => {
                             alignItems: 'center'
                         }}
                     >
+                        <TouchableOpacity
+                            style={{
+                                paddingHorizontal: 20,
+                                display: currentStep > 1 ? 'flex' : 'none'
+                            }}
+                            onPress={() => {
+                                if(currentStep > 1){
+                                    setCurrentStep(currentStep -1);
+                                }
+                            }}
+                        >
+                            <Icon name='arrow-back-ios' color='#AEAEAE' />
+                        </TouchableOpacity>
                         <Text
                             style={{
                                 color: '#334F74',
@@ -59,7 +94,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                                 fontWeight: 'bold',
                                 textAlign: 'center',
                                 flex: 1,
-                                marginRight: -70
+                                marginRight: currentStep === 1 ? -64 : 0
                             }}
                         >
                             아이디어 등록
@@ -111,9 +146,34 @@ const IdeaRegistrationModal = ({onClose}) => {
                 <View style={{margin: 20}}>
                     <RoundButton
                         text='저장하고 다음'
-                        onPress={() => setCurrentStep(currentStep + 1)}
+                        onPress={onNextStep}
+                        disabled={progressing}
+                        loading={progressing}
                     />
                 </View>
+                {
+                    openResultModal &&
+                    <InfoModal
+                        isVisible={openResultModal}
+                        onClose={() => setOpenResultModal(false)}
+                    >
+                        <View style={{width: '80%', backgroundColor: 'white', padding: 20, borderRadius: 20}}>
+                            <Icon
+                                name='mood'
+                                color='#001240'
+                                size={36}
+                            />
+                            <Text style={{color: '#001240', fontSize: 16, textAlign: 'center', marginVertical: 20}}>아이디어 등록이 완료되었습니다!</Text>
+                            <RoundButton
+                                text='확인'
+                                onPress={() => {
+                                    setOpenResultModal(false);
+                                    onClose();
+                                }}
+                            />
+                        </View>
+                    </InfoModal>
+                }
             </SafeAreaView>
         </Modal>
     )

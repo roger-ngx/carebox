@@ -1,7 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
-const RoundButton = ({text, onPress}) => {
+const RoundButton = ({text, onPress, loading, ...props}) => {
 
     return (
         <TouchableOpacity
@@ -13,10 +14,19 @@ const RoundButton = ({text, onPress}) => {
                 alignSelf: 'flex-end'
             }}
             onPress={onPress}
+            {...props}
         >
-            <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
-                {text}
-            </Text>
+            {
+                loading ?
+                <ActivityIndicator
+                    size='small'
+                    color='white'
+                />
+                :
+                <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
+                    {text}
+                </Text>
+            }
         </TouchableOpacity>
     )
 }

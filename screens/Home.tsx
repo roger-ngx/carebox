@@ -7,13 +7,25 @@ import { Divider } from 'react-native-paper';
 import NewIdea from '../components/Idea/NewIdea';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import IdeaRegistrationModal from '../modals/IdeaRegistrationModal';
+import { addIdeasListenner } from '../firebase/IdeaRepository';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function Home({navigation}) {
+
+  const ideas = useSelector(state => state.user.ideas);
+  const dispatch = useDispatch();
+  console.log('ideas', ideas.length);
 
   const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
 
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
+
+  useEffect(() => {
+    const unsubscriber = addIdeasListenner(dispatch);
+
+    return () => unsubscriber && unsubscriber();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>

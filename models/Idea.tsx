@@ -8,11 +8,22 @@ interface IIdea {
     links: string[]
 }
 
+export interface IImage{
+    url: string,
+    title: string,
+}
+
+export interface ILink{
+    url: string,
+    title: string
+}
+
 export default class Idea {
     idea = {
+        ownerId: '',
         category: '',
         type: '',
-        scamper: '',
+        scampers: [],
         subject: '',
         detail: {},
         images: [],
@@ -22,6 +33,13 @@ export default class Idea {
     constructor()
     constructor(idea?: IIdea){
         idea && (this.idea = idea);
+    }
+
+    get ownerId(){
+        return this.idea.ownerId;
+    }
+    setOwnerId(ownerId: string){
+        this.idea.ownerId = ownerId;
     }
 
     get category(){
@@ -38,11 +56,11 @@ export default class Idea {
         this.idea.type = type
     }
 
-    get scamper(){
-        return this.idea.scamper;
+    get scampers(){
+        return this.idea.scampers;
     }
-    setScamper(scamper:string){
-        this.idea.scamper = scamper;
+    setScampers(scampers:string[]){
+        this.idea.scampers = scampers;
     }
 
     get subject(){
@@ -62,14 +80,14 @@ export default class Idea {
     get images(){
         return this.idea.images;
     }
-    setImages(images: string[]){
+    setImages(images: Image[]){
         return this.idea.images = images;
     }
 
     get links(){
         return this.idea.links;
     }
-    setLinks(links: string[]){
+    setLinks(links: Link[]){
         return this.idea.links = links;
     }
 }

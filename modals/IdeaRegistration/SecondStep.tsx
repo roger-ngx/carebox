@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { map, includes, remove } from 'lodash';
 import { CheckBox, Icon } from 'react-native-elements';
@@ -21,7 +21,9 @@ const SecondStep = ({idea}) => {
     const [ showModal, setShowModal ] = useState(false);
     const [ ideaScampers, setIdeaScampers ] = useState([]);
 
-    idea.setScamper('S : 대체하기(소재, 방식, 원리)');
+    useEffect(() => {
+        idea.setScampers(ideaScampers);
+    }, [ideaScampers])
 
     return(
         <View>

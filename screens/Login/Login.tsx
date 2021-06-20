@@ -12,12 +12,16 @@ import { Icon } from 'react-native-elements';
 import UserInfoInput from './UserInfoInput';
 import functions from '@react-native-firebase/functions';
 import { ActivityIndicator } from 'react-native-paper';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../stores/slices/userSlice';
 
 const Login = ({navigation}) => {
 
     const [ showUserInfoInput, setShowUserInfoInput ] = useState(false);
     const [ kakaoId, setKakaoId ] = useState();
     const [ loading, setLoading ] = useState(false);
+
+    const dispatch = useDispatch();
 
     const signInWithKakao = async (): Promise<void> => {
         setLoading(true);
@@ -29,6 +33,8 @@ const Login = ({navigation}) => {
             const profile:KakaoProfile = await getKakaoProfile();
             console.log(profile);
             setKakaoId(profile.id+'');
+
+            dispatch(setUser(profile));
     
             const checkUserExists = functions().httpsCallable('checkUserExists');
             const ret = await checkUserExists({uid: profile.id+''});

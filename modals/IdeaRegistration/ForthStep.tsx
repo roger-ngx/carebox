@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements'
 
+import IdeaPhotoUpload from 'components/IdeaPhotoUpload';
+import ExternalLinkUpload from '../../components/ExternalLinkUpload';
+
 const ForthStep = ({idea}) => {
-    idea.setImages(['image1']);
-    idea.setLinks('link1');
+
+    const [ isNotUploadPhotoAndLink, setNotUploadPhotoAndLink ] = useState();
 
     return(
         <ScrollView
@@ -19,29 +22,11 @@ const ForthStep = ({idea}) => {
                     <Text style={styles.headerTxt}>
                         * 이미지
                     </Text>
-                    <Text style={styles.headerTxt}>
-                        + 추가
-                    </Text>
+                    <TouchableOpacity>
+                        <Text style={styles.headerTxt}>+ 추가</Text>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity
-                    style={{
-                        borderWidth: 1,
-                        borderColor: '#9C9C9C',
-                        borderRadius: 4,
-                        padding: 32,
-                        marginBottom: 8,
-                        backgroundColor: 'white'
-                    }}
-                >
-                    <Icon
-                        name='camera'
-                    />
-                </TouchableOpacity>
-                <TextInput
-                    placeholder='설명 추가'
-                    style={styles.textInput}
-                    maxLength={50}
-                />
+                <IdeaPhotoUpload onImageChanged={image => idea.setImages([image])}/>
             </View>
             <View
                 style={{
@@ -52,15 +37,11 @@ const ForthStep = ({idea}) => {
                     <Text style={styles.headerTxt}>
                         * 링크
                     </Text>
-                    <Text style={styles.headerTxt}>
-                        + 추가
-                    </Text>
+                    <TouchableOpacity>
+                        <Text style={styles.headerTxt}>+ 추가</Text>
+                    </TouchableOpacity>
                 </View>
-                <TextInput
-                    placeholder='링크를 입력해주세요.'
-                    style={styles.textInput}
-                    maxLength={50}
-                />
+                <ExternalLinkUpload onLinkChanged={link => idea.setLinks([link])} />
             </View>
             <CheckBox
                 title='이미지, 링크 등록없이 업로드 할래요.'
@@ -70,12 +51,13 @@ const ForthStep = ({idea}) => {
                     marginLeft: 0,
                     borderWidth: 0
                 }}
-
+                checked={isNotUploadPhotoAndLink}
                 textStyle={{
                     color: '#334F74',
                     fontSize: 16,
                     fontWeight: 'normal'
                 }}
+                onPress={() => setNotUploadPhotoAndLink(!isNotUploadPhotoAndLink)}
             />
         </ScrollView>
     )

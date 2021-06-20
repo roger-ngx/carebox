@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setAuthToken, setLoadingToken } from '../stores/slices/tokenSlice';
+import { setUser, setUserUid } from '../stores/slices/userSlice';
 
 const SplashScreen = () => {
 
@@ -18,6 +19,9 @@ const SplashScreen = () => {
             console.log(auth().currentUser);
             const userToken = await SecureStore.getItemAsync('userToken');
             
+            const currentUser = auth().currentUser;
+            currentUser && dispatch(setUser(currentUser));
+
             dispatch(setAuthToken(userToken));
             dispatch(setLoadingToken(false));
         }catch(ex){

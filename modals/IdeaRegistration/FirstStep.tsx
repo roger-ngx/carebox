@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useEffect} from 'react';
 import { View, Text } from 'react-native';
 import { map } from 'lodash';
 import TouchableTag from '../../components/TouchableTag';
@@ -15,10 +15,13 @@ const IDEA_TYPES=[
 
 const FirstStep = ({idea}) => {
 
-    idea.setCategory('category 1');
-
     const [ category, setCategory ] = useState();
     const [ ideaType, setIdeaType ] = useState();
+
+    useEffect(() => {
+        idea.setCategory(category);
+        idea.setType(ideaType);
+    }, [category, ideaType])
 
     return(
         <View>

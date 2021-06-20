@@ -1,9 +1,26 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
 const ThirdStep = ({idea}) => {
 
-    idea.setSubject('novice');
+    const [subject, setSubject] = useState();
+    const [problemObject, setProblemObject] = useState();
+    const [problemSituation, setProblemSituation] = useState();
+    const [problemSolution, setProblemSolution] = useState();
+
+    useEffect(() => {
+        idea.setSubject(subject);
+    }, [subject]);
+
+    useEffect(() => {
+        const detail = {
+            object: problemObject,
+            situation: problemSituation,
+            solution: problemSolution
+        }
+
+        idea.setIdeaDetail(detail);
+    }, [problemObject, problemSituation, problemSolution]);
 
     return(
         <View>
@@ -19,6 +36,8 @@ const ThirdStep = ({idea}) => {
                     placeholder='제목을 입력해 주세요.'
                     style={styles.textInput}
                     maxLength={50}
+                    value={subject}
+                    onChangeText={setSubject}
                 />
             </View>
             <View
@@ -41,6 +60,8 @@ const ThirdStep = ({idea}) => {
                         placeholder='어떤것에 불편함을 느꼈나요?'
                         style={styles.textInput}
                         maxLength={50}
+                        value={problemObject}
+                        onChangeText={setProblemObject}
                     />
                 </View>
                 <View
@@ -57,6 +78,8 @@ const ThirdStep = ({idea}) => {
                         multiline={true}
                         numberOfLines={5}
                         maxLength={2000}
+                        value={problemSituation}
+                        onChangeText={setProblemSituation}
                     />
                 </View>
 
@@ -79,6 +102,8 @@ const ThirdStep = ({idea}) => {
                         multiline={true}
                         numberOfLines={5}
                         maxLength={2000}
+                        value={problemSolution}
+                        onChangeText={setProblemSolution}
                     />
 
                     <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
