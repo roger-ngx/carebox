@@ -14,7 +14,7 @@ export default function Home({navigation}) {
 
   const ideas = useSelector(state => state.user.ideas);
   const dispatch = useDispatch();
-  console.log('ideas', ideas.length);
+  // console.log('ideas', ideas.length);
 
   const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
 
@@ -24,7 +24,7 @@ export default function Home({navigation}) {
   useEffect(() => {
     const unsubscriber = addIdeasListenner(dispatch);
 
-    return () => unsubscriber && unsubscriber();
+    return () => (typeof unsubscriber === 'function') && unsubscriber();
   }, []);
 
   return (

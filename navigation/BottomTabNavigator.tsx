@@ -18,6 +18,8 @@ import Home from 'screens/Home';
 import IdeaDetailScreen from 'screens/IdeaDetailScreen';
 import PickedIdeasScreen from 'screens/PickedIdeasScreen';
 import IdeaScreen from 'screens/IdeaScreen';
+import { Icon } from 'react-native-elements';
+import UserProfileEdit from '../screens/UserProfileEdit';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -29,10 +31,17 @@ export default function BottomTabNavigator() {
       initialRouteName="TabOne"
       tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}>
       <BottomTab.Screen
-        name="TabOne"
+        name="아이디어"
         component={TabOneNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="ios-code" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={30} type='material-community' name="lightbulb-on-outline" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="마이페이지"
+        component={UserProfileNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <TabBarIcon name="person-outline" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -79,16 +88,16 @@ function TabOneNavigator() {
   );
 }
 
-const TabTwoStack = createStackNavigator<TabTwoParamList>();
+const UserProfileStack = createStackNavigator<TabTwoParamList>();
 
-function TabTwoNavigator() {
+function UserProfileNavigator() {
   return (
-    <TabTwoStack.Navigator>
-      <TabTwoStack.Screen
+    <UserProfileStack.Navigator>
+      <UserProfileStack.Screen
         name="TabTwoScreen"
-        component={TabTwoScreen}
-        options={{ headerTitle: 'Tab Two Title' }}
+        component={UserProfileEdit}
+        options={{ headerShown: false }}
       />
-    </TabTwoStack.Navigator>
+    </UserProfileStack.Navigator>
   );
 }

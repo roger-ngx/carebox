@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
-import functions from '@react-native-firebase/functions';
 import { isEmpty } from 'lodash';
-import auth from '@react-native-firebase/auth';
-import * as SecureStore from 'expo-secure-store';
+import { ActivityIndicator } from 'react-native-paper';
 
 import InfoModal from 'modals/InfoModal';
 import CBDropDownPicker from 'components/CBDropDownPicker';
-import { ActivityIndicator } from 'react-native-paper';
+import { checkNicknameExists, signUp } from '../../firebase/UserRepository';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -42,32 +40,24 @@ const UserInfoInput = ({uid}) => {
         }
     }, [isNicknameExists])
 
-    const signUp = async() => {
+    const userSignUp = async() => {
         setLoading(true);
 
         try{
-            const signUp = functions().httpsCallable('signUp');
+
             const ret = await signUp({
                 uid, nickName, gender, department, yearsOnJob
             })
-            console.log(ret);
-            const { authToken } = ret.data;
-
-            if(authToken){
-                await auth().signInWithCustomToken(authToken);
-                await SecureStore.setItemAsync('userToken', authToken);
-                setOpenConfirmModal(true);
-            }
+            setOpenConfirmModal(ret);
         }catch(ex){
             console.log('signUp', ex);
         }
         setLoading(false);
     }
 
-    const checkNicknameExists = async() => {
-        const checkNicknameExists = functions().httpsCallable('checkNicknameExists');
-        const ret = await checkNicknameExists({nickName});
-
+    const checkNickname = async() => {
+        const ret = await checkNicknameExists(nickName);
+        
         console.log(ret);
 
         setNicknameExists(ret.data.isExists);
@@ -111,7 +101,7 @@ const UserInfoInput = ({uid}) => {
                             onChangeText={setNickName}
                             onBlur={() => {
                                 if(!isEmpty(nickName)){
-                                    checkNicknameExists();
+                                    checkNickname();
                                 }
                             }}
                             rightIcon={nickNameVerifiedIcon}
@@ -192,7 +182,7 @@ const UserInfoInput = ({uid}) => {
                             justifyContent: 'center'
                         }}
                         disabled={loading}
-                        onPress={signUp}
+                        onPress={userSignUp}
                     >
                         {
                             loading ?

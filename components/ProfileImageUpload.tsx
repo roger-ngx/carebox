@@ -4,7 +4,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
-const ProfileChange = () => {
+const ProfileImageUpload = ({containerStyle}) => {
 
     const [ profileImage, setProfileImage ] = useState(require('assets/images/profile_image.png'));
     const [ loadingImage, setLoadingImage ] = useState(false);
@@ -32,7 +32,7 @@ const ProfileChange = () => {
         setLoadingImage(false);
     }
 
-    return <View style={{justifyContent: 'center', alignItems: 'center'}}>
+    return <View style={[{justifyContent: 'center', alignItems: 'center'}, containerStyle]}>
         <View
             style={{
                 width: 80, height: 80,
@@ -71,4 +71,4 @@ const ProfileChange = () => {
     </View>
 }
 
-export default ProfileChange;
+export default ProfileImageUpload;

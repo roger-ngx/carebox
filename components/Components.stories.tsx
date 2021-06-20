@@ -19,7 +19,7 @@ import CommentRegistrationModal from '../modals/CommentRegistrationModal';
 import IdeaDetailScreen from '../screens/IdeaDetailScreen';
 import CommentInputModal from '../modals/CommentInputModal';
 import Profile from './Profile';
-import ProfileChange from './ProfileChange';
+import ProfileImageUpload from './ProfileImageUpload';
 import IdeaImageAdd from './IdeaImageAdd';
 import SplashScreen from '../screens/SplashScreen';
 import PickedIdeaListHeader from './PickedIdeaListHeader';
@@ -28,12 +28,13 @@ import Filter from './Filter';
 import IdeaOverallRating from './IdeaOverallRating';
 import ExpandableText from './ExpandableText';
 import LikeCommentNumber from './LikeCommentNumber';
+import TitleNavigationBar from './TitleNavigationBar';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
 .add('New', () => <NewIdeaHead />)
 .add('Profile', () => <Profile />)
-.add('Profile Change', () => <ProfileChange />)
+.add('Profile Change', () => <ProfileImageUpload />)
 .add('ContainedTag', () => <ContainedTag text='기계'/>)
 .add('OutlinedTag', () => <OutlinedTag sign='P' text='용도의 전환'/>)
 .add('Idea Heart', () => <IdeaHeart count={13} />)
@@ -64,5 +65,5 @@ storiesOf('IdeaHead', module)
 .add('Idea Overall Rating', () => <IdeaOverallRating />)
 .add('expandable text', () => <ExpandableText text='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'/>)
 .add('likes and comments', () => <LikeCommentNumber />)
-
+.add('title navigation bar', () => <TitleNavigationBar title='프로필 수정' />)
 
