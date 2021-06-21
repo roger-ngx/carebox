@@ -2,9 +2,12 @@ import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import { Divider, Icon } from 'react-native-elements';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { map } from 'lodash';
 
-const IdeaDetailScreen = () => {
+const IdeaDetailScreen = ({idea}) => {
+    if(!idea) return null;
+
+    const { detail, images } = idea;
 
     return (
         <View
@@ -16,22 +19,26 @@ const IdeaDetailScreen = () => {
                 <View style={{padding: 20}}>
                     <View style={{marginBottom: 8}}>
                         <Text style={{color: '#898989', marginBottom: 2}}>구체적 대상</Text>
-                        <Text style={{color: '#334F74', fontSize: 16}}>산소 마스크</Text>
+                        <Text style={{color: '#334F74', fontSize: 16}}>{detail.object}</Text>
                     </View>
                     <View style={{marginBottom: 8}}>
                         <Text style={{color: '#898989', marginBottom: 2}}>구체적 상황</Text>
-                        <Text style={{color: '#334F74', fontSize: 16}}>산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격</Text>
+                        <Text style={{color: '#334F74', fontSize: 16}}>{detail.situation}</Text>
                     </View>
                     <View style={{marginBottom: 8}}>
                         <Text style={{color: '#898989', marginBottom: 2}}>해결방법</Text>
-                        <Text style={{color: '#334F74', fontSize: 16}}>1회용 필터를 갈아 끼우는 형태로 제안합니다.</Text>
+                        <Text style={{color: '#334F74', fontSize: 16}}>{detail.solution}</Text>
                     </View>
                 </View>
                 <Divider />
                 <View style={{padding: 20}}>
                     <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
-                    <Image style={{height: 150, marginBottom: 8}} source={{uri: 'https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg'}} />
-                    <Text  style={{color: '#334F74', fontSize: 16}}>이미지 설명 이미지 설명 이미지 설명</Text>
+                    {
+                        map(images, ({title, url}) => (<>
+                            <Image style={{height: 150, marginBottom: 8}} source={{uri: url}} />
+                            <Text  style={{color: '#334F74', fontSize: 16}}>{title}</Text>
+                        </>))
+                    }
                 </View>
                 <Divider />
                 <View style={{padding: 20}}>

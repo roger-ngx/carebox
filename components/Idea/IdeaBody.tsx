@@ -1,21 +1,32 @@
 import React from 'react';
 import { View, Text } from 'react-native';
+import { map } from 'lodash';
+import moment from 'moment';
+
 import ContainedTag from '../ContainedTag';
 import OutlinedTag from '../OutlinedTag';
 import IdeaRate from './IdeaRate';
 import IdeaHeart from './IdeaHeart';
 
-const IdeaBody = () => {
+const IdeaBody = ({idea}) => {
+    if(!idea) return null;
+
+    const {category, scampers, subject, createdAt } = idea;
 
     return (
         <>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 16}}>
-                <ContainedTag text='기계'/>
-                <OutlinedTag text='용도의 전환' sign='P'/>
-                <OutlinedTag text='역발상' sign='R'/>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 16}}>
+                <ContainedTag text={category}/>
+                {
+                    map(scampers, scamper => {
+                        const [sign, text] = scamper.split(' : ');
+
+                        return (<OutlinedTag text={text} sign={sign}/>)
+                    })
+                }
             </View>
             <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 8}}>
-                병동에서 쓰는 산소마스크 아이디어 입니다.
+                {subject}
             </Text>
             <IdeaRate count={123} rate={4.5} />
             <View
@@ -25,7 +36,7 @@ const IdeaBody = () => {
                     marginTop: 8
                 }}
             >
-                <Text style={{color: '#898989'}}>2021.04.06</Text>
+                <Text style={{color: '#898989'}}>{moment.unix(createdAt.seconds).format('YYYY.MM.DD')}</Text>
                 <IdeaHeart count={13}/>
             </View>
 

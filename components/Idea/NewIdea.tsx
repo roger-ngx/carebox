@@ -4,19 +4,22 @@ import { Divider } from 'react-native-elements';
 import IdeaBody from './IdeaBody';
 import NewIdeaHead from './NewIdeaHead';
 
-const NewIdea = ({containerStyle}) => {
+const NewIdea = ({idea, containerStyle}) => {
+    console.log('NewIdea', idea);
 
     return (
-        <View
+        idea ? (<View
             style={[
                 {width: '100%', borderRadius: 10, backgroundColor: 'white', padding: 20},
                 containerStyle
             ]}
         >
-            <NewIdeaHead />
+            <NewIdeaHead idea={idea}/>
             <Divider style={{marginVertical: 16}}/>
-            <IdeaBody />
-        </View>
+            <IdeaBody idea={idea}/>
+        </View>)
+        :
+        null
     )
 }
 

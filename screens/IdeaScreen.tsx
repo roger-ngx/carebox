@@ -6,11 +6,6 @@ import IdeaDetailScreen from './IdeaDetailScreen';
 import { Icon } from 'react-native-elements';
 import IdeaCommentScreen from './IdeaCommentScreen';
 
-const renderScene = SceneMap({
-  first: IdeaDetailScreen,
-  second: IdeaCommentScreen,
-});
-
 const renderTabBar = props => (
   <TabBar
     {...props}
@@ -22,8 +17,16 @@ const renderTabBar = props => (
   />
 )
 
-export default function IdeaScreen({navigation}) {
+export default function IdeaScreen({route, navigation}) {
   const layout = useWindowDimensions();
+
+  const { idea } = route.params;
+  if(!idea) return null;
+
+  const renderScene = SceneMap({
+    first: () => (<IdeaDetailScreen idea={idea} />),
+    second: () => (<IdeaCommentScreen idea={idea} />),
+  });
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([

@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, SafeAreaView, Text, View } from 'react-native';
-import PickedIdea from '../components/Idea/PickedIdea';
-import Filter from '../components/Filter';
-import PickedIdeaListHeader from '../components/PickedIdeaListHeader';
+import { StyleSheet, Image, ScrollView, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-paper';
-import NewIdea from '../components/Idea/NewIdea';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import IdeaRegistrationModal from '../modals/IdeaRegistrationModal';
-import { addIdeasListenner } from '../firebase/IdeaRepository';
 import { useSelector, useDispatch } from 'react-redux';
+import { map } from 'lodash';
+
+import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
+import Filter from 'components/Filter';
+import PickedIdea from 'components/Idea/PickedIdea';
+import NewIdea from 'components/Idea/NewIdea';
+import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
+import { addIdeasListenner } from 'firebase/IdeaRepository';
 
 export default function Home({navigation}) {
 
   const ideas = useSelector(state => state.user.ideas);
   const dispatch = useDispatch();
-  // console.log('ideas', ideas.length);
+  console.log('ideas', ideas);
 
   const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
 
@@ -60,8 +61,17 @@ export default function Home({navigation}) {
           <Divider style={{marginVertical: 20, color: '#B7BCC9'}} />
           <View>
             <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 20}}>New Idea</Text>
-            <NewIdea containerStyle={{marginBottom: 20}}/>
-            <NewIdea containerStyle={{marginBottom: 20}}/>
+
+            {
+              map(ideas, idea => (
+                <TouchableOpacity
+                  style={{marginBottom: 20}}
+                  onPress={() => navigation.navigate('Idea', {idea})}
+                >
+                  <NewIdea key={idea.id} idea={idea} containerStyle={{marginBottom: 20}}/>
+                </TouchableOpacity>
+              ))
+            }
           </View>
         </View>
       </ScrollView>
