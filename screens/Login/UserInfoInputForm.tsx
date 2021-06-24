@@ -98,8 +98,8 @@ const UserInfoInputForm = () => {
                 items={JOBS}
                 value={department}
                 setValue={setDepartment}
-                open={openJobSelection}
-                setOpen={() => setOpenJobSelection(!openJobSelection)}
+                // open={openJobSelection}
+                // setOpen={() => setOpenJobSelection(!openJobSelection)}
             />
 
             <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8, marginTop: 32}}>연차</Text>

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import { AirbnbRating } from 'react-native-elements';
 
-const Rating = ({title, onFinishRating}) => {
+const Rating = ({title, rate, onFinishRating}) => {
 
     return (
         <View style={{flexDirection: 'row', alignItems: 'center', marginVertical: 4}}>
@@ -10,6 +10,7 @@ const Rating = ({title, onFinishRating}) => {
             <AirbnbRating
                 showRating={false}
                 size={32}
+                defaultRating={rate}
                 onFinishRating={onFinishRating}
             />
         </View>

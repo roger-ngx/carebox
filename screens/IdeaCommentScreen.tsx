@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Image, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
 import IdeaOverallRating from '../components/IdeaOverallRating';
 import NewIdeaHead from '../components/Idea/NewIdeaHead';
@@ -8,34 +8,45 @@ import RatingView from '../components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
+import { useDispatch, useSelector } from 'react-redux';
+import { map } from 'lodash';
+import { addIdeaCommentsListenner } from '../firebase/IdeaRepository';
 
-const Comment = () => (
-    <View>
+const Comment = ({comment}) => {
+
+    const {
+        ideaId, practicalityRate, creativityRate, valuableRate,
+        scamper, content, links
+    } = comment;
+
+    console.log(comment);
+
+    return (<View>
         <View style={{marginBottom: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>2.8점</Text></Text>
-            <RatingView />
+            <RatingView {...{practicalityRate, creativityRate, valuableRate}}/>
         </View>
         <View style={{marginBottom: 10}}>
             <OutlinedTag
                 sign='P'
-                text='용도의 전환'
+                text={scamper}
                 style={{alignSelf: 'flex-start'}}
             />
         </View>
         <View style={{marginBottom: 10}}>
-            <ExpandableText text='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'/>
+            <ExpandableText text={content}/>
         </View>
         <Image style={{height: 150, marginBottom: 20}} source={{uri: 'https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg'}} />
         
         <View style={{marginBottom: 32}}>
-            <View style={{marginBottom: 8}}>
-                <Text style={{color: '#334F74', fontSize: 16}}>1회용 필터 정보</Text>
-                <Text style={{color: '#2E2E2E'}} numberOfLines={1}>https://www.figma.com/file/zFayXRmFx4XDXxIvdh7jq3/%EC%BC%80%EC%96%B4%EB%B0%95%EC%8A%A4?node-id=315%3A654</Text>
-            </View>
-            <View>
-                <Text style={{color: '#334F74', fontSize: 16}}>1회용 필터 정보</Text>
-                <Text style={{color: '#2E2E2E'}} numberOfLines={1}>https://www.figma.com/file/zFayXRmFx4XDXxIvdh7jq3/%EC%BC%80%EC%96%B4%EB%B0%95%EC%8A%A4?node-id=315%3A654</Text>
-            </View>
+            {
+                map(links, link => (
+                    <View style={{marginBottom: 8}}>
+                        <Text style={{color: '#334F74', fontSize: 16}}>{link.externalLinkTitle}</Text>
+                        <Text style={{color: '#2E2E2E'}} numberOfLines={1}>{link.externalLink}</Text>
+                    </View>
+                ))
+            }
         </View>
 
         <View>
@@ -69,24 +80,39 @@ const Comment = () => (
             </View>
         </TouchableOpacity>
     </View>
-)
+)}
 
-const IdeaCommentScreen = () => {
+const IdeaCommentScreen = ({idea}) => {
     const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const unsubcriber = addIdeaCommentsListenner(idea.id, dispatch);
+
+        return () => typeof unsubcriber === 'function' && unsubcriber();
+    }, []);
+
+    const comments = useSelector(state => state.idea.comments)
 
     return (
         <ScrollView>
             <IdeaOverallRating />
-            <View style={{padding: 20}}>
-                <View style={{paddingBottom: 20}}>
-                    <NewIdeaHead />
-                </View>
-
-                <Comment />
-            </View>
             {
-                showCommentInputModal &&
-                <CommentInputModal onClose={() => setShowCommentInputModal(false)}/>
+                map(comments, comment => (
+                    <>
+                        <View style={{padding: 20}}>
+                            <View style={{paddingBottom: 20}}>
+                                <NewIdeaHead />
+                            </View>
+
+                            <Comment comment={comment}/>
+                        </View>
+                        {
+                            showCommentInputModal &&
+                            <CommentInputModal onClose={() => setShowCommentInputModal(false)}/>
+                        }
+                    </>
+                ))
             }
         </ScrollView>
     )

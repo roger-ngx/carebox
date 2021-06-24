@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { View, Text } from 'react-native';
 
-const CBDropDownPicker = ({title, items, value, setValue, open, setOpen, placeholder}) => {
+const CBDropDownPicker = ({title, items, value, setValue, placeholder}) => {
+
+    const [ open, setOpen ] = useState(false);
 
     return (
-        <View style={{zIndex: 999}}>
+        <View style={{position: 'relative'}}>
             <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8}}>
                 {title}
             </Text>
@@ -29,6 +31,10 @@ const CBDropDownPicker = ({title, items, value, setValue, open, setOpen, placeho
                 textStyle={{
                     fontSize: 15,
                     color: '#7d7d7d'
+                }}
+                listMode="MODAL"
+                scrollViewProps={{
+                    nestedScrollEnabled: true
                 }}
             />
         </View>

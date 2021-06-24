@@ -14,11 +14,11 @@ const Rating = ({type, rate}) => (
     </View>
 )
 
-const RatingView = () => (
+const RatingView = ({practicalityRate, creativityRate, valuableRate}) => (
     <View>
-        <Rating type='실용성' rate='4.0' />
-        <Rating type='창의성' rate='4.5' />
-        <Rating type='가치성' rate='4.2' />
+        <Rating type='실용성' rate={practicalityRate} />
+        <Rating type='창의성' rate={creativityRate} />
+        <Rating type='가치성' rate={valuableRate} />
     </View>
 )
 

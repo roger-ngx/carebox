@@ -17,7 +17,7 @@ const JOBS = [
 ]
 
 const UserInfoInput = ({uid}) => {
-    const [ openJobSelection, setOpenJobSelection ] = useState(false);
+    // const [ openJobSelection, setOpenJobSelection ] = useState(false);
 
     const [ nickName, setNickName ] = useState();
     const [ gender, setGender ] = useState();
@@ -137,8 +137,8 @@ const UserInfoInput = ({uid}) => {
                             items={JOBS}
                             value={department}
                             setValue={setDepartment}
-                            open={openJobSelection}
-                            setOpen={() => setOpenJobSelection(!openJobSelection)}
+                            // open={openJobSelection}
+                            // setOpen={() => setOpenJobSelection(!openJobSelection)}
                         />
 
                         <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8, marginTop: 32}}>연차</Text>

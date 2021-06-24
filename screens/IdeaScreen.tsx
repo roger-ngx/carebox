@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import IdeaDetailScreen from './IdeaDetailScreen';
 import { Icon } from 'react-native-elements';
 import IdeaCommentScreen from './IdeaCommentScreen';
+import { useDispatch } from 'react-redux';
+import { setIdeaId } from '../stores/slices/ideaSlice';
 
 const renderTabBar = props => (
   <TabBar
@@ -22,6 +24,9 @@ export default function IdeaScreen({route, navigation}) {
 
   const { idea } = route.params;
   if(!idea) return null;
+
+  const dispatch = useDispatch();
+  dispatch(setIdeaId(idea.id))
 
   const renderScene = SceneMap({
     first: () => (<IdeaDetailScreen idea={idea} />),

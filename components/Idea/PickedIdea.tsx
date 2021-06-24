@@ -5,7 +5,7 @@ import { Divider } from 'react-native-elements';
 import IdeaBody from './IdeaBody';
 import Profile from '../Profile';
 
-const PickedIdea = () => {
+const PickedIdea = ({idea}) => {
 
     return (
         <View
@@ -13,7 +13,7 @@ const PickedIdea = () => {
         >
             <Profile />
             <Divider style={{marginVertical: 16}}/>
-            <IdeaBody />
+            <IdeaBody idea={idea}/>
         </View>
     )
 }

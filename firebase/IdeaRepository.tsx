@@ -6,6 +6,7 @@ import { get, isEmpty, map, forEach, set } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch } from "react-redux";
 import { setIdeas } from "../stores/slices/userSlice";
+import { setComments } from "../stores/slices/ideaSlice";
 
 export async function addNewIdea(idea){
     try{
@@ -56,4 +57,43 @@ export async function addIdeasListenner(dispatch){
     }
 
     return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
+}
+
+export async function addCommentToIdea(ideaId, commentDoc){
+
+    if(!ideaId) return;
+
+    const doc = {
+        ...commentDoc,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId).collection('comments').add(doc);
+    }catch(ex){
+        console.log('addCommentToIdea', ex);
+    }
+}
+
+export function addIdeaCommentsListenner(ideaId, dispatch){
+    
+    function onResult(querySnapshot) {
+        console.log('Got Users collection result.');
+        const docs = querySnapshot.docs;
+        const comments = map(docs, doc => ({id: doc.id, ...doc.data()}))
+
+        console.log('comments', comments);
+
+        dispatch(setComments(comments));
+    }
+      
+    function onError(error) {
+        console.error(error);
+    }
+
+    return firestore()
+    .collection('ideas').doc(ideaId)
+    .collection('comments').orderBy('createdAt', 'desc')
+    .onSnapshot(onResult, onError);
 }

@@ -29,6 +29,7 @@ import IdeaOverallRating from './IdeaOverallRating';
 import ExpandableText from './ExpandableText';
 import LikeCommentNumber from './LikeCommentNumber';
 import TitleNavigationBar from './TitleNavigationBar';
+import IdeaCommentButtons from './IdeaCommentButtons';
 
 storiesOf('IdeaHead', module)
 .addDecorator((getStory) => <View style={{flex: 1, padding: 20}}>{getStory()}</View>)
@@ -65,5 +66,5 @@ storiesOf('IdeaHead', module)
 .add('Idea Overall Rating', () => <IdeaOverallRating />)
 .add('expandable text', () => <ExpandableText text='산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격 산소 마스크 사용할 때 위생관리가 잘 안되는 환자 목격'/>)
 .add('likes and comments', () => <LikeCommentNumber />)
-.add('title navigation bar', () => <TitleNavigationBar title='프로필 수정' />)
+.add('comment buttons', () => <IdeaCommentButtons />)
 

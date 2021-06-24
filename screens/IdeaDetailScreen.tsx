@@ -1,20 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import { Divider, Icon } from 'react-native-elements';
 import { map } from 'lodash';
+import IdeaCommentButtons from '../components/IdeaCommentButtons';
+import CommentRegistrationModal from '../modals/CommentRegistrationModal';
+import { useDispatch } from 'react-redux';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
 
-    const { detail, images } = idea;
+    const dispatch = useDispatch();
+
+    const { id, detail, images } = idea;
+
+    const [ showingCommentRegistrationModal, setShowingCommentRegistrationModal ] = useState(false);
 
     return (
         <View
             style={{flex: 1, backgroundColor: 'white'}}
         >
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-                <PickedIdea />
+                <PickedIdea idea={idea}/>
                 <Divider/>
                 <View style={{padding: 20}}>
                     <View style={{marginBottom: 8}}>
@@ -41,7 +48,7 @@ const IdeaDetailScreen = ({idea}) => {
                     }
                 </View>
                 <Divider />
-                <View style={{padding: 20}}>
+                <View style={{padding: 20, marginBottom: 120}}>
                     <Text style={{color: '#7D7D7D', marginBottom: 8}}>링크</Text>
                     <Text style={{color: '#334F74', fontSize: 16, lineHeight: 20}}>
                         1회용 필터 정보
@@ -51,6 +58,28 @@ const IdeaDetailScreen = ({idea}) => {
                     </Text>
                 </View>
             </ScrollView>
+            <View
+                style={{
+                    position: 'absolute',
+                    bottom: 0, left: 0,
+                    paddingVertical: 8,
+                    width: '100%',
+                    backgroundColor: 'white',
+                    alignItems: 'center'
+                }}
+            >
+                <IdeaCommentButtons
+                    onCommentRegister={() => setShowingCommentRegistrationModal(true)}
+                    onFavorite={() => {}}
+                />
+            </View>
+            {
+                showingCommentRegistrationModal &&
+                <CommentRegistrationModal
+                    ideaId={idea.id}
+                    onClose={() => setShowingCommentRegistrationModal(false)}
+                />
+            }
         </View>
     )
 }

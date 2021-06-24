@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TextInput, Text } from 'react-native';
 import { size } from 'lodash';
 
-const CBTextInput = ({title, value, setValue, height=50, maxLength, placeholder, multiline=false}) => {
+const CBTextInput = ({title, value, setValue, height=50, maxLength, placeholder, multiline=false, ...props}) => {
 
     return (
         <View>
@@ -15,6 +15,7 @@ const CBTextInput = ({title, value, setValue, height=50, maxLength, placeholder,
                 height={height}
                 maxLength={maxLength}
                 style={{borderWidth: 1, borderColor: '#334F74', borderRadius: 4, padding: 12}}
+                {...props}
             />
             <Text style={{textAlign: 'right', marginTop: 4, fontSize: 12}}>{size(value)}/{maxLength}</Text>
         </View>

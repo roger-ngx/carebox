@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, SafeAreaView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { map } from 'lodash';
+import { map, get } from 'lodash';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
 import Filter from 'components/Filter';
@@ -29,8 +30,11 @@ export default function Home({navigation}) {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image style={{marginBottom: 16, alignSelf: 'center'}} source={require('assets/images/carebox.png')} />
+    <SafeAreaView edges={['top']} style={styles.container}>
+      <Image
+        style={{marginVertical: 16, alignSelf: 'center'}}
+        source={require('assets/images/carebox.png')}
+      />
       <ScrollView
         style={{width: '100%'}}
         showsVerticalScrollIndicator={false}
@@ -56,7 +60,7 @@ export default function Home({navigation}) {
             containerStyle={{paddingVertical: 20}}
             onPress={() => navigation.navigate('PickedIdeas')}
           />
-          <PickedIdea />
+          <PickedIdea idea={get(ideas, '0')}/>
 
           <Divider style={{marginVertical: 20, color: '#B7BCC9'}} />
           <View>
