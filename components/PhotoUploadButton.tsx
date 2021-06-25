@@ -1,8 +1,34 @@
-import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
+import React, { useState } from 'react';
+import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
+import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-const PhotoUploadButton = () => {
+const PhotoUploadButton = ({count, max, onReturnUri}) => {
+
+    const [ loadingImage, setLoadingImage ] = useState(false);
+
+    const pickImage = async () => {
+        setLoadingImage(true);
+
+        try{
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                allowsEditting: true,
+            })
+    
+            const { uri } = await ImageManipulator.manipulateAsync(
+                result.uri,
+                [{ resize: {width: 800, height: 800}}]
+            )
+    
+            uri && onReturnUri(uri)
+        }catch(ex){
+            console.log(ex);
+        }
+
+        setLoadingImage(false);
+    }
 
     return (
         <TouchableOpacity
@@ -12,13 +38,19 @@ const PhotoUploadButton = () => {
                 borderRadius: 4,
                 justifyContent: 'center', alignItems: 'center'
             }}
+            onPress={pickImage}
         >
-            <Icon
-                name='photo-camera'
-                color='#A1A1A1'
-                size={28}
-            />
-            <Text style={{fontSize: 15, color: '#7D7D7D', marginTop: 4}}>0/3</Text>
+            {
+                loadingImage ?
+                <ActivityIndicator size='small' />
+                :
+                <Icon
+                    name='photo-camera'
+                    color='#A1A1A1'
+                    size={28}
+                />
+            }
+            <Text style={{fontSize: 15, color: '#7D7D7D', marginTop: 4}}>{`${count}/${max}`}</Text>
         </TouchableOpacity>
     )
 }

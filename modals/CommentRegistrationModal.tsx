@@ -9,6 +9,7 @@ import CBTextInput from 'components/CBTextInput';
 import PhotoUploadButton from 'components/PhotoUploadButton';
 import RoundButton from 'components/RoundButton';
 import { addCommentToIdea } from '../firebase/IdeaRepository';
+import CommentImagesUploader from '../components/CommentImagesUploader';
 
 const CommentRegistrationModal = ({ideaId, onClose}) => {
     console.log(ideaId);
@@ -100,7 +101,7 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                         />
                     </View>
                     <View style={{flexDirection: 'row', marginBottom: 28}}>
-                        <PhotoUploadButton />
+                        <CommentImagesUploader />
                     </View>
                     <View style={{marginBottom: 50}}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
