@@ -20,6 +20,7 @@ import PickedIdeasScreen from 'screens/PickedIdeasScreen';
 import IdeaScreen from 'screens/IdeaScreen';
 import { Icon } from 'react-native-elements';
 import UserProfileEdit from '../screens/UserProfileEdit';
+import UserProfileScreen from '../screens/UserProfileScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -94,8 +95,8 @@ function UserProfileNavigator() {
   return (
     <UserProfileStack.Navigator>
       <UserProfileStack.Screen
-        name="TabTwoScreen"
-        component={UserProfileEdit}
+        name="UserProfile"
+        component={UserProfileScreen}
         options={{ headerShown: false }}
       />
     </UserProfileStack.Navigator>
