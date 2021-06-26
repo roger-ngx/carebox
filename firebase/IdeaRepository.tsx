@@ -8,6 +8,19 @@ import { useDispatch } from "react-redux";
 import { setIdeas } from "../stores/slices/userSlice";
 import { setComments } from "../stores/slices/ideaSlice";
 
+const uploadImages = async (imageFileUris, imageFirestorePaths) => {
+    if(!isEmpty(imageFileUris) || !isEmpty(imageFirestorePaths)){
+
+        const promises = map(imageFileUris, async (uri, index) => await storage().ref(imageFirestorePaths[index]).putFile(uri))
+        await Promise.all(promises);
+        
+        const downloadUrlPromises = map(imageFirestorePaths, async path => await storage().ref(path).getDownloadURL())
+        return await Promise.all(downloadUrlPromises);
+    }
+
+    return [];
+}
+
 export async function addNewIdea(idea){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
@@ -19,15 +32,10 @@ export async function addNewIdea(idea){
             const imagePaths = map(images, image => {
                 const uuid = uuidv4();
     
-                return `/images/${ownerId}/ideas/${uuid}.png`;
+                return `/images/${ownerId}/ideas/${uuid}.jpg`;
             })
 
-
-            const promises = map(images, async (image, index) => await storage().ref(imagePaths[index]).putFile(image.url))
-            await Promise.all(promises);
-            
-            const downloadUrlPromises = map(imagePaths, async path => await storage().ref(path).getDownloadURL())
-            const downloadUrls = await Promise.all(downloadUrlPromises);
+            const downloadUrls = await uploadImages(map(images, image => image.url), imagePaths);
 
             forEach(downloadUrls, (url, index) => set(images, `${index}.url`, url))
         }
@@ -59,18 +67,47 @@ export async function addIdeasListenner(dispatch){
     return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
 }
 
-export async function addCommentToIdea(ideaId, commentDoc){
+export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris}){
 
-    if(!ideaId) return;
+    if(!ideaId || !ownerId) return;
 
-    const doc = {
-        ...commentDoc,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }
+    console.log(ideaId, ownerId, commentDoc);
 
     try{
+        const imagePaths = map(imageUris, uri => {
+            const uuid = uuidv4();
+
+            return `/images/${ownerId}/ideas/comments/${uuid}.png`;
+        })
+
+        const imageUrls =  await uploadImages(imageUris, imagePaths);
+
+        const doc = {
+            ...commentDoc,
+            images: imageUrls,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }
+
         await firestore().collection('ideas').doc(ideaId).collection('comments').add(doc);
+    }catch(ex){
+        console.log('addCommentToIdea', ex);
+    }
+}
+
+export async function addCommentToComment({ideaId, owner, commentId, commentData}){
+
+    try{
+        const doc = {
+            ...commentData,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }
+
+        await firestore()
+        .collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId)
+        .collection('comments').add(doc);
     }catch(ex){
         console.log('addCommentToIdea', ex);
     }

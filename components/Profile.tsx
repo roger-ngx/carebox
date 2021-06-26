@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
 
-const Profile = () => {
+const Profile = ({user={}}) => {
+
+    const { nickName, yearsOnJob, department, profileImageUrl } = user;
 
     return (
         <View
@@ -12,15 +14,15 @@ const Profile = () => {
         >
             <Image
                 style={{width: 60, height: 60, borderRadius: 10}}
-                source={require('assets/images/profile_image.png')}
+                source={{uri: profileImageUrl}}
             />
 
             <View style={{marginLeft: 8, alignItems: 'flex-start'}}>
                 <View style={{flexDirection: 'row', marginBottom: 2}}>
-                    <Text style={{fontSize: 18, marginRight: 2, color: '#334F74'}}>아이디어 뱅크</Text>
+                    <Text style={{fontSize: 18, marginRight: 2, color: '#334F74'}}>{nickName}</Text>
                     <Image source={require('assets/icons/crown.png')} />
                 </View>
-                <Text style={{color: '#334F74'}}>2년차 ∙ 병동</Text>
+                <Text style={{color: '#334F74'}}>{yearsOnJob}년차 ∙ {department}</Text>
             </View>
         </View>
     )

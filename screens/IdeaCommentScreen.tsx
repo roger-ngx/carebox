@@ -12,12 +12,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { map } from 'lodash';
 import { addIdeaCommentsListenner } from '../firebase/IdeaRepository';
 
-const Comment = ({comment}) => {
+const Comment = ({comment, showCommentInput}) => {
 
     const {
         ideaId, practicalityRate, creativityRate, valuableRate,
         scamper, content, links
     } = comment;
+
+    const scamperSplits = scamper.split(' : ');
 
     console.log(comment);
 
@@ -28,8 +30,8 @@ const Comment = ({comment}) => {
         </View>
         <View style={{marginBottom: 10}}>
             <OutlinedTag
-                sign='P'
-                text={scamper}
+                sign={scamperSplits[0]}
+                text={scamperSplits[1]}
                 style={{alignSelf: 'flex-start'}}
             />
         </View>
@@ -41,15 +43,15 @@ const Comment = ({comment}) => {
         <View style={{marginBottom: 32}}>
             {
                 map(links, link => (
-                    <View style={{marginBottom: 8}}>
-                        <Text style={{color: '#334F74', fontSize: 16}}>{link.externalLinkTitle}</Text>
+                    <View style={{marginBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                        <Text style={{color: '#334F74', fontSize: 16}}>&#8226; {link.externalLinkTitle}</Text>
                         <Text style={{color: '#2E2E2E'}} numberOfLines={1}>{link.externalLink}</Text>
                     </View>
                 ))
             }
         </View>
 
-        <View>
+        <View style={{marginBottom: 10}}>
             <LikeCommentNumber liked={true}/>
         </View>
         
@@ -67,7 +69,7 @@ const Comment = ({comment}) => {
                 paddingVertical: 16,
                 alignItems: 'center'
             }}
-            onPress={() => setShowCommentInputModal(true)}
+            onPress={showCommentInput}
         >
             <Image source={require('assets/icons/person.png')} />
             <View pointerEvents='none'>
@@ -105,11 +107,16 @@ const IdeaCommentScreen = ({idea}) => {
                                 <NewIdeaHead />
                             </View>
 
-                            <Comment comment={comment}/>
+                            <Comment
+                                comment={comment}
+                                showCommentInput={() => setShowCommentInputModal(true)}
+                            />
                         </View>
                         {
                             showCommentInputModal &&
-                            <CommentInputModal onClose={() => setShowCommentInputModal(false)}/>
+                            <CommentInputModal
+                                onClose={() => setShowCommentInputModal(false)}
+                            />
                         }
                     </>
                 ))

@@ -11,8 +11,11 @@ import PickedIdea from 'components/Idea/PickedIdea';
 import NewIdea from 'components/Idea/NewIdea';
 import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
 import { addIdeasListenner } from 'firebase/IdeaRepository';
+import { subscribeForUserInformation } from '../firebase/UserRepository';
 
 export default function Home({navigation}) {
+
+  const currentUser = useSelector(state => state.user.currentUser);
 
   const ideas = useSelector(state => state.user.ideas);
   const dispatch = useDispatch();
@@ -28,6 +31,13 @@ export default function Home({navigation}) {
 
     return () => (typeof unsubscriber === 'function') && unsubscriber();
   }, []);
+
+  useEffect(() => {
+    const uid = currentUser.uid;
+    if(uid){
+      subscribeForUserInformation(uid, dispatch);
+    }
+  }, [currentUser]);
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>

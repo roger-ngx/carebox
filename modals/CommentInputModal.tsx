@@ -37,6 +37,7 @@ const CommentInputModal = ({onSubmitComment, onClose}) => {
                         value={comment}
                         onChangeText={setComment}
                         autoFocus={true}
+                        multiline
                     />
                     <TouchableOpacity
                         style={{

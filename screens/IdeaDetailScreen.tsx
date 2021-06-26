@@ -77,6 +77,7 @@ const IdeaDetailScreen = ({idea}) => {
                 showingCommentRegistrationModal &&
                 <CommentRegistrationModal
                     ideaId={idea.id}
+                    ownerId={idea.ownerId}
                     onClose={() => setShowingCommentRegistrationModal(false)}
                 />
             }

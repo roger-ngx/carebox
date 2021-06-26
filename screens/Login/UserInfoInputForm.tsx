@@ -14,16 +14,20 @@ const JOBS = [
     { label:'외래', value:'외래' }
 ]
 
-const UserInfoInputForm = () => {
+const UserInfoInputForm = ({user={}, onUserInfoChange}) => {
 
     const [ openJobSelection, setOpenJobSelection ] = useState(false);
 
-    const [ nickName, setNickName ] = useState();
-    const [ gender, setGender ] = useState();
-    const [ department, setDepartment ] = useState();
-    const [ yearsOnJob, setYearsOnJob ] = useState(1);
+    const [ nickName, setNickName ] = useState(user.nickName);
+    const [ gender, setGender ] = useState(user.gender);
+    const [ department, setDepartment ] = useState(user.department);
+    const [ yearsOnJob, setYearsOnJob ] = useState(user.yearsOnJob);
     const [ isNicknameExists, setNicknameExists ] = useState();
     const [ nickNameVerifiedIcon, setNickNameVerifiedIcon ] = useState();
+
+    useEffect(() => {
+        onUserInfoChange({nickName, gender, department, yearsOnJob})
+    }, [nickName, gender, department, yearsOnJob])
 
     useEffect(() => {
         if(isNicknameExists === false){

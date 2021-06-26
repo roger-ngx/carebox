@@ -7,8 +7,11 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Divider } from 'react-native-elements';
 import UserProfileEdit from './UserProfileEdit';
 import ProfileSettingItem from '../components/ProfileSettingItem';
+import { useSelector } from 'react-redux';
 
 const UserProfileScreen = () => {
+
+    const user = useSelector(state => state.user.userProfileData);
 
     const [ showingProfileEditModal, setShowingProfileEditModal ] = useState(false);
 
@@ -21,7 +24,7 @@ const UserProfileScreen = () => {
                 <Divider style={{marginHorizontal: -20}}/>
 
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 20, alignItems: 'center'}}>
-                    <Profile /> 
+                    <Profile user={user}/> 
                     <TouchableOpacity
                         style={{backgroundColor: '#F1F1F1', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 50}}
                         onPress={() => setShowingProfileEditModal(true)}

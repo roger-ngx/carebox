@@ -3,6 +3,8 @@ import Modal from 'react-native-modal';
 import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from 'react-native-elements';
+import { map } from 'lodash';
+
 import Rating from 'components/Rating';
 import CBDropDownPicker from 'components/CBDropDownPicker';
 import CBTextInput from 'components/CBTextInput';
@@ -11,7 +13,7 @@ import RoundButton from 'components/RoundButton';
 import { addCommentToIdea } from '../firebase/IdeaRepository';
 import CommentImagesUploader from '../components/CommentImagesUploader';
 
-const CommentRegistrationModal = ({ideaId, onClose}) => {
+const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
     console.log(ideaId);
 
     const [ practicalityRate, setPracticalityRate ] = useState();
@@ -19,18 +21,22 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
     const [ valuableRate, setValuableRate ] = useState();
     const [ scamper, setScamper ] = useState();
     const [ content, setContent ] = useState();
-    const [ externalLink, setExternalLink ] = useState();
-    const [ externalLinkTitle, setExternalLinkTitle ] = useState();
+    const [ externalLinks, setExternalLinks ] = useState(['']);
+    const [ externalLinkTitles, setExternalLinkTitles ] = useState(['']);
     const [ processing, setProcessing ] = useState(false);
+    const [ imageUris, setImageUris ] = useState();
 
     const onAddCommentToIdea = async () => {
         setProcessing(true);
+
+        const links = map(externalLinks, (externalLink, index) => ({externalLink, externalLinkTitle: externalLinkTitles[index]}))
+
         const commentDoc = {
             ideaId, practicalityRate, creativityRate, valuableRate,
-            scamper, content, links: [{externalLink, externalLinkTitle}]
+            scamper, content, links
         }
 
-        await addCommentToIdea(ideaId, commentDoc);
+        await addCommentToIdea({ideaId, ownerId, imageUris, commentDoc});
         setProcessing(false);
         onClose();
     }
@@ -76,13 +82,13 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                             placeholder='선택해 주세요.'
                             title='*Scamper 기법을 선택해 주세요.'
                             items={[
-                                { label: 'S : 대체하기(소재, 방식, 원리)', value: 'S' },
-                                { label: 'C : 조합하기(소재, 목적, 색, 기능)', value: 'C' },
-                                { label: 'A : 응용하기', value: 'A' },
-                                { label: 'M : 수정, 확대, 축소하기', value: 'M' },
-                                { label: 'P : 용도의 전환', value: 'P' },
-                                { label: 'E : 제거하기', value: 'E' },
-                                { label: 'R : 역발상', value: 'R'}
+                                { label: 'S : 대체하기(소재, 방식, 원리)', value: 'S : 대체하기(소재, 방식, 원리)' },
+                                { label: 'C : 조합하기(소재, 목적, 색, 기능)', value: 'C : 조합하기(소재, 목적, 색, 기능)' },
+                                { label: 'A : 응용하기', value: 'A : 응용하기' },
+                                { label: 'M : 수정, 확대, 축소하기', value: 'M : 수정, 확대, 축소하기' },
+                                { label: 'P : 용도의 전환', value: 'P : 용도의 전환' },
+                                { label: 'E : 제거하기', value: 'E : 제거하기' },
+                                { label: 'R : 역발상', value: 'R : 역발상'}
                             ]}
                             value={scamper}
                             setValue={setScamper}
@@ -101,13 +107,22 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                         />
                     </View>
                     <View style={{flexDirection: 'row', marginBottom: 28}}>
-                        <CommentImagesUploader />
+                        <CommentImagesUploader
+                            onImagesChange={setImageUris}
+                        />
                     </View>
                     <View style={{marginBottom: 50}}>
-                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+                        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4}}>
                             <Text style={{fontSize: 16, color: '#334F74'}}>링크</Text>
                             <TouchableOpacity
                                 style={{padding: 4}}
+                                onPress={() => {
+                                    externalLinks.push('');
+                                    externalLinkTitles.push('');
+
+                                    setExternalLinks([...externalLinks]);
+                                    setExternalLinkTitles([...externalLinkTitles]);
+                                }}
                             >
                                 <Icon
                                     name='add'
@@ -115,30 +130,40 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                                 />
                             </TouchableOpacity>
                         </View>
-                        <TextInput
-                            placeholder='입력해 주세요.'
-                            style={{
-                                borderRadius: 4, 
-                                borderColor: '#9C9C9C',
-                                borderWidth: 1,
-                                padding: 12,
-                                height: 50
-                            }}
-                            value={externalLink}
-                            onChangeText={setExternalLink}
-                        />
-                        <TextInput
-                            placeholder='입력해 주세요.'
-                            style={{
-                                borderRadius: 4, 
-                                borderColor: '#9C9C9C',
-                                borderWidth: 1,
-                                padding: 12,
-                                height: 50
-                            }}
-                            value={externalLinkTitle}
-                            onChangeText={setExternalLinkTitle}
-                        />
+                        {
+                            map(externalLinks, (links, index) => (<View style={{marginBottom: 24}}>
+                                <TextInput
+                                    placeholder='입력해 주세요.'
+                                    style={{
+                                        borderRadius: 4, 
+                                        borderColor: '#9C9C9C',
+                                        borderWidth: 1,
+                                        padding: 12,
+                                        height: 50
+                                    }}
+                                    value={externalLinks[index]}
+                                    onChangeText={text => {
+                                        externalLinks[index]=text
+                                        setExternalLinks([...externalLinks]);
+                                    }}
+                                />
+                                <TextInput
+                                    placeholder='입력해 주세요.'
+                                    style={{
+                                        borderRadius: 4, 
+                                        borderColor: '#9C9C9C',
+                                        borderWidth: 1,
+                                        padding: 12,
+                                        height: 50
+                                    }}
+                                    value={externalLinkTitles[index]}
+                                    onChangeText={text => {
+                                        externalLinkTitles[index] = text
+                                        setExternalLinkTitles([...externalLinkTitles]);
+                                    }}
+                                />
+                            </View>))
+                        }
                     </View>
                 </ScrollView>
                 <RoundButton
