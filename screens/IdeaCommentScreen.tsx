@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
-import IdeaOverallRating from '../components/IdeaOverallRating';
-import NewIdeaHead from '../components/Idea/NewIdeaHead';
-import OutlinedTag from '../components/OutlinedTag';
-import ExpandableText from '../components/ExpandableText';
-import RatingView from '../components/RatingView';
-import LikeCommentNumber from 'components/LikeCommentNumber';
+import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { map } from 'lodash';
-import { addIdeaCommentsListenner } from '../firebase/IdeaRepository';
 
-const Comment = ({comment, showCommentInput}) => {
+import IdeaOverallRating from 'components/IdeaOverallRating';
+import NewIdeaHead from 'components/Idea/NewIdeaHead';
+import OutlinedTag from 'components/OutlinedTag';
+import ExpandableText from 'components/ExpandableText';
+import RatingView from 'components/RatingView';
+import LikeCommentNumber from 'components/LikeCommentNumber';
+import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
+import { addCommentToComment } from '../firebase/IdeaRepository';
+import CommentListModal from '../modals/CommentListModal';
+
+const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
     const {
         ideaId, practicalityRate, creativityRate, valuableRate,
@@ -38,7 +42,10 @@ const Comment = ({comment, showCommentInput}) => {
         <View style={{marginBottom: 10}}>
             <ExpandableText text={content}/>
         </View>
-        <Image style={{height: 150, marginBottom: 20}} source={{uri: 'https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg'}} />
+        <FastImage
+            style={{height: 150, marginBottom: 20}}
+            source={{uri: 'https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg'}}
+        />
         
         <View style={{marginBottom: 32}}>
             {
@@ -57,7 +64,10 @@ const Comment = ({comment, showCommentInput}) => {
         
         <Divider/>
 
-        <TouchableOpacity style={{paddingVertical: 10}}>
+        <TouchableOpacity
+            style={{paddingVertical: 10}}
+            onPress={onShowComments}
+        >
             <Text style={{fontSize: 10, color: '#898989'}}>댓글 20개 모두 보기</Text>
         </TouchableOpacity>
 
@@ -71,7 +81,14 @@ const Comment = ({comment, showCommentInput}) => {
             }}
             onPress={showCommentInput}
         >
-            <Image source={require('assets/icons/person.png')} />
+            <FastImage
+                style={{width: 32, height: 32, borderRadius: 32}}
+                source={
+                    user.profileImageUrl ?
+                    {uri: user.profileImageUrl} :
+                    require('assets/icons/person.png')
+                }
+            />
             <View pointerEvents='none'>
                 <TextInput 
                     style={{flex: 1, color: '#898989', marginLeft: 8}}
@@ -86,7 +103,13 @@ const Comment = ({comment, showCommentInput}) => {
 
 const IdeaCommentScreen = ({idea}) => {
     const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
+    const [ showInnerCommentsModal, setShowInnerCommentsModal ] = useState(false);
+    const [ selectedComment, setSelectedComment ] = useState({});
+
+    const [ loading, setLoading ] = useState(false);
+
     const dispatch = useDispatch();
+    const user = useSelector(state => state.user.userProfileData);
 
     useEffect(() => {
         const unsubcriber = addIdeaCommentsListenner(idea.id, dispatch);
@@ -95,6 +118,23 @@ const IdeaCommentScreen = ({idea}) => {
     }, []);
 
     const comments = useSelector(state => state.idea.comments)
+
+    onSubmitComment = async (parentCommentId, comment) => {
+        setLoading(true);
+
+        const ret = await addCommentToComment({parentCommentId, comment, owner: user, ideaId: idea.id})
+
+        if(ret){
+            setShowCommentInputModal(false);
+        }
+
+        setLoading(false);
+    }
+
+    onShowInnerComments = (comment) => {
+        setShowInnerCommentsModal(true);
+        setSelectedComment(comment);
+    }
 
     return (
         <ScrollView>
@@ -108,19 +148,29 @@ const IdeaCommentScreen = ({idea}) => {
                             </View>
 
                             <Comment
+                                user={user}
                                 comment={comment}
                                 showCommentInput={() => setShowCommentInputModal(true)}
+                                onShowComments={() => onShowInnerComments(comment)}
                             />
                         </View>
                         {
                             showCommentInputModal &&
                             <CommentInputModal
+                                profileImageUrl={user.profileImageUrl}
                                 onClose={() => setShowCommentInputModal(false)}
+                                onSubmitComment={cmt => onSubmitComment(comment.id, cmt)}
+                                loading={loading}
                             />
                         }
                     </>
                 ))
             }
+            <CommentListModal
+                isVisible={showInnerCommentsModal}
+                onClose={() => setShowInnerCommentsModal(false)}
+                parentComment={selectedComment}
+            />
         </ScrollView>
     )
 }

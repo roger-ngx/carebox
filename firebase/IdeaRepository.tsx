@@ -95,22 +95,27 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
     }
 }
 
-export async function addCommentToComment({ideaId, owner, commentId, commentData}){
+export async function addCommentToComment({ideaId, owner, parentCommentId, comment}){
 
     try{
         const doc = {
-            ...commentData,
+            comment,
+            owner,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         }
 
         await firestore()
         .collection('ideas').doc(ideaId)
-        .collection('comments').doc(commentId)
+        .collection('comments').doc(parentCommentId)
         .collection('comments').add(doc);
+
+        return true;
     }catch(ex){
         console.log('addCommentToIdea', ex);
     }
+
+    return false;
 }
 
 export function addIdeaCommentsListenner(ideaId, dispatch){

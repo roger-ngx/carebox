@@ -8,6 +8,8 @@ const ExpandableText = ({text}) => {
     useEffect(() => {
         if(size(text) > 60){
             setShownText(text.substring(0, 57) + '...');
+        }else{
+            setShownText(text);
         }
     }, [text]);
 

@@ -14,7 +14,7 @@ const TitleNavigationBar = ({onBackPress, title}) => {
             }}
         >
             <TouchableOpacity
-                style={{padding: 8, paddingLeft: 0}}
+                style={{padding: 8, paddingLeft: 0, zIndex: 1}}
                 onPress={onBackPress}
             >
                 <Icon

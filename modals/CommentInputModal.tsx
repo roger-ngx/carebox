@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import Modal from 'react-native-modal';
-import { View, Text, TextInput, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import FastImage from 'react-native-fast-image'
+import { ActivityIndicator } from 'react-native-paper';
 
-const CommentInputModal = ({onSubmitComment, onClose}) => {
+const CommentInputModal = ({profileImageUrl, onSubmitComment, onClose, loading}) => {
 
     const [ comment, setComment ] = useState('');
 
@@ -30,7 +32,14 @@ const CommentInputModal = ({onSubmitComment, onClose}) => {
                         alignItems: 'center'
                     }}
                 >
-                    <Image source={require('assets/icons/person.png')} />
+                    <FastImage
+                        style={{width: 32, height: 32, borderRadius: 32}}
+                        source={
+                            profileImageUrl ?
+                            {uri: profileImageUrl} :
+                            require('assets/icons/person.png')
+                        }
+                    />
                     <TextInput 
                         style={{flex: 1, color: '#898989', marginLeft: 8}}
                         placeholder='댓글 달기...'
@@ -47,8 +56,13 @@ const CommentInputModal = ({onSubmitComment, onClose}) => {
                             paddingHorizontal: 16
                         }}
                         onPress={onSubmit}
+                        disabled={loading}
                     >
-                        <Text style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>등록</Text>
+                        {
+                            loading ?
+                            <ActivityIndicator size='small' color='white' /> :
+                            <Text style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>등록</Text>
+                        }
                     </TouchableOpacity>
                 </View>
             </SafeAreaView>

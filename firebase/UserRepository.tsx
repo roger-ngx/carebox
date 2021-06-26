@@ -1,7 +1,7 @@
 
 import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
-import storage from '@react-native-firebase/storage';
+import storage, { firebase } from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import * as SecureStore from 'expo-secure-store';
 import { setUserProfileData } from '../stores/slices/userSlice';
@@ -29,7 +29,8 @@ export async function updateUserInfo({uid, profileImageUri, userInfo}){
     
         await firestore().collection('users').doc(uid).update({
             ...userInfo,
-            profileImageUrl
+            profileImageUrl,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         })
 
         return true;

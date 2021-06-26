@@ -4,6 +4,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import { Icon } from 'react-native-elements';
+import FastImage from 'react-native-fast-image'
 
 const ProfileImageUpload = ({imageUrl, containerStyle, onImageChange}) => {
 
@@ -54,7 +55,7 @@ const ProfileImageUpload = ({imageUrl, containerStyle, onImageChange}) => {
                 :
                 (
                     profileImage ?
-                    <Image
+                    <FastImage
                         style={{width: '100%', height: '100%'}}
                         source={profileImage}
                         resizeMode='cover'

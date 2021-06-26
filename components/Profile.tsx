@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image } from 'react-native';
+import FastImage from 'react-native-fast-image'
 
 const Profile = ({user={}}) => {
 
@@ -12,7 +13,7 @@ const Profile = ({user={}}) => {
                 alignItems: 'center'
             }}
         >
-            <Image
+            <FastImage
                 style={{width: 60, height: 60, borderRadius: 10}}
                 source={{uri: profileImageUrl}}
             />
