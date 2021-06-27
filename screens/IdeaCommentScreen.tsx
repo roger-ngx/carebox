@@ -15,6 +15,7 @@ import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
 import { addCommentToComment } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
+import ExternalLink from '../components/ExternalLink';
 
 const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
@@ -49,12 +50,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
         
         <View style={{marginBottom: 32}}>
             {
-                map(links, link => (
-                    <View style={{marginBottom: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                        <Text style={{color: '#334F74', fontSize: 16}}>&#8226; {link.externalLinkTitle}</Text>
-                        <Text style={{color: '#2E2E2E'}} numberOfLines={1}>{link.externalLink}</Text>
-                    </View>
-                ))
+                map(links, link => <ExternalLink title={link.externalLinkTitle} link={link.externalLink}/>)
             }
         </View>
 

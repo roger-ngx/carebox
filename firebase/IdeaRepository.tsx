@@ -20,7 +20,7 @@ const uploadImages = async (imageFileUris, imageFirestorePaths) => {
     return [];
 }
 
-export async function addNewIdea(idea){
+export async function addNewIdea(idea, owner){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
 
@@ -39,7 +39,7 @@ export async function addNewIdea(idea){
             forEach(downloadUrls, (url, index) => set(images, `${index}.url`, url))
         }
 
-        const ret = await addNewIdea({...idea, images});
+        const ret = await addNewIdea({...idea, images, owner});
 
         if(get(ret, 'data.ret')){
             return true;

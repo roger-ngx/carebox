@@ -7,6 +7,7 @@ import IdeaCommentButtons from '../components/IdeaCommentButtons';
 import CommentRegistrationModal from '../modals/CommentRegistrationModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { likeIdea, addIdeaListenner } from '../firebase/IdeaRepository';
+import ExternalLink from '../components/ExternalLink';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
@@ -17,7 +18,7 @@ const IdeaDetailScreen = ({idea}) => {
         if(idea.id){
             const unsubscriber = addIdeaListenner(idea.id, dispatch);
 
-            return (typeof unsubscriber === 'function') && unsubscriber();
+            return () => (typeof unsubscriber === 'function') && unsubscriber();
         }
     }, [idea])
 
@@ -26,7 +27,7 @@ const IdeaDetailScreen = ({idea}) => {
     const user = useSelector(state => state.user.currentUser);
     const currentIdea = useSelector(state => state.idea.currentIdea)
 
-    const { id, detail, images } = idea;
+    const { id, detail, images, links } = idea;
 
     const [ showingCommentRegistrationModal, setShowingCommentRegistrationModal ] = useState(false);
 
@@ -64,12 +65,9 @@ const IdeaDetailScreen = ({idea}) => {
                 <Divider />
                 <View style={{padding: 20, marginBottom: 120}}>
                     <Text style={{color: '#7D7D7D', marginBottom: 8}}>링크</Text>
-                    <Text style={{color: '#334F74', fontSize: 16, lineHeight: 20}}>
-                        1회용 필터 정보
-                    </Text>
-                    <Text style={{color: '#334F74', fontSize: 16, lineHeight: 20}}>
-                        산소마스크 협회협회...
-                    </Text>
+                    {
+                        map(links, link => <ExternalLink title={link.title} link={link.url}/>)
+                    }
                 </View>
             </ScrollView>
             <View

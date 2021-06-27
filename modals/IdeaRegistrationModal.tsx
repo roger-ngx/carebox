@@ -23,6 +23,8 @@ const IdeaRegistrationModal = ({onClose}) => {
     const [ progressing, setProgressing ] = useState(false);
 
     const user = useSelector(state => state.user.currentUser);
+    const userProfile = useSelector(state => state.user.userProfileData);
+
     console.log('user', user);
 
     const onNextStep = () => {
@@ -38,7 +40,7 @@ const IdeaRegistrationModal = ({onClose}) => {
 
         setProgressing(true);
 
-        const ret = await addNewIdea(idea);
+        const ret = await addNewIdea(idea, userProfile);
         if(ret){
             setOpenResultModal(true);
         }
