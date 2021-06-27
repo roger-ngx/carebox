@@ -170,6 +170,8 @@ const IdeaCommentScreen = ({idea}) => {
                 isVisible={showInnerCommentsModal}
                 onClose={() => setShowInnerCommentsModal(false)}
                 parentComment={selectedComment}
+                user={user}
+                onSubmitComment={onSubmitComment}
             />
         </ScrollView>
     )

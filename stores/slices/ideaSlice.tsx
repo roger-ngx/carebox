@@ -4,6 +4,8 @@ const ideaSlice = createSlice({
     initialState: {
         ideaId: null,
         comments: null,
+        selectedCommentId: null,
+        subComments: null,
     },
     reducers: {
         setIdeaId(state, action){
@@ -12,8 +14,11 @@ const ideaSlice = createSlice({
         setComments(state, action){
             state.comments = action.payload;
         },
+        setSubComments(state, action){
+            state.subComments = action.payload;
+        },
     }
 })
 
-export const  { setIdeaId, setComments } = ideaSlice.actions;
+export const  { setIdeaId, setComments, setSubComments } = ideaSlice.actions;
 export default ideaSlice.reducer;

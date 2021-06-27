@@ -6,7 +6,7 @@ import { get, isEmpty, map, forEach, set } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch } from "react-redux";
 import { setIdeas } from "../stores/slices/userSlice";
-import { setComments } from "../stores/slices/ideaSlice";
+import { setComments, setSubComments } from "../stores/slices/ideaSlice";
 
 const uploadImages = async (imageFileUris, imageFirestorePaths) => {
     if(!isEmpty(imageFileUris) || !isEmpty(imageFirestorePaths)){
@@ -136,6 +136,31 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
 
     return firestore()
     .collection('ideas').doc(ideaId)
+    .collection('comments').orderBy('createdAt', 'desc')
+    .onSnapshot(onResult, onError);
+}
+
+export function addCommentListenner({ideaId, commentId, dispatch}){
+
+    console.log(ideaId, commentId, dispatch)
+    
+    function onResult(querySnapshot) {
+        console.log('Got Users collection result.');
+        const docs = querySnapshot.docs;
+        const comments = map(docs, doc => ({id: doc.id, ...doc.data()}))
+
+        console.log('comments', comments);
+
+        dispatch(setSubComments(comments));
+    }
+      
+    function onError(error) {
+        console.error(error);
+    }
+
+    return firestore()
+    .collection('ideas').doc(ideaId)
+    .collection('comments').doc(commentId)
     .collection('comments').orderBy('createdAt', 'desc')
     .onSnapshot(onResult, onError);
 }

@@ -6,8 +6,8 @@ const ExpandableText = ({text}) => {
     const [ shownText, setShownText ] = useState();
     
     useEffect(() => {
-        if(size(text) > 60){
-            setShownText(text.substring(0, 57) + '...');
+        if(size(text) > 200){
+            setShownText(text.substring(0, 197) + '...');
         }else{
             setShownText(text);
         }
