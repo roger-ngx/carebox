@@ -1,16 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import { Divider, Icon } from 'react-native-elements';
-import { map } from 'lodash';
+import { map, includes, size } from 'lodash';
 import IdeaCommentButtons from '../components/IdeaCommentButtons';
 import CommentRegistrationModal from '../modals/CommentRegistrationModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { likeIdea, addIdeaListenner } from '../firebase/IdeaRepository';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
 
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(idea.id){
+            const unsubscriber = addIdeaListenner(idea.id, dispatch);
+
+            return (typeof unsubscriber === 'function') && unsubscriber();
+        }
+    }, [idea])
+
+    console.log('likes', idea.likes);
+
+    const user = useSelector(state => state.user.currentUser);
+    const currentIdea = useSelector(state => state.idea.currentIdea)
 
     const { id, detail, images } = idea;
 
@@ -21,7 +35,7 @@ const IdeaDetailScreen = ({idea}) => {
             style={{flex: 1, backgroundColor: 'white'}}
         >
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-                <PickedIdea idea={idea}/>
+                <PickedIdea idea={currentIdea || idea}/>
                 <Divider/>
                 <View style={{padding: 20}}>
                     <View style={{marginBottom: 8}}>
@@ -70,7 +84,8 @@ const IdeaDetailScreen = ({idea}) => {
             >
                 <IdeaCommentButtons
                     onCommentRegister={() => setShowingCommentRegistrationModal(true)}
-                    onFavorite={() => {}}
+                    onFavorite={() => likeIdea({ideaId: id, uid: user.uid, isLike: !includes((currentIdea||idea).likes, user.uid)})}
+                    liked={includes((currentIdea||idea).likes, user.uid)}
                 />
             </View>
             {

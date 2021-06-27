@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { map } from 'lodash';
+import { map, size } from 'lodash';
 import moment from 'moment';
 
 import ContainedTag from '../ContainedTag';
@@ -11,7 +11,7 @@ import IdeaHeart from './IdeaHeart';
 const IdeaBody = ({idea}) => {
     if(!idea) return null;
 
-    const {category, scampers, subject, createdAt } = idea;
+    const {category, scampers, subject, createdAt, likes } = idea;
 
     return (
         <>
@@ -37,7 +37,7 @@ const IdeaBody = ({idea}) => {
                 }}
             >
                 <Text style={{color: '#898989'}}>{moment.unix(createdAt.seconds).format('YYYY.MM.DD')}</Text>
-                <IdeaHeart count={13}/>
+                <IdeaHeart count={size(likes)}/>
             </View>
 
         </>

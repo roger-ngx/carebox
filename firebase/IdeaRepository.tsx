@@ -1,12 +1,11 @@
 import { firebase } from "@react-native-firebase/functions";
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-
 import { get, isEmpty, map, forEach, set } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { useDispatch } from "react-redux";
+
 import { setIdeas } from "../stores/slices/userSlice";
-import { setComments, setSubComments } from "../stores/slices/ideaSlice";
+import { setComments, setSubComments, setCurrentIdea } from "../stores/slices/ideaSlice";
 
 const uploadImages = async (imageFileUris, imageFirestorePaths) => {
     if(!isEmpty(imageFileUris) || !isEmpty(imageFirestorePaths)){
@@ -65,6 +64,19 @@ export async function addIdeasListenner(dispatch){
     }
 
     return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
+}
+
+export async function addIdeaListenner(ideaId, dispatch){
+    
+    function onResult(doc) {
+        dispatch(setCurrentIdea(doc.data()));
+    }
+      
+    function onError(error) {
+        console.error(error);
+    }
+
+    return firestore().collection('ideas').doc(ideaId).onSnapshot(onResult, onError);
 }
 
 export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris}){
@@ -163,4 +175,15 @@ export function addCommentListenner({ideaId, commentId, dispatch}){
     .collection('comments').doc(commentId)
     .collection('comments').orderBy('createdAt', 'desc')
     .onSnapshot(onResult, onError);
+}
+
+export async function likeIdea({ideaId, uid, isLike}){
+    try{
+        await firestore().collection('ideas').doc(ideaId).update({
+            likes: isLike ? firestore.FieldValue.arrayUnion(uid) : firestore.FieldValue.arrayRemove(uid),
+            updatedAt: firestore.FieldValue.serverTimestamp()
+        })
+    }catch(ex){
+        console.log('likeIdea', ex);
+    }
 }
