@@ -8,6 +8,7 @@ import CommentRegistrationModal from '../modals/CommentRegistrationModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { likeIdea, addIdeaListenner } from '../firebase/IdeaRepository';
 import ExternalLink from '../components/ExternalLink';
+import FastImage from 'react-native-fast-image';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
@@ -21,8 +22,6 @@ const IdeaDetailScreen = ({idea}) => {
             return () => (typeof unsubscriber === 'function') && unsubscriber();
         }
     }, [idea])
-
-    console.log('likes', idea.likes);
 
     const user = useSelector(state => state.user.currentUser);
     const currentIdea = useSelector(state => state.idea.currentIdea)
@@ -57,7 +56,7 @@ const IdeaDetailScreen = ({idea}) => {
                     <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
                     {
                         map(images, ({title, url}) => (<>
-                            <Image style={{height: 150, marginBottom: 8}} source={{uri: url}} />
+                            <FastImage style={{height: 150, marginBottom: 8}} source={{uri: url}} />
                             <Text  style={{color: '#334F74', fontSize: 16}}>{title}</Text>
                         </>))
                     }

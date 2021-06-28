@@ -33,9 +33,11 @@ export default function Home({navigation}) {
   }, []);
 
   useEffect(() => {
-    const uid = currentUser.uid;
-    if(uid){
-      subscribeForUserInformation(uid, dispatch);
+    if(currentUser){
+      const uid = currentUser.uid;
+      if(uid){
+        subscribeForUserInformation(uid, dispatch);
+      }
     }
   }, [currentUser]);
 

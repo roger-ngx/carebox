@@ -9,13 +9,11 @@ import * as React from 'react';
 import { ColorSchemeName } from 'react-native';
 import { useSelector, RootStateOrAny } from 'react-redux';
 
-import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
-import PhoneNumberVerification from '../screens/Login/PhoneNumberVerification';
-import Login from 'screens/Login/Login';
 import SplashScreen from 'screens/SplashScreen';
+import LoginWithPhoneNumber from '../screens/Login/LoginWithPhoneNumber';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -42,10 +40,11 @@ function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {
-        // !!auth.authToken ?
+        !!auth.authToken ?
         <Stack.Screen name="Home" component={BottomTabNavigator} />
-        // :
+        :
         // <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Login" component={LoginWithPhoneNumber} />
       }
     </Stack.Navigator>
   );
