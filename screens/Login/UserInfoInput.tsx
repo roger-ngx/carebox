@@ -65,23 +65,18 @@ const UserInfoInput = ({uid}) => {
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-            <View style={{flex: 1, padding: 24, marginTop: 60}}>
-                <Text style={{fontSize: 28, fontWeight: 'bold', color: '#001240'}}>
-                    프로필을 등록해 주세요!
-                </Text>
+            <View style={{flex: 1, padding: 24, marginTop: 30}}>
 
-                <View
-                    style={{
-                        marginTop: 48,
-                        flex: 1
-                    }}
-                >
                     <ScrollView
                         style={{
                             flexDirection: 'column',
                             flex: 1,
                         }}
+                        showsVerticalScrollIndicator={false}
                     >
+                        <Text style={{fontSize: 28, fontWeight: 'bold', color: '#001240', marginBottom: 40}}>
+                            프로필을 등록해 주세요!
+                        </Text>
 
                         <Text style={{fontSize: 20, color: '#434A3F', marginBottom: 8}}>닉네임</Text>
 
@@ -147,6 +142,7 @@ const UserInfoInput = ({uid}) => {
                                 flexDirection: 'row',
                                 backgroundColor: '#F1F1F1',
                                 alignItems: 'center',
+                                marginBottom: 60
                             }}
                         >
                             <TouchableOpacity
@@ -193,7 +189,6 @@ const UserInfoInput = ({uid}) => {
                             </Text>
                         }
                     </TouchableOpacity>
-                </View>
             </View>
             {
                 isOpenConfirmModal &&
@@ -210,7 +205,7 @@ const UserInfoInput = ({uid}) => {
                             alignItems: 'center'
                         }}
                     >
-                        <Icon name='mood' size={48} color='oreange'/>
+                        <Icon name='mood' size={48} color='orange'/>
                         <Text style={{fontSize: 15, marginTop: 24}}><Text style={{fontWeight: 'bold', fontSize: 15}}>{nickName}</Text> 간호사님, 축하합니다!</Text>
                         <Text style={{fontSize: 15, marginTop: 16}}><Text style={{fontWeight: 'bold', fontSize: 15}}>carebox</Text>에 가입되셨습니다.</Text>
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Modal from 'react-native-modal';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 
@@ -41,11 +41,13 @@ const UserProfileEdit = ({isVisible, onClose}) => {
             animationOut='slideOutLeft'
             useNativeDriver={true}
         >
-            <SafeAreaView style={{flex: 1, paddingHorizontal: 20, backgroundColor: 'white'}}>
+            <SafeAreaView style={{flex: 1, padding: 20, backgroundColor: 'white'}}>
                 <TitleNavigationBar title='프로필 수정' onBackPress={onClose}/>
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    <ProfileImageUpload imageUrl={user.profileImageUrl} onImageChange={setProfileImageUri} containerStyle={{marginBottom: 36}}/>
-                    <UserInfoInputForm onUserInfoChange={setUserInfo} user={user}/>
+                    <View style={{marginBottom: 60}}>
+                        <ProfileImageUpload imageUrl={user.profileImageUrl} onImageChange={setProfileImageUri} containerStyle={{marginBottom: 36}}/>
+                        <UserInfoInputForm onUserInfoChange={setUserInfo} user={user}/>
+                    </View>
                 </ScrollView>
                 <RoundButton text='완료' onPress={onUpdateProfile} loading={processing}/>
             </SafeAreaView>

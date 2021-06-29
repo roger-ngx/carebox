@@ -15,7 +15,7 @@ const Profile = ({user={}}) => {
         >
             <FastImage
                 style={{width: 60, height: 60, borderRadius: 10}}
-                source={{uri: profileImageUrl}}
+                source={profileImageUrl ? {uri: profileImageUrl} : require('assets/icons/person.png')}
             />
 
             <View style={{marginLeft: 8, alignItems: 'flex-start'}}>

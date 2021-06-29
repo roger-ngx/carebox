@@ -32,11 +32,9 @@ const PhoneNumberVerification = ({onSuccess}) => {
         setLoading(true);
 
         try{
-            const ret = await confirmation.confirm(verificationCode);
+            const {additionalUserInfo, user} = await confirmation.confirm(verificationCode);
 
-            console.log('ret', ret);
-
-            onSuccess(ret.uid);
+            onSuccess(user.uid, additionalUserInfo.isNewUser);
         }catch(ex){
             console.log('confirmCode', ex);
         }
