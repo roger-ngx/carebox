@@ -1,4 +1,4 @@
-import React, { useState }  from 'react';
+import React, { useState, useEffect }  from 'react';
 import Modal from 'react-native-modal';
 import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,15 +16,16 @@ import CommentImagesUploader from '../components/CommentImagesUploader';
 const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
     console.log(ideaId);
 
-    const [ practicalityRate, setPracticalityRate ] = useState();
-    const [ creativityRate, setCreativityRate ] = useState();
-    const [ valuableRate, setValuableRate ] = useState();
+    const [ practicalityRate, setPracticalityRate ] = useState(0);
+    const [ creativityRate, setCreativityRate ] = useState(0);
+    const [ valuableRate, setValuableRate ] = useState(0);
     const [ scamper, setScamper ] = useState();
     const [ content, setContent ] = useState();
     const [ externalLinks, setExternalLinks ] = useState(['']);
     const [ externalLinkTitles, setExternalLinkTitles ] = useState(['']);
     const [ processing, setProcessing ] = useState(false);
     const [ imageUris, setImageUris ] = useState();
+    const [ showingFinishButton, setShowingFinishButton ] = useState(false);
 
     const onAddCommentToIdea = async () => {
         setProcessing(true);
@@ -41,6 +42,10 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
         onClose();
     }
 
+    useEffect(() => {
+        setShowingFinishButton(practicalityRate && creativityRate && valuableRate && scamper && content);
+    }, [practicalityRate, creativityRate, valuableRate, scamper, content]);
+
     return (
         <Modal
             isVisible={true}
@@ -48,7 +53,7 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
             avoidKeyboard={true}
             onBackButtonPress={onClose}
         >
-            <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
+            <SafeAreaView style={{flex: 1, backgroundColor: 'white', padding: 20}}>
                 <TouchableOpacity
                     style={{padding: 0, alignSelf: 'flex-end', padding: 8}}
                     onPress={onClose}
@@ -166,11 +171,14 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
                         }
                     </View>
                 </ScrollView>
-                <RoundButton
-                    text='확인'
-                    onPress={onAddCommentToIdea}
-                    loading={processing}
-                />
+                {
+                    !!showingFinishButton &&
+                    <RoundButton
+                        text='확인'
+                        onPress={onAddCommentToIdea}
+                        loading={processing}
+                    />
+                }
             </SafeAreaView>
         </Modal>
     )

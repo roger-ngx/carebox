@@ -9,8 +9,8 @@ const UserComment = ({user, comment}) => {
     return (
         <View style={{flexDirection: 'row', marginVertical: 16}}>
             <FastImage
-                source={{uri: profileImageUrl}}
                 style={{width: 32, height: 32, borderRadius: 32}}
+                source={profileImageUrl ? {uri: profileImageUrl} : require('assets/icons/person.png')}
             />
             <View style={{flex: 1, backgroundColor: '#eee', borderRadius: 10, padding: 8, marginLeft: 8}}>
                 <Text style={{color: '#1D395F', fontWeight: '500'}}>{nickName}</Text>

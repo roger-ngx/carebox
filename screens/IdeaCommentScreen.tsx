@@ -21,7 +21,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
     const {
         ideaId, practicalityRate, creativityRate, valuableRate,
-        scamper, content, links
+        scamper, content, links, images
     } = comment;
 
     const scamperSplits = scamper.split(' : ');
@@ -43,10 +43,21 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
         <View style={{marginBottom: 10}}>
             <ExpandableText text={content}/>
         </View>
-        <FastImage
-            style={{height: 150, marginBottom: 20}}
-            source={{uri: 'https://st.depositphotos.com/1428083/2946/i/600/depositphotos_29460297-stock-photo-bird-cage.jpg'}}
-        />
+
+        <ScrollView
+            horizontal
+            style={{marginBottom: 20}}
+            showsHorizontalScrollIndicator={false}
+        >
+            {
+                map(images, image => (
+                    <FastImage
+                        style={{width: 150, height: 150, marginRight: 8}}
+                        source={{uri: image}}
+                    />
+                ))
+            }
+        </ScrollView>
         
         <View style={{marginBottom: 32}}>
             {
