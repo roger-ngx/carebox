@@ -52,7 +52,8 @@ export default function IdeaScreen({route, navigation}) {
             }}
         >
             <TouchableOpacity
-                onPress={() => navigation.pop()}
+              style={{paddingTop: 8}}
+              onPress={() => navigation.pop()}
             >
                 <Icon
                     name='arrow-back-ios'
@@ -60,7 +61,8 @@ export default function IdeaScreen({route, navigation}) {
                 />
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => navigation.pop()}
+              style={{paddingTop: 8}}
+              onPress={() => navigation.pop()}
             >
                 <Icon
                     name='notifications-none'

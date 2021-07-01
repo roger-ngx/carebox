@@ -3,7 +3,7 @@ import { View, Text, Image } from 'react-native';
 
 const NewIdeaHead = ({idea}) => {
 
-    if(!idea) return null;
+    if(!idea || !idea.owner) return null;
 
     const { nickName, department, yearsOnJob, profileImageUrl } = idea.owner;
 

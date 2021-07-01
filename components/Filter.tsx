@@ -14,6 +14,7 @@ const Filter = ({current, containerStyle}) => {
             horizontal
             bounces={false}
             style={{...containerStyle}}
+            showsHorizontalScrollIndicator={false}
         >
             {
                 map(FILTERS, filter => (

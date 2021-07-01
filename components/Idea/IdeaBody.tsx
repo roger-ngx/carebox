@@ -33,7 +33,8 @@ const IdeaBody = ({idea}) => {
                 style={{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    marginTop: 8
+                    marginTop: 8,
+                    alignItems: 'center'
                 }}
             >
                 <Text style={{color: '#898989'}}>{moment.unix(createdAt.seconds).format('YYYY.MM.DD')}</Text>

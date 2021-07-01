@@ -25,7 +25,7 @@ const IdeaRegistrationModal = ({onClose}) => {
     const user = useSelector(state => state.user.currentUser);
     const userProfile = useSelector(state => state.user.userProfileData);
 
-    console.log('user', user);
+    console.log('userProfile', userProfile);
 
     const onNextStep = () => {
         if(currentStep===4){
@@ -40,7 +40,7 @@ const IdeaRegistrationModal = ({onClose}) => {
 
         setProgressing(true);
 
-        const ret = await addNewIdea(idea, userProfile);
+        const ret = await addNewIdea(idea.idea, userProfile);
         if(ret){
             setOpenResultModal(true);
         }
@@ -62,7 +62,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                 <View
                     style={{
                         position: 'absolute',
-                        top: 40,
+                        // top: 40,
                         zIndex: 999,
                         width: '100%',
                         backgroundColor: 'white'
