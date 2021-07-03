@@ -11,6 +11,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
     const [ confirmation, setConfirmation ] = useState();
     const [ loading, setLoading ] = useState(false);
     const [ verificationCode, setVerificationCode ] = useState();
+    const [ isTextOnFocus, setTextOnFocus ] = useState(false);
 
     async function signInWithPhoneNumber() {
         setLoading(true);
@@ -33,8 +34,9 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
         try{
             const {additionalUserInfo, user} = await confirmation.confirm(verificationCode);
+            console.log('user', user);
 
-            onSuccess(user.uid, additionalUserInfo.isNewUser);
+            await onSuccess(user.uid, additionalUserInfo.isNewUser);
         }catch(ex){
             console.log('confirmCode', ex);
         }
@@ -74,6 +76,8 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             value={phoneNumber}
                             onChangeText={setPhoneNumber}
                             maxLength={11}
+                            onFocus={() => setTextOnFocus(true)}
+                            onBlur={() => setTextOnFocus(false)}
                         />
 
                         <CheckBox
@@ -115,6 +119,8 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             placeholder='• • • • • •'
                             value={verificationCode}
                             onChangeText={setVerificationCode}
+                            onFocus={() => setTextOnFocus(true)}
+                            onBlur={() => setTextOnFocus(false)}
                         />
 
                         <View
@@ -131,7 +137,11 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             <TouchableOpacity
                                 style={{
                                     flexDirection: 'row',
-                                    alignItem: 'center'
+                                    alignItems: 'center',
+                                }}
+                                onPress={() => {
+                                    signInWithPhoneNumber();
+                                    setVerificationCode();
                                 }}
                             >
                                 <Icon
@@ -147,26 +157,29 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
             </ScrollView>
 
-            <TouchableOpacity
-                style={{
-                    backgroundColor: '#4A7CFF',
-                    paddingVertical: 16,
-                    borderRadius: 50,
-                    width: '100%',
-                    // alignSelf: 'flex-end'
-                }}
-                disabled={(step===1&&size(phoneNumber)!==11) || loading}
-                onPress={step===1?signInWithPhoneNumber:confirmCode}
-            >
-                {
-                    loading ?
-                    <ActivityIndicator size='small' color='white' />
-                    :
-                    <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
-                        다음
-                    </Text>
-                }
-            </TouchableOpacity>
+            {
+                !isTextOnFocus &&
+                <TouchableOpacity
+                    style={{
+                        backgroundColor: '#4A7CFF',
+                        paddingVertical: 16,
+                        borderRadius: 50,
+                        width: '100%',
+                        // alignSelf: 'flex-end'
+                    }}
+                    disabled={(step===1&&size(phoneNumber)!==11) || loading}
+                    onPress={step===1?signInWithPhoneNumber:confirmCode}
+                >
+                    {
+                        loading ?
+                        <ActivityIndicator size='small' color='white' />
+                        :
+                        <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
+                            다음
+                        </Text>
+                    }
+                </TouchableOpacity>
+            }
         </View>
     )
 }

@@ -24,6 +24,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
         } else {
             await getToken(uid);
         }
+        return true;
     }
 
     const getToken = async(uid) => {
@@ -35,9 +36,10 @@ const LoginWithPhoneNumber = ({navigation}) => {
             let authToken = await SecureStore.getItemAsync('userToken');
             if(!authToken){
                 const refeshAuthToken = functions().httpsCallable('refeshAuthToken');
-                const ret = await refeshAuthToken(uid);
+                const ret = await refeshAuthToken({uid});
+                console.log('getToken', ret);
 
-                authToken = ret.data.authToken;
+                authToken = ret.data.ret.authToken;
 
                 await SecureStore.setItemAsync('userToken', authToken);
             }
@@ -61,7 +63,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
         >
             {
                 uid ? (
-                    <UserInfoInput uid={uid}/>
+                    <UserInfoInput uid={uid} navigation={navigation}/>
                 ) : (
                     <PhoneNumberVerification onSuccess={onFinishVerification}/>
                 )

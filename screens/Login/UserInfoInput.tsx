@@ -16,7 +16,7 @@ const JOBS = [
     { label:'외래', value:'외래' }
 ]
 
-const UserInfoInput = ({uid}) => {
+const UserInfoInput = ({uid, navigation}) => {
     // const [ openJobSelection, setOpenJobSelection ] = useState(false);
 
     const [ nickName, setNickName ] = useState();
@@ -218,7 +218,10 @@ const UserInfoInput = ({uid}) => {
                                 alignItems: 'center',
                                 marginTop: 48
                             }}
-                            onPress={() => setOpenConfirmModal(false)}
+                            onPress={() => {
+                                setOpenConfirmModal(false);
+                                navigation.navigate('Home');
+                            }}
                         >
                             <Text style={{fontSize: 20, fontWeight: '500', color: 'white'}}>확인</Text>
                         </TouchableOpacity>
