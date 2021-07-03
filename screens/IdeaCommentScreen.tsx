@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { map } from 'lodash';
+import { includes, map, size } from 'lodash';
 
 import IdeaOverallRating from 'components/IdeaOverallRating';
 import NewIdeaHead from 'components/Idea/NewIdeaHead';
@@ -13,20 +13,37 @@ import ExpandableText from 'components/ExpandableText';
 import RatingView from 'components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
-import { addCommentToComment } from '../firebase/IdeaRepository';
+import { addCommentToComment, getIdeaCommentsOfComment, likeIdeaComment } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
 import ExternalLink from '../components/ExternalLink';
+import UserComment from '../components/UserComment';
 
 const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
+    const [ subCommentCount, setSubCommentCount ] = useState();
+    const [ latestSubComment, setLatestSubComment ] = useState();
+
+    
     const {
         ideaId, practicalityRate, creativityRate, valuableRate,
-        scamper, content, links, images
+        scamper, content, links, images, likes
     } = comment;
-
+    
     const scamperSplits = scamper.split(' : ');
+    
+    useEffect(() => {
+        getSubCommentCount();
+    }, [comment]);
 
-    console.log(comment);
+   const getSubCommentCount = async () => {
+        const ret = await getIdeaCommentsOfComment(ideaId, comment.id);
+        setSubCommentCount(ret?.count);
+        setLatestSubComment(ret?.lastComment);
+    }
+
+    const likeComment = () => {
+        likeIdeaComment({ideaId, commentId: comment.id, uid: user.uid, isLike: true})
+    }
 
     return (<View>
         <View style={{marginBottom: 10}}>
@@ -66,16 +83,28 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
         </View>
 
         <View style={{marginBottom: 10}}>
-            <LikeCommentNumber liked={true}/>
+            <LikeCommentNumber
+                liked={includes(likes, user.uid)}
+                likeNumber={size(likes)}
+                commentNumber={subCommentCount}
+                onLikeComment={likeComment}
+            />
         </View>
         
         <Divider/>
 
+        {
+            !!latestSubComment &&
+            <UserComment
+                user={latestSubComment.owner}
+                comment={latestSubComment.comment}
+            />
+        }
         <TouchableOpacity
-            style={{paddingVertical: 10}}
+            style={{paddingBottom: 10}}
             onPress={onShowComments}
         >
-            <Text style={{fontSize: 10, color: '#898989'}}>댓글 20개 모두 보기</Text>
+            <Text style={{color: '#898989'}}>댓글 {subCommentCount}개 모두 보기</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

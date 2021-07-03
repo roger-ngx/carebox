@@ -131,7 +131,7 @@ export async function addCommentToComment({ideaId, owner, parentCommentId, comme
             comment,
             owner,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.fgetIdeaCommentsOfCommentirestore.FieldValue.serverTimestamp(),
         }
 
         await firestore()
@@ -154,7 +154,7 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
         const docs = querySnapshot.docs;
         const comments = map(docs, doc => ({id: doc.id, ...doc.data()}))
 
-        console.log('comments', comments);
+        // console.log('comments', comments);
 
         dispatch(setComments(comments));
     }
@@ -194,6 +194,24 @@ export function addCommentListenner({ideaId, commentId, dispatch}){
     .onSnapshot(onResult, onError);
 }
 
+export const getIdeaCommentsOfComment = async (ideaId, commentId) => {
+    try{
+        const subComments = await firestore()
+        .collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId)
+        .collection('comments').orderBy('createdAt', 'desc').get();
+
+        if(subComments.docs.length){
+            const lastDoc = subComments.docs[0];
+            return { count: subComments.docs.length, lastComment: {id: lastDoc.id, ...lastDoc.data()} }
+        } else {
+            return {};
+        }
+    }catch(ex){
+        console.log('getIdeaCommentsOfComment', ex)
+    }
+}
+
 export async function likeIdea({ideaId, uid, isLike}){
     const batch = firestore().batch();
 
@@ -219,6 +237,40 @@ export async function likeIdea({ideaId, uid, isLike}){
             }
         ) :
         await batch.delete(firestore().collection('history').doc(uid).collection('likes').doc(ideaId))
+
+        await batch.commit();
+    }catch(ex){
+        console.log('likeIdea', ex);
+    }
+}
+
+export async function likeIdeaComment({ideaId, commentId, uid, isLike}){
+    const batch = firestore().batch();
+
+    try{
+
+        const commentDoc = await firestore().collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId).get();
+
+        if(!commentDoc.exists){
+            return;
+        }
+
+        await batch.update(
+            firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId),
+            {
+                likes: isLike ? firestore.FieldValue.arrayUnion(uid) : firestore.FieldValue.arrayRemove(uid),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        isLike ? await batch.set(
+            firestore().collection('history').doc(uid).collection('commentLikes').doc(commentId),
+            {
+                ...commentDoc.data()
+            }
+        ) :
+        await batch.delete(firestore().collection('history').doc(uid).collection('likes').doc(ideaId).collection('comments').doc(commentId))
 
         await batch.commit();
     }catch(ex){
