@@ -4,7 +4,8 @@ import { Icon, AirbnbRating } from 'react-native-elements';
 import { Divider } from 'react-native-elements';
 import RatingView from './RatingView';
 
-const IdeaOverallRating = () => {
+const IdeaOverallRating = ({overallRate}) => {
+    const {avg, creativity, practicality, valuable} = overallRate;
 
     return (
         <View
@@ -15,13 +16,13 @@ const IdeaOverallRating = () => {
                 <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
                     <Icon name='grade' color='#FFC700' size={36}/>
                     <View style={{flexDirection: 'row', height: 36}}>
-                        <Text style={{fontWeight: 'bold', fontSize: 32}}>4.0</Text>
+                        <Text style={{fontWeight: 'bold', fontSize: 32}}>{avg}</Text>
                         <Text style={{color: '#919EAE', alignSelf: 'flex-end'}}>/5</Text>
                     </View>
                 </View>
             </View>
             <Divider orientation='vertical' width={1} color='#9C9C9C'/>
-            <RatingView />
+            <RatingView practicalityRate={practicality} creativityRate={creativity} valuableRate={valuable}/>
         </View>
     )
 }

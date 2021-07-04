@@ -85,6 +85,8 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
 
     console.log(ideaId, ownerId, commentDoc);
 
+    const { avgRating, practicalityRate, creativityRate, valuableRate } = commentDoc;
+
     const batch = firestore().batch();
 
     try{
@@ -112,7 +114,7 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
             firestore().collection('ideas').doc(ideaId),
             {
                 commentCount: firestore.FieldValue.increment(1),
-                rating: firestore.FieldValue.arrayUnion(commentDoc.avgRating),
+                rating: firestore.FieldValue.arrayUnion({ avgRating, practicalityRate, creativityRate, valuableRate }),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
         )

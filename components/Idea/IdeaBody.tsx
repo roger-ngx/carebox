@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text } from 'react-native';
-import { map, size } from 'lodash';
+import { map, reduce, size } from 'lodash';
 import moment from 'moment';
 
 import ContainedTag from '../ContainedTag';
@@ -11,7 +11,11 @@ import IdeaHeart from './IdeaHeart';
 const IdeaBody = ({idea}) => {
     if(!idea) return null;
 
-    const {category, scampers, subject, createdAt, likes } = idea;
+    const {category, scampers, subject, createdAt, likes, commentCount, rating } = idea;
+
+    const avgRating = size(rating) > 0 ? reduce(rating, (sum, rate) => {
+        return sum + rate.avgRating
+    }, 0) / size(rating) : 0;
 
     return (
         <>
@@ -28,7 +32,7 @@ const IdeaBody = ({idea}) => {
             <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 8}}>
                 {subject}
             </Text>
-            <IdeaRate count={123} rate={4.5} />
+            <IdeaRate count={commentCount} rate={avgRating} />
             <View
                 style={{
                     flexDirection: 'row',

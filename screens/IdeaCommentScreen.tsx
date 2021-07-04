@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { includes, map, size } from 'lodash';
+import { includes, map, reduce, size } from 'lodash';
 
 import IdeaOverallRating from 'components/IdeaOverallRating';
 import NewIdeaHead from 'components/Idea/NewIdeaHead';
@@ -25,7 +25,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
     
     const {
-        ideaId, practicalityRate, creativityRate, valuableRate,
+        ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
         scamper, content, links, images, likes
     } = comment;
     
@@ -47,7 +47,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
     return (<View>
         <View style={{marginBottom: 10}}>
-            <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>2.8점</Text></Text>
+            <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>{avgRating}점</Text></Text>
             <RatingView {...{practicalityRate, creativityRate, valuableRate}}/>
         </View>
         <View style={{marginBottom: 10}}>
@@ -101,7 +101,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
             />
         }
         {
-            subCommentCount > 0 &&
+            (subCommentCount > 0) &&
             <TouchableOpacity
                 style={{paddingBottom: 10}}
                 onPress={onShowComments}
@@ -145,6 +145,8 @@ const IdeaCommentScreen = ({idea}) => {
     const [ showInnerCommentsModal, setShowInnerCommentsModal ] = useState(false);
     const [ selectedComment, setSelectedComment ] = useState({});
 
+    const [ overallRate, setOverallRate ] = useState({});
+
     const [ loading, setLoading ] = useState(false);
 
     const dispatch = useDispatch();
@@ -155,6 +157,33 @@ const IdeaCommentScreen = ({idea}) => {
 
         return () => typeof unsubcriber === 'function' && unsubcriber();
     }, []);
+
+    useEffect(() => {
+        const { rating } = idea;
+
+        const overallRate = reduce(rating, (sum, rate) => {
+            sum.avg = sum.avg + rate.avgRating;
+            sum.creativity += rate.creativityRate;
+            sum.practicality += rate.practicalityRate;
+            sum.valuable += rate.valuableRate;
+
+            return sum;
+        }, {avg: 0, creativity: 0, practicality: 0, valuable: 0});
+
+        const ratingSize = size(rating);
+
+        if(ratingSize > 0){
+            return setOverallRate({
+                avg: +(overallRate.avg/ratingSize).toFixed(1),
+                creativity: +(overallRate.creativity/ratingSize).toFixed(1),
+                practicality: +(overallRate.practicality/ratingSize).toFixed(1),
+                valuable: +(overallRate.valuable/ratingSize).toFixed(1)
+            })
+        }
+
+        return setOverallRate(overallRate);
+
+    }, [idea]);
 
     const comments = useSelector(state => state.idea.comments)
 
@@ -177,7 +206,7 @@ const IdeaCommentScreen = ({idea}) => {
 
     return (
         <ScrollView>
-            <IdeaOverallRating />
+            <IdeaOverallRating overallRate={overallRate}/>
             {
                 map(comments, comment => (
                     <>

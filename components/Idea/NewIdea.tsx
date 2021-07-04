@@ -5,7 +5,6 @@ import IdeaBody from './IdeaBody';
 import NewIdeaHead from './NewIdeaHead';
 
 const NewIdea = ({idea, containerStyle}) => {
-    console.log('NewIdea', idea);
 
     return (
         idea ? (<View
