@@ -13,7 +13,7 @@ import ExpandableText from 'components/ExpandableText';
 import RatingView from 'components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
-import { addReplyToComment, getIdeaCommentsOfComment, likeIdeaComment } from '../firebase/IdeaRepository';
+import { addReplyToComment, getIdeaCommentReplies, likeIdeaComment } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
 import ExternalLink from '../components/ExternalLink';
 import UserComment from '../components/UserComment';
@@ -36,9 +36,9 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
     }, [comment]);
 
    const getSubCommentCount = async () => {
-        const ret = await getIdeaCommentsOfComment(ideaId, comment.id);
+        const ret = await getIdeaCommentReplies(ideaId, comment.id);
         setSubCommentCount(ret?.count);
-        setLatestSubComment(ret?.lastComment);
+        setLatestSubComment(ret?.lastReply);
     }
 
     const likeComment = () => {

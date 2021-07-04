@@ -141,8 +141,8 @@ export async function addReplyToComment({ideaId, owner, parentCommentId, comment
         const doc = {
             comment,
             owner,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.fgetIdeaCommentsOfCommentirestore.FieldValue.serverTimestamp(),
+            createdAt: firestore.FieldValue.serverTimestamp(),
+            updatedAt: firestore.FieldValue.serverTimestamp(),
         }
 
         await firestore()
@@ -180,7 +180,7 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
     .onSnapshot(onResult, onError);
 }
 
-export function addCommenRepliestListenner({ideaId, commentId, dispatch}){
+export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
 
     console.log(ideaId, commentId, dispatch)
     
@@ -205,16 +205,16 @@ export function addCommenRepliestListenner({ideaId, commentId, dispatch}){
     .onSnapshot(onResult, onError);
 }
 
-export const getIdeaCommentsOfComment = async (ideaId, commentId) => {
+export const getIdeaCommentReplies = async (ideaId, commentId) => {
     try{
-        const subComments = await firestore()
+        const replies = await firestore()
         .collection('ideas').doc(ideaId)
         .collection('comments').doc(commentId)
-        .collection('comments').orderBy('createdAt', 'desc').get();
+        .collection('replies').orderBy('createdAt', 'desc').get();
 
-        if(subComments.docs.length){
-            const lastDoc = subComments.docs[0];
-            return { count: subComments.docs.length, lastComment: {id: lastDoc.id, ...lastDoc.data()} }
+        if(replies.docs.length){
+            const lastDoc = replies.docs[0];
+            return { count: replies.docs.length, lastReply: {id: lastDoc.id, ...lastDoc.data()} }
         } else {
             return {};
         }
