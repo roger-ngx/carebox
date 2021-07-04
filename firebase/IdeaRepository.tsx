@@ -5,7 +5,7 @@ import { get, isEmpty, map, forEach, set } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { setIdeas } from "../stores/slices/userSlice";
-import { setComments, setSubComments, setCurrentIdea } from "../stores/slices/ideaSlice";
+import { setComments, setCommentReplies, setCurrentIdea } from "../stores/slices/ideaSlice";
 
 const uploadImages = async (imageFileUris, imageFirestorePaths) => {
     if(!isEmpty(imageFileUris) || !isEmpty(imageFirestorePaths)){
@@ -108,6 +108,15 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         }
 
+        batch.update(
+            firestore().collection('ideas').doc(ideaId),
+            {
+                commentCount: firestore.FieldValue.increment(1),
+                rating: firestore.FieldValue.arrayUnion(commentDoc.avgRating),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
         batch.set(firestore().collection('ideas').doc(ideaId).collection('comments').doc(), doc);
 
         batch.set(
@@ -124,7 +133,7 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
     }
 }
 
-export async function addCommentToComment({ideaId, owner, parentCommentId, comment}){
+export async function addReplyToComment({ideaId, owner, parentCommentId, comment}){
 
     try{
         const doc = {
@@ -137,7 +146,7 @@ export async function addCommentToComment({ideaId, owner, parentCommentId, comme
         await firestore()
         .collection('ideas').doc(ideaId)
         .collection('comments').doc(parentCommentId)
-        .collection('comments').add(doc);
+        .collection('replies').add(doc);
 
         return true;
     }catch(ex){
@@ -169,18 +178,18 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
     .onSnapshot(onResult, onError);
 }
 
-export function addCommentListenner({ideaId, commentId, dispatch}){
+export function addCommenRepliestListenner({ideaId, commentId, dispatch}){
 
     console.log(ideaId, commentId, dispatch)
     
     function onResult(querySnapshot) {
         console.log('Got Users collection result.');
         const docs = querySnapshot.docs;
-        const comments = map(docs, doc => ({id: doc.id, ...doc.data()}))
+        const replies = map(docs, doc => ({id: doc.id, ...doc.data()}))
 
-        console.log('comments', comments);
+        console.log('comments', replies);
 
-        dispatch(setSubComments(comments));
+        dispatch(setCommentReplies(replies));
     }
       
     function onError(error) {
@@ -190,7 +199,7 @@ export function addCommentListenner({ideaId, commentId, dispatch}){
     return firestore()
     .collection('ideas').doc(ideaId)
     .collection('comments').doc(commentId)
-    .collection('comments').orderBy('createdAt', 'desc')
+    .collection('replies').orderBy('createdAt', 'desc')
     .onSnapshot(onResult, onError);
 }
 

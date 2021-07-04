@@ -35,7 +35,7 @@ const FirstStep = ({idea}) => {
             >
                 {
                     map(CATEGORIES, cat => (
-                        <View style={{margin: 4}}>
+                        <View style={{margin: 4}} key={cat}>
                             <TouchableTag
                                 title={cat}
                                 isSelected={category===cat}
@@ -52,6 +52,7 @@ const FirstStep = ({idea}) => {
             {
                 map(IDEA_TYPES, type => (
                     <CheckBox
+                        key={type}
                         title={type}
                         checkedIcon='dot-circle-o'
                         uncheckedIcon='circle-o'

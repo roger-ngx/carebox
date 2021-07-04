@@ -5,9 +5,7 @@ import FilterItem from './FilterItem';
 
 const FILTERS = [ '전체', '의료기기', '의료용품', '서비스', '업무', '기타' ];
 
-const Filter = ({current, containerStyle}) => {
-
-    const [ selectedFilter, setSelectedFilter ] = useState(current);
+const Filter = ({value, setValue, containerStyle}) => {
 
     return (
         <ScrollView
@@ -20,9 +18,9 @@ const Filter = ({current, containerStyle}) => {
                 map(FILTERS, filter => (
                         <TouchableOpacity
                             style={{marginRight: 16}}
-                            onPress={() => setSelectedFilter(filter)}
+                            onPress={() => setValue(filter)}
                         >
-                            <FilterItem text={filter} active={selectedFilter===filter} />
+                            <FilterItem text={filter} active={value===filter} />
                         </TouchableOpacity>
                     )
                 )

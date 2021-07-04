@@ -40,6 +40,7 @@ const SecondStep = ({idea}) => {
                 {
                     map(SCAMPERS, scamper => (
                         <CheckBox
+                            key={scamper}
                             title={scamper}
                             containerStyle={{
                                 backgroundColor: 'transparent',

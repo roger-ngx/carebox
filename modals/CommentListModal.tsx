@@ -10,7 +10,7 @@ import LikeCommentNumber from '../components/LikeCommentNumber';
 import { Divider } from 'react-native-elements/dist/divider/Divider';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import TitleNavigationBar from '../components/TitleNavigationBar';
-import { addCommentListenner } from '../firebase/IdeaRepository';
+import { addCommenRepliestListenner } from '../firebase/IdeaRepository';
 import { useDispatch, useSelector } from 'react-redux';
 import UserComment from '../components/UserComment';
 import CommentInput from '../components/CommentInput';
@@ -33,7 +33,7 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
     useEffect(() => {
         if(!ideaId) return;
 
-        const unsubscriber = addCommentListenner({ideaId, commentId: id, dispatch})
+        const unsubscriber = addCommenRepliestListenner({ideaId, commentId: id, dispatch})
         return () => {
             typeof unsubscriber === 'function' && unsubscriber();
         }

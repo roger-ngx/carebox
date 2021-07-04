@@ -1,16 +1,22 @@
+import { map, get, set } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 
-const ThirdStep = ({idea}) => {
+const ThirdStep = ({idea, onFocusChange}) => {
 
     const [subject, setSubject] = useState();
     const [problemObject, setProblemObject] = useState();
     const [problemSituation, setProblemSituation] = useState();
     const [problemSolution, setProblemSolution] = useState();
+    const [ isTextFocused, setTextFocused ] = useState(false);
 
     useEffect(() => {
         idea.setSubject(subject);
     }, [subject]);
+
+    useEffect(() => {
+        onFocusChange(isTextFocused);
+    }, [isTextFocused]);
 
     useEffect(() => {
         const detail = {
@@ -38,6 +44,9 @@ const ThirdStep = ({idea}) => {
                     maxLength={50}
                     value={subject}
                     onChangeText={setSubject}
+                    onFocus={() => setTextFocused(true)}
+                    onBlur={() => setTextFocused(false)}
+                    textAlignVertical='top'
                 />
             </View>
             <View
@@ -62,6 +71,9 @@ const ThirdStep = ({idea}) => {
                         maxLength={50}
                         value={problemObject}
                         onChangeText={setProblemObject}
+                        onFocus={() => setTextFocused(true)}
+                        onBlur={() => setTextFocused(false)}
+                        textAlignVertical='top'
                     />
                 </View>
                 <View
@@ -80,6 +92,9 @@ const ThirdStep = ({idea}) => {
                         maxLength={2000}
                         value={problemSituation}
                         onChangeText={setProblemSituation}
+                        onFocus={() => setTextFocused(true)}
+                        onBlur={() => setTextFocused(false)}
+                        textAlignVertical='top'
                     />
                 </View>
 
@@ -92,30 +107,31 @@ const ThirdStep = ({idea}) => {
                         해결방법
                     </Text>
 
-                    <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
-                        S : 대체하기(소재, 방식, 원리)
-                    </Text>
+                    {
+                        map(idea.scampers, scamper => (
+                            <View key={scamper} style={{marginBottom: 16}}>
+                                <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
+                                   {scamper}
+                                </Text>
 
-                    <TextInput
-                        placeholder={`- 무엇을 바꿀 수 있을까?\n- 그것 대신에 무엇을 활용할 수 있을까?\n- 그 대신 어떤 프로세스를 활용할 수 있을까?\n- 그 대신 어떤 다른 재료를 사용할 수 있을까?`}
-                        style={[styles.textInput, {height: 100}]}
-                        multiline={true}
-                        numberOfLines={5}
-                        maxLength={2000}
-                        value={problemSolution}
-                        onChangeText={setProblemSolution}
-                    />
-
-                    <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
-                        M : 수정하기
-                    </Text>
-                    <TextInput
-                        placeholder={`- 무엇을 조합할 수 있을까?\n- 어떻게 일부를 연결할 수 있을까?\n- 어떤 목적을 서로 조합할 수 있을까?`}
-                        style={[styles.textInput, {height: 100}]}
-                        multiline={true}
-                        numberOfLines={5}
-                        maxLength={2000}
-                    />
+                                <TextInput
+                                    placeholder={`- 무엇을 바꿀 수 있을까?\n- 그것 대신에 무엇을 활용할 수 있을까?\n- 그 대신 어떤 프로세스를 활용할 수 있을까?\n- 그 대신 어떤 다른 재료를 사용할 수 있을까?`}
+                                    style={[styles.textInput, {minHeight: 100}]}
+                                    multiline={true}
+                                    numberOfLines={5}
+                                    maxLength={2000}
+                                    value={get(problemSolution, `${scamper}`)}
+                                    onChangeText={(text) => {
+                                        set(problemSolution, `${scamper}`, text);
+                                        setProblemSolution({...problemSolution})
+                                    }}
+                                    textAlignVertical='top'
+                                    onFocus={() => setTextFocused(true)}
+                                    onBlur={() => setTextFocused(false)}
+                                />
+                            </View>
+                        ))
+                    }
                 </View>
             </View>
         </View>

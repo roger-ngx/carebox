@@ -13,7 +13,7 @@ import ExpandableText from 'components/ExpandableText';
 import RatingView from 'components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
-import { addCommentToComment, getIdeaCommentsOfComment, likeIdeaComment } from '../firebase/IdeaRepository';
+import { addReplyToComment, getIdeaCommentsOfComment, likeIdeaComment } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
 import ExternalLink from '../components/ExternalLink';
 import UserComment from '../components/UserComment';
@@ -100,12 +100,15 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
                 comment={latestSubComment.comment}
             />
         }
-        <TouchableOpacity
-            style={{paddingBottom: 10}}
-            onPress={onShowComments}
-        >
-            <Text style={{color: '#898989'}}>댓글 {subCommentCount}개 모두 보기</Text>
-        </TouchableOpacity>
+        {
+            subCommentCount > 0 &&
+            <TouchableOpacity
+                style={{paddingBottom: 10}}
+                onPress={onShowComments}
+            >
+                <Text style={{color: '#898989'}}>댓글 {subCommentCount}개 모두 보기</Text>
+            </TouchableOpacity>
+        }
 
         <TouchableOpacity
             style={{
@@ -158,7 +161,7 @@ const IdeaCommentScreen = ({idea}) => {
     onSubmitComment = async (parentCommentId, comment) => {
         setLoading(true);
 
-        const ret = await addCommentToComment({parentCommentId, comment, owner: user, ideaId: idea.id})
+        const ret = await addReplyToComment({parentCommentId, comment, owner: user, ideaId: idea.id})
 
         if(ret){
             setShowCommentInputModal(false);

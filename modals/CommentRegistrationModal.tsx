@@ -32,9 +32,11 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
 
         const links = map(externalLinks, (externalLink, index) => ({externalLink, externalLinkTitle: externalLinkTitles[index]}))
 
+        const avgRating = +((practicalityRate + creativityRate + valuableRate) / 3).toFixed(1);
+
         const commentDoc = {
             ideaId, practicalityRate, creativityRate, valuableRate,
-            scamper, content, links
+            scamper, content, links, avgRating
         }
 
         await addCommentToIdea({ideaId, ownerId, imageUris, commentDoc});

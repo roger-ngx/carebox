@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { map, get } from 'lodash';
+import { map, get, filter } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
@@ -17,10 +17,11 @@ export default function Home({navigation}) {
 
   const currentUser = useSelector(state => state.user.currentUser);
 
-  const ideas = useSelector(state => state.user.ideas);
+  const storeIdeas = useSelector(state => state.user.ideas);
   const dispatch = useDispatch();
-  console.log('ideas', ideas);
 
+  const [ ideas, setIdeas ] = useState(storeIdeas);
+  const [ currentFilter, setCurrentFilter ] = useState('전체');
   const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
 
   const openModal = () => setOpenRegistrationModal(true)
@@ -31,6 +32,19 @@ export default function Home({navigation}) {
 
     return () => (typeof unsubscriber === 'function') && unsubscriber();
   }, []);
+
+  useEffect(() => {
+    if(!currentFilter) return;
+
+    console.log('currentFilter', currentFilter);
+
+    if(currentFilter === '전체'){
+      setIdeas(storeIdeas);
+    } else {
+      setIdeas(filter(storeIdeas, idea => idea.category === currentFilter));
+    }
+
+  }, [currentFilter, storeIdeas]);
 
   useEffect(() => {
     if(currentUser){
@@ -65,7 +79,7 @@ export default function Home({navigation}) {
           </Text>
         </View>
         <View style={{backgroundColor: 'white', padding: 20}}>
-          <Filter current='전체'/>
+          <Filter value={currentFilter} setValue={setCurrentFilter}/>
         </View>
         <View style={{paddingHorizontal: 20, marginBottom: 80}}>
           <PickedIdeaListHeader
@@ -78,16 +92,20 @@ export default function Home({navigation}) {
           <View>
             <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 20}}>New Idea</Text>
 
-            {
-              map(ideas, idea => (
-                <TouchableOpacity
-                  style={{marginBottom: 20}}
-                  onPress={() => navigation.navigate('Idea', {idea})}
-                >
-                  <NewIdea key={idea.id} idea={idea} containerStyle={{marginBottom: 20}}/>
-                </TouchableOpacity>
-              ))
-            }
+            <FlatList
+              data={ideas}
+              keyExtractor={item => item.id}
+              renderItem={
+                ({item}) => (
+                  <TouchableOpacity
+                    style={{marginBottom: 20}}
+                    onPress={() => navigation.navigate('Idea', {idea: item})}
+                  >
+                    <NewIdea key={item.id} idea={item} containerStyle={{marginBottom: 20}}/>
+                  </TouchableOpacity>
+                )
+              }
+            />
           </View>
         </View>
       </ScrollView>

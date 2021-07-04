@@ -22,6 +22,9 @@ const IdeaRegistrationModal = ({onClose}) => {
     const [ openResultModal, setOpenResultModal ] = useState(false);
     const [ progressing, setProgressing ] = useState(false);
 
+    const [ isTextFocused, setTextFocused ] = useState(false);
+
+
     const user = useSelector(state => state.user.currentUser);
     const userProfile = useSelector(state => state.user.userProfileData);
 
@@ -134,7 +137,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                         }
                         {
                             currentStep === 3 &&
-                            <ThirdStep idea={idea} />
+                            <ThirdStep idea={idea} onFocusChange={setTextFocused}/>
                         }
 
                         {
@@ -145,14 +148,17 @@ const IdeaRegistrationModal = ({onClose}) => {
                     </ScrollView>
                 </View>
                 </KeyboardAwareScrollView>
-                <View style={{margin: 20}}>
-                    <RoundButton
-                        text='저장하고 다음'
-                        onPress={onNextStep}
-                        disabled={progressing}
-                        loading={progressing}
-                    />
-                </View>
+                {
+                    !isTextFocused &&
+                    <View style={{margin: 20}}>
+                        <RoundButton
+                            text='저장하고 다음'
+                            onPress={onNextStep}
+                            disabled={progressing}
+                            loading={progressing}
+                        />
+                    </View>
+                }
                 {
                     openResultModal &&
                     <InfoModal
