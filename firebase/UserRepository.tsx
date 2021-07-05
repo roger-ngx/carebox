@@ -40,11 +40,11 @@ export async function updateUserInfo({uid, profileImageUri, userInfo}){
     return false;
 }
 
-export async function signUp({uid, nickName, gender, department, yearsOnJob}){
+export async function signUp({uid, nickName, gender, department, yearsOnJob, phoneNumber}){
     try{
         const signUp = functions().httpsCallable('signUp');
         const ret = await signUp({
-            uid, nickName, gender, department, yearsOnJob
+            uid, nickName, gender, department, yearsOnJob, phoneNumber
         })
         console.log(ret);
         const { authToken } = ret.data;
@@ -78,4 +78,18 @@ export async function subscribeForUserInformation(userId, dispatch){
     }catch(ex){
         console.log('subscribeForUserInformation', ex);
     }
+}
+
+export async function updateUserPushToken(userId, pushToken){
+    try{
+        await firestore().collection('users').doc(userId)
+        .update({
+            fcmToken: pushToken,
+            updatedAt: firestore.FieldValue.serverTimestamp()
+        })
+        return true;
+    }catch(ex){
+        console.log('updateUserPushToken', ex);
+    }
+    return false;
 }

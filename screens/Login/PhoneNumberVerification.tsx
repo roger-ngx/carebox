@@ -36,7 +36,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
             const {additionalUserInfo, user} = await confirmation.confirm(verificationCode);
             console.log('user', user);
 
-            await onSuccess(user.uid, additionalUserInfo.isNewUser);
+            await onSuccess(user.uid, additionalUserInfo.isNewUser, user.phoneNumber);
         }catch(ex){
             console.log('confirmCode', ex);
         }
