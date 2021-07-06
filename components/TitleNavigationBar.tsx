@@ -2,16 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 
-const TitleNavigationBar = ({onBackPress, title}) => {
+const TitleNavigationBar = ({onBackPress, title, containerStyle}) => {
 
     return (
         <View
-            style={{
+            style={[{
                 flexDirection: 'row',
                 width: '100%',
                 alignItems: 'center',
-                marginBottom: 20
-            }}
+            }, containerStyle]}
         >
             <TouchableOpacity
                 style={{padding: 8, paddingLeft: 0, zIndex: 1}}

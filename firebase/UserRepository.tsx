@@ -2,7 +2,9 @@
 import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
 import storage, { firebase } from '@react-native-firebase/storage';
+import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
+import { map } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
 import { setUserProfileData } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
@@ -93,3 +95,51 @@ export async function updateUserPushToken(userId, pushToken){
     }
     return false;
 }
+
+export async function requestPushNotificationPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+}
+
+export async function getLikedIdeas(uid){
+    try{
+        console.log('uid', uid);
+
+        const ret = await firestore().collection('history').doc(uid).collection('likes').get();
+        return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
+    }catch(ex){
+        console.log('getLikedIdeas', ex);
+    }
+}
+
+export async function getRegisteredIdeas(uid){
+    try{
+        console.log('uid', uid);
+
+        const ret = await firestore().collection('ideas')
+        .where('ownerId', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .get();
+        return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
+    }catch(ex){
+        console.log('getLikedIdeas', ex);
+    }
+}
+
+export async function getRegisteredComments(uid){
+    try{
+        console.log('uid', uid);
+
+        const ret = await firestore().collection('history').doc(uid).collection('comments').get();
+        return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
+    }catch(ex){
+        console.log('getLikedIdeas', ex);
+    }
+} 
+

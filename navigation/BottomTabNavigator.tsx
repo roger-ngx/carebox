@@ -21,6 +21,9 @@ import IdeaScreen from 'screens/IdeaScreen';
 import { Icon } from 'react-native-elements';
 import UserProfileEdit from '../screens/UserProfileEdit';
 import UserProfileScreen from '../screens/UserProfileScreen';
+import LikedIdeas from '../screens/UserProfile/LikedIdeas';
+import RegisterdIdeas from '../screens/UserProfile/RegisterdIdeas';
+import UserAccountSetting from '../screens/UserProfile/UserAccountSetting';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -98,6 +101,21 @@ function UserProfileNavigator() {
         name="UserProfile"
         component={UserProfileScreen}
         options={{ headerShown: false }}
+      />
+      <UserProfileStack.Screen
+        name='LikedIdeas'
+        component={LikedIdeas}
+        options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name='RegisteredIdeas'
+        component={RegisterdIdeas}
+        options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name='UserAccountSetting'
+        component={UserAccountSetting}
+        options={{headerShown: false}}
       />
     </UserProfileStack.Navigator>
   );

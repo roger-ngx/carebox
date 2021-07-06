@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList } from 'react-native';
+import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { map, get, filter } from 'lodash';
@@ -11,7 +11,7 @@ import PickedIdea from 'components/Idea/PickedIdea';
 import NewIdea from 'components/Idea/NewIdea';
 import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
 import { addIdeasListenner } from 'firebase/IdeaRepository';
-import { subscribeForUserInformation } from '../firebase/UserRepository';
+import { requestPushNotificationPermission, subscribeForUserInformation } from '../firebase/UserRepository';
 
 export default function Home({navigation}) {
 
@@ -28,6 +28,11 @@ export default function Home({navigation}) {
   const closeModal = () => setOpenRegistrationModal(false)
 
   useEffect(() => {
+
+    if(Platform.OS === 'ios'){
+      requestPushNotificationPermission();
+    }
+
     const unsubscriber = addIdeasListenner(dispatch);
 
     return () => (typeof unsubscriber === 'function') && unsubscriber();

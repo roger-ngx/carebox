@@ -9,7 +9,7 @@ import UserProfileEdit from './UserProfileEdit';
 import ProfileSettingItem from '../components/ProfileSettingItem';
 import { useSelector } from 'react-redux';
 
-const UserProfileScreen = () => {
+const UserProfileScreen = ({navigation}) => {
 
     const user = useSelector(state => state.user.userProfileData);
 
@@ -37,10 +37,12 @@ const UserProfileScreen = () => {
                 
                 <ProfileSettingItem
                     text='찜 목록'
+                    onPress={() => navigation.navigate('LikedIdeas')}
                 />
                 <Divider />
                 <ProfileSettingItem
                     text='내가 등록한 아이디어'
+                    onPress={() => navigation.navigate('RegisteredIdeas')}
                 />
                 <ProfileSettingItem
                     text='내가 등록한 코멘트'
@@ -55,6 +57,7 @@ const UserProfileScreen = () => {
                 <Divider />
                 <ProfileSettingItem
                     text='설정'
+                    onPress={() => navigation.navigate('UserAccountSetting')}
                 />
             </ScrollView>
 
