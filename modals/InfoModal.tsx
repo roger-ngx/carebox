@@ -13,7 +13,9 @@ const InfoModal = ({isVisible, children, onClose, clickOutsideToClose=false}) =>
             hasBackdrop={true}
         >
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                {children}
+                <View style={{width: '80%', alignItems: 'center', backgroundColor: 'white', padding: 20, borderRadius: 20}}>
+                    {children}
+                </View>
             </View>
         </Modal>
     )

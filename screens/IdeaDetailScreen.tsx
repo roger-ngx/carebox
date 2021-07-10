@@ -14,18 +14,7 @@ import OutlinedTag from '../components/OutlinedTag';
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
 
-    const dispatch = useDispatch();
-
-    useEffect(() => {
-        if(idea.id){
-            const unsubscriber = addIdeaListenner(idea.id, dispatch);
-
-            return () => (typeof unsubscriber === 'function') && unsubscriber();
-        }
-    }, [idea])
-
     const user = useSelector(state => state.user.currentUser);
-    const currentIdea = useSelector(state => state.idea.currentIdea)
 
     const { id, detail, images, links } = idea;
 
@@ -39,7 +28,7 @@ const IdeaDetailScreen = ({idea}) => {
             style={{flex: 1, backgroundColor: 'white'}}
         >
             <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-                <PickedIdea idea={currentIdea || idea}/>
+                <PickedIdea idea={idea}/>
                 <Divider/>
                 <View style={{padding: 20}}>
                     <View style={{marginBottom: 8}}>
@@ -99,15 +88,14 @@ const IdeaDetailScreen = ({idea}) => {
             >
                 <IdeaCommentButtons
                     onCommentRegister={() => setShowingCommentRegistrationModal(true)}
-                    onFavorite={() => likeIdea({ideaId: id, uid: user.uid, isLike: !includes((currentIdea||idea).likes, user.uid)})}
-                    liked={includes((currentIdea||idea).likes, user.uid)}
+                    onFavorite={() => likeIdea({ideaId: id, uid: user.uid, isLike: !includes(idea.likes, user.uid)})}
+                    liked={includes(idea.likes, user.uid)}
                 />
             </View>
             {
                 showingCommentRegistrationModal &&
                 <CommentRegistrationModal
                     ideaId={idea.id}
-                    ownerId={idea.ownerId}
                     onClose={() => setShowingCommentRegistrationModal(false)}
                 />
             }

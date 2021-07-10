@@ -52,13 +52,20 @@ export default function Home({navigation}) {
   }, [currentFilter, storeIdeas]);
 
   useEffect(() => {
-    if(currentUser){
-      const uid = currentUser.uid;
+    subscribeForUserData(currentUser);
+  }, [currentUser]);
+
+  const subscribeForUserData = async (user) => {
+    console.log('subscribeForUserData', user);
+    if(user){
+      const uid = user.uid;
       if(uid){
-        subscribeForUserInformation(uid, dispatch);
+        const unsubscriber = await subscribeForUserInformation(uid, dispatch);
+
+        return () => typeof unsubscriber === 'function' && unsubscriber();
       }
     }
-  }, [currentUser]);
+  }
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
@@ -106,7 +113,7 @@ export default function Home({navigation}) {
                     style={{marginBottom: 20}}
                     onPress={() => navigation.navigate('Idea', {idea: item})}
                   >
-                    <NewIdea key={item.id} idea={item} containerStyle={{marginBottom: 20}}/>
+                    <NewIdea idea={item} containerStyle={{marginBottom: 20}}/>
                   </TouchableOpacity>
                 )
               }

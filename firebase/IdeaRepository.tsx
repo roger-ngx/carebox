@@ -53,7 +53,7 @@ export async function addNewIdea(idea, owner){
 export async function addIdeasListenner(dispatch){
     
     function onResult(querySnapshot) {
-        console.log('Got Users collection result.');
+        console.log('Got ideas collection result.');
         const docs = querySnapshot.docs;
         const ideas = map(docs, doc => ({id: doc.id, ...doc.data()}))
         dispatch(setIdeas(ideas));
@@ -69,7 +69,7 @@ export async function addIdeasListenner(dispatch){
 export async function addIdeaListenner(ideaId, dispatch){
     
     function onResult(doc) {
-        dispatch(setCurrentIdea(doc.data()));
+        dispatch(setCurrentIdea({id: doc.id, ...doc.data()}));
     }
       
     function onError(error) {
@@ -79,11 +79,11 @@ export async function addIdeaListenner(ideaId, dispatch){
     return firestore().collection('ideas').doc(ideaId).onSnapshot(onResult, onError);
 }
 
-export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris}){
+export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
-    if(!ideaId || !ownerId) return;
+    if(!ideaId || !owner) return;
 
-    console.log(ideaId, ownerId, commentDoc);
+    console.log(ideaId, owner, commentDoc);
 
     const { avgRating, practicalityRate, creativityRate, valuableRate } = commentDoc;
 
@@ -98,13 +98,14 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
         const imagePaths = map(imageUris, uri => {
             const uuid = uuidv4();
 
-            return `/images/${ownerId}/ideas/comments/${uuid}.png`;
+            return `/images/${owner.uid}/ideas/comments/${uuid}.png`;
         })
 
         const imageUrls =  await uploadImages(imageUris, imagePaths);
 
         const doc = {
             ...commentDoc,
+            owner,
             images: imageUrls,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -122,7 +123,7 @@ export async function addCommentToIdea({ideaId, ownerId, commentDoc, imageUris})
         batch.set(firestore().collection('ideas').doc(ideaId).collection('comments').doc(), doc);
 
         batch.set(
-            firestore().collection('history').doc(ownerId).collection('comments').doc(ideaId),
+            firestore().collection('history').doc(owner.uid).collection('comments').doc(ideaId),
             {
                 idea: ideaDoc.data(),
                 comment: doc
@@ -159,13 +160,12 @@ export async function addReplyToComment({ideaId, owner, parentCommentId, comment
 }
 
 export function addIdeaCommentsListenner(ideaId, dispatch){
+    console.log('idea id', ideaId);
     
     function onResult(querySnapshot) {
-        console.log('Got Users collection result.');
         const docs = querySnapshot.docs;
+        console.log('Got idea comments collection result.', docs.length);
         const comments = map(docs, doc => ({id: doc.id, ...doc.data()}))
-
-        // console.log('comments', comments);
 
         dispatch(setComments(comments));
     }
@@ -185,7 +185,7 @@ export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
     console.log(ideaId, commentId, dispatch)
     
     function onResult(querySnapshot) {
-        console.log('Got Users collection result.');
+        console.log('Got comment replies collection result.');
         const docs = querySnapshot.docs;
         const replies = map(docs, doc => ({id: doc.id, ...doc.data()}))
 
@@ -286,5 +286,54 @@ export async function likeIdeaComment({ideaId, commentId, uid, isLike}){
         await batch.commit();
     }catch(ex){
         console.log('likeIdea', ex);
+    }   
+}
+
+export const pickAnIdea = async ({uid, ideaId, commentId}) => {
+    const batch = firestore().batch();
+
+    try{
+
+        const commentDoc = await firestore().collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId).get();
+
+        if(!commentDoc.exists){
+            return;
+        }
+
+        const commentData = commentDoc.data();
+
+        await batch.update(
+            firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId),
+            {
+                isPicked: true,
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.update(
+            firestore().collection('ideas').doc(ideaId),
+            {
+                pickes: firestore.FieldValue.arrayUnion(commentData.owner),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.set(
+            firestore().collection('history').doc(uid).collection('picked').doc(),
+            {
+                ...commentDoc.data(),
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.commit();
+
+        return true;
+    }catch(ex){
+        console.log('pickAnIdea', ex);
     }
+
+    return false;
 }

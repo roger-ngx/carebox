@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { includes, map, reduce, size } from 'lodash';
+import { includes, map, reduce, size, throttle } from 'lodash';
 
 import IdeaOverallRating from 'components/IdeaOverallRating';
 import NewIdeaHead from 'components/Idea/NewIdeaHead';
@@ -13,10 +13,13 @@ import ExpandableText from 'components/ExpandableText';
 import RatingView from 'components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
-import { addReplyToComment, getIdeaCommentReplies, likeIdeaComment } from '../firebase/IdeaRepository';
+import { addReplyToComment, getIdeaCommentReplies, likeIdeaComment, pickAnIdea } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
 import ExternalLink from '../components/ExternalLink';
 import UserComment from '../components/UserComment';
+import RoundButton from '../components/RoundButton';
+import CBButton from '../components/CBButton';
+import InfoModal from '../modals/InfoModal';
 
 const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 
@@ -145,6 +148,10 @@ const IdeaCommentScreen = ({idea}) => {
     const [ showInnerCommentsModal, setShowInnerCommentsModal ] = useState(false);
     const [ selectedComment, setSelectedComment ] = useState({});
 
+    const [ isShowingConfirmToPick, setShowingConfirmToPick ] = useState(false);
+
+    const [ isPickedIdeaSuccessful, setPickedIdeaSuccessful ] = useState(false);
+
     const [ overallRate, setOverallRate ] = useState({});
 
     const [ loading, setLoading ] = useState(false);
@@ -153,10 +160,12 @@ const IdeaCommentScreen = ({idea}) => {
     const user = useSelector(state => state.user.userProfileData);
 
     useEffect(() => {
-        const unsubcriber = addIdeaCommentsListenner(idea.id, dispatch);
-
-        return () => typeof unsubcriber === 'function' && unsubcriber();
-    }, []);
+        if(idea){
+            const unsubcriber = addIdeaCommentsListenner(idea.id, dispatch);
+    
+            return () => typeof unsubcriber === 'function' && unsubcriber();
+        }
+    }, [idea.id]);
 
     useEffect(() => {
         const { rating } = idea;
@@ -204,6 +213,19 @@ const IdeaCommentScreen = ({idea}) => {
         setSelectedComment(comment);
     }
 
+    const pickIdea = async () => {
+        setLoading(true);
+        try{
+            await pickAnIdea({uid: user.uid, ideaId: idea.id, commentId: isShowingConfirmToPick});
+        }catch(ex){
+            console.log('pickIdea', ex)
+        }
+
+        setPickedIdeaSuccessful(true);
+        // setShowingConfirmToPick(null);
+        setLoading(false);
+    }
+
     return (
         <ScrollView>
             <IdeaOverallRating overallRate={overallRate}/>
@@ -211,8 +233,13 @@ const IdeaCommentScreen = ({idea}) => {
                 map(comments, comment => (
                     <>
                         <View style={{padding: 20}}>
-                            <View style={{paddingBottom: 20}}>
-                                <NewIdeaHead />
+                            <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
+                                <NewIdeaHead owner={comment.owner}/>
+                                
+                                <CBButton
+                                    text='Pick하기'
+                                    onPress={() => setShowingConfirmToPick(comment.id)}
+                                />
                             </View>
 
                             <Comment
@@ -241,6 +268,53 @@ const IdeaCommentScreen = ({idea}) => {
                 user={user}
                 onSubmitComment={onSubmitComment}
             />
+            {
+                Boolean(isShowingConfirmToPick) &&
+                <InfoModal isVisible={Boolean(isShowingConfirmToPick)} onClose={() => setShowingConfirmToPick(true)}>
+                    {
+                        isPickedIdeaSuccessful ?
+                        <>
+                            <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
+                                Pick 초대
+                            </Text>
+                            <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24}}>
+                                {`‘000님’이 회원님을\n아이디어 참여자로 pick했어요!`}
+                            </Text>
+                            <TouchableOpacity style={{marginBottom: 24, padding: 8}}>
+                                <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
+                            </TouchableOpacity>
+                            <View style={{flexDirection: 'row'}}>
+                                <CBButton
+                                    text='거절'
+                                    variant='outlined'
+                                    containerStyle={{paddingVertical: 16, paddingHorizontal: 32, marginRight: 16, borderRadius: 50}}
+                                    onPress={() => setShowingConfirmToPick(null)}
+                                />
+                                <CBButton
+                                    text='확인'
+                                    variant='contained'
+                                    containerStyle={{paddingVertical: 16, paddingHorizontal: 32, borderRadius: 50}}
+                                    onPress={() => setShowingConfirmToPick(null)}
+                                />
+                            </View>
+                        </>
+                        :
+                        <>
+                            <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
+                                Pick하기
+                            </Text>
+                            <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24, marginBottom: 24}}>
+                                {`pick을 하면 같은 팀으로 활동할 수 있어요!\n000님을 아이디어 참여자로 pick 하시겠어요?`}
+                            </Text>
+                            <RoundButton
+                                text='확인'
+                                loading={loading}
+                                onPress={throttle(pickIdea, 5000, { trailing: false })}
+                            />
+                        </>
+                    }
+                </InfoModal>
+            }
         </ScrollView>
     )
 }

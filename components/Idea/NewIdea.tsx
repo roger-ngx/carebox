@@ -13,7 +13,7 @@ const NewIdea = ({idea, containerStyle}) => {
                 containerStyle
             ]}
         >
-            <NewIdeaHead idea={idea}/>
+            <NewIdeaHead owner={idea.owner}/>
             <Divider style={{marginVertical: 16}}/>
             <IdeaBody idea={idea}/>
         </View>)

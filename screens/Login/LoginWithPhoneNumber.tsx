@@ -3,6 +3,8 @@ import auth from '@react-native-firebase/auth';
 import functions from '@react-native-firebase/functions';
 import messaging from '@react-native-firebase/messaging';
 
+import { isEmpty } from 'lodash';
+
 import { useDispatch } from 'react-redux';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
@@ -50,7 +52,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
             currentUser && dispatch(setUser(currentUser));
             
             let authToken = await SecureStore.getItemAsync('userToken');
-            if(!authToken){
+            if(isEmpty(authToken)){
                 const refeshAuthToken = functions().httpsCallable('refeshAuthToken');
                 const ret = await refeshAuthToken({uid});
                 console.log('getToken', ret);

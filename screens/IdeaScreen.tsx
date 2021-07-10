@@ -1,12 +1,14 @@
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { View, useWindowDimensions, TouchableOpacity, Text } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import IdeaDetailScreen from './IdeaDetailScreen';
 import { Icon } from 'react-native-elements';
 import IdeaCommentScreen from './IdeaCommentScreen';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setIdeaId } from '../stores/slices/ideaSlice';
+import PickedList from './PickedList';
+import { addIdeaListenner } from '../firebase/IdeaRepository';
 
 const renderTabBar = props => (
   <TabBar
@@ -28,15 +30,27 @@ export default function IdeaScreen({route, navigation}) {
   const dispatch = useDispatch();
   dispatch(setIdeaId(idea.id))
 
+  useEffect(() => {
+    if(idea.id){
+        const unsubscriber = addIdeaListenner(idea.id, dispatch);
+
+        return () => (typeof unsubscriber === 'function') && unsubscriber();
+    }
+  }, [idea.id])
+
+  const currentIdea = useSelector(state => state.idea.currentIdea);
+
   const renderScene = SceneMap({
-    first: () => (<IdeaDetailScreen idea={idea} />),
+    first: () => (<IdeaDetailScreen idea={currentIdea} />),
     second: () => (<IdeaCommentScreen idea={idea} />),
+    third: () => (<PickedList pickes={currentIdea && currentIdea.pickes} />)
   });
 
   const [index, setIndex] = React.useState(0);
   const [routes] = React.useState([
     { key: 'first', title: '아이디어 상세' },
     { key: 'second', title: '코멘트' },
+    { key: 'third', title: 'PICK' },
   ]);
 
   return (

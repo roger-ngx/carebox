@@ -12,8 +12,9 @@ import PhotoUploadButton from 'components/PhotoUploadButton';
 import RoundButton from 'components/RoundButton';
 import { addCommentToIdea } from '../firebase/IdeaRepository';
 import CommentImagesUploader from '../components/CommentImagesUploader';
+import { useSelector } from 'react-redux';
 
-const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
+const CommentRegistrationModal = ({ideaId, onClose}) => {
     console.log(ideaId);
 
     const [ practicalityRate, setPracticalityRate ] = useState(0);
@@ -27,6 +28,8 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
     const [ imageUris, setImageUris ] = useState();
     const [ showingFinishButton, setShowingFinishButton ] = useState(false);
 
+    const owner = useSelector(state => state.user.userProfileData);
+
     const onAddCommentToIdea = async () => {
         setProcessing(true);
 
@@ -39,7 +42,7 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
             scamper, content, links, avgRating
         }
 
-        await addCommentToIdea({ideaId, ownerId, imageUris, commentDoc});
+        await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
         setProcessing(false);
         onClose();
     }
@@ -140,26 +143,13 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
                         {
                             map(externalLinks, (links, index) => (<View style={{marginBottom: 24}}>
                                 <TextInput
-                                    placeholder='입력해 주세요.'
+                                    placeholder='title 입력해 주세요.'
                                     style={{
-                                        borderRadius: 4, 
+                                        borderTopRightRadius: 4, 
+                                        borderTopLeftRadius: 4, 
                                         borderColor: '#9C9C9C',
                                         borderWidth: 1,
-                                        padding: 12,
-                                        height: 50
-                                    }}
-                                    value={externalLinks[index]}
-                                    onChangeText={text => {
-                                        externalLinks[index]=text
-                                        setExternalLinks([...externalLinks]);
-                                    }}
-                                />
-                                <TextInput
-                                    placeholder='입력해 주세요.'
-                                    style={{
-                                        borderRadius: 4, 
-                                        borderColor: '#9C9C9C',
-                                        borderWidth: 1,
+                                        borderBottomWidth: 0,
                                         padding: 12,
                                         height: 50
                                     }}
@@ -167,6 +157,22 @@ const CommentRegistrationModal = ({ideaId, ownerId, onClose}) => {
                                     onChangeText={text => {
                                         externalLinkTitles[index] = text
                                         setExternalLinkTitles([...externalLinkTitles]);
+                                    }}
+                                />
+                                <TextInput
+                                    placeholder='url 입력해 주세요.'
+                                    style={{
+                                        borderColor: '#9C9C9C',
+                                        borderWidth: 1,
+                                        borderBottomRightRadius: 4, 
+                                        borderBottomLeftRadius: 4, 
+                                        padding: 12,
+                                        height: 50
+                                    }}
+                                    value={externalLinks[index]}
+                                    onChangeText={text => {
+                                        externalLinks[index]=text
+                                        setExternalLinks([...externalLinks]);
                                     }}
                                 />
                             </View>))
