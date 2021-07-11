@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, useWindowDimensions, TouchableOpacity, Text } from 'react-native';
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,7 +8,8 @@ import IdeaCommentScreen from './IdeaCommentScreen';
 import { useDispatch, useSelector } from 'react-redux';
 import { setIdeaId } from '../stores/slices/ideaSlice';
 import PickedList from './PickedList';
-import { addIdeaListenner } from '../firebase/IdeaRepository';
+import { addIdeaListenner, loadIdeaFromId } from '../firebase/IdeaRepository';
+import { ActivityIndicator } from 'react-native-paper';
 
 const renderTabBar = props => (
   <TabBar
@@ -22,27 +23,51 @@ const renderTabBar = props => (
 )
 
 export default function IdeaScreen({route, navigation}) {
+  const { ideaId, idea } = route.params;
+  if(!idea && !ideaId){
+    return null;
+  };
+
+  const [ loading, setLoading ] = useState(true);
+  const [ ideaData, setIdeaData ] = useState(idea || {});
+
   const layout = useWindowDimensions();
 
-  const { idea } = route.params;
-  if(!idea) return null;
 
-  const dispatch = useDispatch();
-  dispatch(setIdeaId(idea.id))
+  const loadIdea = async (ideaId) => {
+    try{
+      setIdeaData(await loadIdeaFromId(ideaId));
+    }catch(ex){
+      console.log('loadIdea', ex)
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
-    if(idea.id){
-        const unsubscriber = addIdeaListenner(idea.id, dispatch);
+    if(ideaId){
+      loadIdea(ideaId);
+    }
+  }, [ideaId])
+
+  const dispatch = useDispatch();
+
+  dispatch(setIdeaId(ideaData.id))
+
+  useEffect(() => {
+    if(ideaData.id){
+        setLoading(false);
+
+        const unsubscriber = addIdeaListenner(ideaData.id, dispatch);
 
         return () => (typeof unsubscriber === 'function') && unsubscriber();
     }
-  }, [idea.id])
+  }, [ideaData.id])
 
   const currentIdea = useSelector(state => state.idea.currentIdea);
 
   const renderScene = SceneMap({
     first: () => (<IdeaDetailScreen idea={currentIdea} />),
-    second: () => (<IdeaCommentScreen idea={idea} />),
+    second: () => (<IdeaCommentScreen idea={ideaData} />),
     third: () => (<PickedList pickes={currentIdea && currentIdea.pickes} />)
   });
 
@@ -55,42 +80,51 @@ export default function IdeaScreen({route, navigation}) {
 
   return (
     <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white'}}>
-        <View
-            style={{
-                paddingHorizontal: 20,
-                paddingBottom: 12,
-                flexDirection: 'row',
-                width: '100%',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-            }}
-        >
-            <TouchableOpacity
-              style={{paddingTop: 8}}
-              onPress={() => navigation.pop()}
-            >
-                <Icon
-                    name='arrow-back-ios'
-                    color='black'
-                />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{paddingTop: 8}}
-              onPress={() => navigation.pop()}
-            >
-                <Icon
-                    name='notifications-none'
-                    color='black'
-                />
-            </TouchableOpacity>
+      {
+        loading ?
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size='small' color='#1379FF' />
         </View>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: layout.width }}
-          renderTabBar={renderTabBar}
-        />
+        :
+        <>
+          <View
+              style={{
+                  paddingHorizontal: 20,
+                  paddingBottom: 12,
+                  flexDirection: 'row',
+                  width: '100%',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+              }}
+          >
+              <TouchableOpacity
+                style={{paddingTop: 8}}
+                onPress={() => navigation.navigate('Home')}
+              >
+                  <Icon
+                      name='arrow-back-ios'
+                      color='black'
+                  />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{paddingTop: 8}}
+                onPress={() => navigation.navigate('Notification')}
+              >
+                  <Icon
+                      name='notifications-none'
+                      color='black'
+                  />
+              </TouchableOpacity>
+          </View>
+          <TabView
+            navigationState={{ index, routes }}
+            renderScene={renderScene}
+            onIndexChange={setIndex}
+            initialLayout={{ width: layout.width }}
+            renderTabBar={renderTabBar}
+          />
+        </>
+      }
     </SafeAreaView>
   );
 }

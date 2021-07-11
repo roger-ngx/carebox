@@ -1,6 +1,6 @@
 import React, { useState, useEffect }  from 'react';
 import Modal from 'react-native-modal';
-import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform } from 'react-native';
+import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from 'react-native-elements';
 import { map } from 'lodash';
@@ -42,7 +42,10 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
             scamper, content, links, avgRating
         }
 
-        await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
+        const ret = await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
+        if(!ret){
+            Alert.alert('add comment failed', '');
+        }
         setProcessing(false);
         onClose();
     }

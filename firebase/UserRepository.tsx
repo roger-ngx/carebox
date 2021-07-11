@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import { map } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
-import { setUserProfileData } from '../stores/slices/userSlice';
+import { setUserProfileData, setUserNotifications } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function checkNicknameExists(nickName){
@@ -79,6 +79,41 @@ export async function subscribeForUserInformation(userId, dispatch){
         return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
     }catch(ex){
         console.log('subscribeForUserInformation', ex);
+    }
+}
+
+export async function subscribeForNotifications(userId, dispatch){
+    try{
+        function onResult(snapShot) {
+            console.log('Got User notifications data.');
+
+            const userData = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
+
+            dispatch(setUserNotifications(userData));
+        }
+          
+        function onError(error) {
+            console.error(error);
+        }
+    
+        return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
+    }catch(ex){
+        console.log('subscribeForUserInformation', ex);
+    }
+}
+
+export async function markReadingNotification(userId, notificationId){
+    try{
+        console.log(userId, notificationId);
+
+        await firestore().collection('users').doc(userId)
+        .collection('notifications').doc(notificationId)
+        .update({
+            unRead: false,
+            updatedAt: firestore.FieldValue.serverTimestamp()
+        });    
+    }catch(ex){
+        console.log('markReadingNotification', ex);
     }
 }
 

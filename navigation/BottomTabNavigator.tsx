@@ -7,28 +7,30 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
+import { filter, size } from 'lodash';
+import { View, Text } from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
-import TabOneScreen from '../screens/Home';
-import TabTwoScreen from 'screens/TabTwoScreen';
 import { BottomTabParamList, TabOneParamList, TabTwoParamList } from '../types';
-import LinksScreen from 'screens/LinksScreen';
 import Home from 'screens/Home';
-import IdeaDetailScreen from 'screens/IdeaDetailScreen';
 import PickedIdeasScreen from 'screens/PickedIdeasScreen';
 import IdeaScreen from 'screens/IdeaScreen';
 import { Icon } from 'react-native-elements';
-import UserProfileEdit from '../screens/UserProfileEdit';
 import UserProfileScreen from '../screens/UserProfileScreen';
 import LikedIdeas from '../screens/UserProfile/LikedIdeas';
 import RegisterdIdeas from '../screens/UserProfile/RegisterdIdeas';
 import UserAccountSetting from '../screens/UserProfile/UserAccountSetting';
+import NotificationScreen from '../screens/NotificationScreen';
+import { useSelector } from 'react-redux';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabNavigator() {
   const colorScheme = useColorScheme();
+
+  const notifications = useSelector(state => state.user.userNotifications);
+  const unreadNotificationCount = size(filter(notifications, notification => notification.unRead));
 
   return (
     <BottomTab.Navigator
@@ -49,13 +51,41 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
+        name="아림"
+        component={NotificationScreen}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <View style={{position: 'relative'}}>
+              <TabBarIcon name="notifications-outline" color={color} />
+              {
+                unreadNotificationCount > 0 &&
+                <View
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: -10,
+                    backgroundColor: 'red',
+                    width: 20,
+                    height: 20,
+                    borderRadius: 20,
+                    justifyContent: 'center'
+                  }}
+                >
+                  <Text style={{fontWeight: '900', color: 'white', textAlign: 'center'}}>{unreadNotificationCount}</Text>
+                </View>
+              }
+            </View>
+          ),
+        }}
+      />
+      {/* <BottomTab.Screen
         name="Links"
         component={LinksScreen}
         options={{
           title: 'Storybook',
           tabBarIcon: ({ focused }) => <TabBarIcon focused={focused} name="md-book" />,
         }}
-      />
+      /> */}
     </BottomTab.Navigator>
   );
 }
@@ -86,6 +116,11 @@ function TabOneNavigator() {
       <TabOneStack.Screen
         name='Idea'
         component={IdeaScreen}
+        options={{ headerShown: false }}
+      />
+      <TabOneStack.Screen
+        name='Notification'
+        component={NotificationScreen}
         options={{ headerShown: false }}
       />
     </TabOneStack.Navigator>

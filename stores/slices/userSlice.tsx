@@ -5,6 +5,7 @@ const userSlice = createSlice({
         currentUser: null,
         userProfileData: null,
         ideas: null,
+        userNotifications: null
     },
     reducers: {
         setUser(state, action){
@@ -12,6 +13,9 @@ const userSlice = createSlice({
         },
         setUserProfileData(state, action){
             state.userProfileData = action.payload;
+        },
+        setUserNotifications(state, action){
+            state.userNotifications = action.payload;
         },
         setIdeas(state, action){
             state.ideas = action.payload;
@@ -22,5 +26,5 @@ const userSlice = createSlice({
     }
 })
 
-export const  { setUser, setUserProfileData, setIdeas, addIdea } = userSlice.actions;
+export const  { setUser, setUserProfileData, setIdeas, addIdea, setUserNotifications } = userSlice.actions;
 export default userSlice.reducer;

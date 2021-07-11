@@ -20,6 +20,19 @@ const uploadImages = async (imageFileUris, imageFirestorePaths) => {
     return [];
 }
 
+export const loadIdeaFromId = async (ideaId) => {
+    if(!ideaId){
+        return null;
+    }
+
+    try{
+        const doc = await firestore().collection('users').doc(ideaId).get();
+        return ({id: doc.id, ...doc.data()})
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+    }
+}
+
 export async function addNewIdea(idea, owner){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
@@ -81,7 +94,7 @@ export async function addIdeaListenner(ideaId, dispatch){
 
 export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
-    if(!ideaId || !owner) return;
+    if(!ideaId || !owner) return false;
 
     console.log(ideaId, owner, commentDoc);
 
@@ -92,7 +105,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
     try{
         const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
         if(!ideaDoc.exists){
-            return;
+            return false;
         }
 
         const imagePaths = map(imageUris, uri => {
@@ -125,14 +138,30 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         batch.set(
             firestore().collection('history').doc(owner.uid).collection('comments').doc(ideaId),
             {
-                idea: ideaDoc.data(),
+                ideaId: ideaDoc.id,
                 comment: doc
             }
         )
 
+        const ideaData = ideaDoc.data();
+
+        //inform to the idea's owner a new comment 
+        batch.set(
+            firestore().collection('users').doc(ideaData.ownerId).collection('notifications').doc(),
+            {
+                ideaId,
+                type: 'NEW_COMMENT',
+                commentUser: owner,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
         await batch.commit();
+        return true;
     }catch(ex){
         console.log('addCommentToIdea', ex);
+        return false;
     }
 }
 
@@ -319,10 +348,22 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
             }
         )
 
-        await batch.set(
-            firestore().collection('history').doc(uid).collection('picked').doc(),
+        // await batch.set(
+        //     firestore().collection('history').doc(uid).collection('picked').doc(),
+        //     {
+        //         ...commentDoc.data(),
+        //         createdAt: firestore.FieldValue.serverTimestamp(),
+        //         updatedAt: firestore.FieldValue.serverTimestamp()
+        //     }
+        // )
+
+        //inform to the idea's owner a new comment 
+        batch.set(
+            firestore().collection('users').doc(commentData.owner.uid).collection('notifications').doc(),
             {
-                ...commentDoc.data(),
+                ideaId,
+                type: 'ASK_FOR_PICK',
+                ideaOwner: ideaData.owner,
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }

@@ -144,6 +144,8 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
 )}
 
 const IdeaCommentScreen = ({idea}) => {
+    if(!idea) return null;
+
     const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
     const [ showInnerCommentsModal, setShowInnerCommentsModal ] = useState(false);
     const [ selectedComment, setSelectedComment ] = useState({});
@@ -270,49 +272,18 @@ const IdeaCommentScreen = ({idea}) => {
             />
             {
                 Boolean(isShowingConfirmToPick) &&
-                <InfoModal isVisible={Boolean(isShowingConfirmToPick)} onClose={() => setShowingConfirmToPick(true)}>
-                    {
-                        isPickedIdeaSuccessful ?
-                        <>
-                            <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
-                                Pick 초대
-                            </Text>
-                            <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24}}>
-                                {`‘000님’이 회원님을\n아이디어 참여자로 pick했어요!`}
-                            </Text>
-                            <TouchableOpacity style={{marginBottom: 24, padding: 8}}>
-                                <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
-                            </TouchableOpacity>
-                            <View style={{flexDirection: 'row'}}>
-                                <CBButton
-                                    text='거절'
-                                    variant='outlined'
-                                    containerStyle={{paddingVertical: 16, paddingHorizontal: 32, marginRight: 16, borderRadius: 50}}
-                                    onPress={() => setShowingConfirmToPick(null)}
-                                />
-                                <CBButton
-                                    text='확인'
-                                    variant='contained'
-                                    containerStyle={{paddingVertical: 16, paddingHorizontal: 32, borderRadius: 50}}
-                                    onPress={() => setShowingConfirmToPick(null)}
-                                />
-                            </View>
-                        </>
-                        :
-                        <>
-                            <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
-                                Pick하기
-                            </Text>
-                            <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24, marginBottom: 24}}>
-                                {`pick을 하면 같은 팀으로 활동할 수 있어요!\n000님을 아이디어 참여자로 pick 하시겠어요?`}
-                            </Text>
-                            <RoundButton
-                                text='확인'
-                                loading={loading}
-                                onPress={throttle(pickIdea, 5000, { trailing: false })}
-                            />
-                        </>
-                    }
+                <InfoModal isVisible={Boolean(isShowingConfirmToPick)} onClose={() => setShowingConfirmToPick(false)}>
+                    <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
+                        Pick하기
+                    </Text>
+                    <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24, marginBottom: 24}}>
+                        {`pick을 하면 같은 팀으로 활동할 수 있어요!\n000님을 아이디어 참여자로 pick 하시겠어요?`}
+                    </Text>
+                    <RoundButton
+                        text='확인'
+                        loading={loading}
+                        onPress={throttle(pickIdea, 5000, { trailing: false })}
+                    />
                 </InfoModal>
             }
         </ScrollView>

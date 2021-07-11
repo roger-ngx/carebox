@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { map, get, filter } from 'lodash';
+import { size, get, filter, find } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
@@ -11,18 +11,27 @@ import PickedIdea from 'components/Idea/PickedIdea';
 import NewIdea from 'components/Idea/NewIdea';
 import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
 import { addIdeasListenner } from 'firebase/IdeaRepository';
-import { requestPushNotificationPermission, subscribeForUserInformation } from '../firebase/UserRepository';
+import { requestPushNotificationPermission, subscribeForUserInformation, subscribeForNotifications } from '../firebase/UserRepository';
+import { Icon } from 'react-native-elements';
+import InfoModal from '../modals/InfoModal';
+import CBButton from '../components/CBButton';
 
 export default function Home({navigation}) {
 
   const currentUser = useSelector(state => state.user.currentUser);
-
   const storeIdeas = useSelector(state => state.user.ideas);
+  const notifications = useSelector(state => state.user.userNotifications);
+
+  const unreadNotificationCount = size(filter(notifications, notification => notification.unRead));
+
   const dispatch = useDispatch();
 
   const [ ideas, setIdeas ] = useState(storeIdeas);
   const [ currentFilter, setCurrentFilter ] = useState('전체');
   const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
+
+  const [ openModalToAllowPick, setOpenModalToAllowPick ] = useState(false);
+  const [ askForPickNotification, setAskForPickNotification ] = useState({});
 
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
@@ -37,6 +46,14 @@ export default function Home({navigation}) {
 
     return () => (typeof unsubscriber === 'function') && unsubscriber();
   }, []);
+
+  useEffect(() => {
+    const notification = find(notifications, notification => notification.unRead && notification.type==='ASK_FOR_PICK');
+    if(notification){
+      setAskForPickNotification(notification);
+      setOpenRegistrationModal(true);
+    }
+  }, [notifications]);
 
   useEffect(() => {
     if(!currentFilter) return;
@@ -60,19 +77,63 @@ export default function Home({navigation}) {
     if(user){
       const uid = user.uid;
       if(uid){
-        const unsubscriber = await subscribeForUserInformation(uid, dispatch);
+        const userDataUnsubscriber = await subscribeForUserInformation(uid, dispatch);
+        const userNotificationsUnsubscriber = await subscribeForNotifications(uid, dispatch);
 
-        return () => typeof unsubscriber === 'function' && unsubscriber();
+        return () => {
+          (typeof userDataUnsubscriber === 'function') && userDataUnsubscriber();
+          (typeof userNotificationsUnsubscriber === 'function') && userNotificationsUnsubscriber();
+        }
       }
     }
   }
 
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
-      <Image
-        style={{marginVertical: 16, alignSelf: 'center'}}
-        source={require('assets/images/carebox.png')}
-      />
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
+        }}
+      >
+        <Image
+          style={{marginVertical: 16, alignSelf: 'center'}}
+          source={require('assets/images/carebox.png')}
+        />
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            right: 0, top: 0, bottom: 0,
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingHorizontal: 20
+          }}
+          onPress={() => navigation.navigate('Notification')}
+        >
+          <>
+          <Icon
+            name='notifications-none'
+          />
+          {
+            unreadNotificationCount > 0 &&
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                right: -10,
+                backgroundColor: 'red',
+                width: 20,
+                height: 20,
+                borderRadius: 20,
+                justifyContent: 'center'
+              }}
+            >
+              <Text style={{fontWeight: '900', color: 'white', textAlign: 'center'}}>{unreadNotificationCount}</Text>
+            </View>
+          }
+          </>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         style={{width: '100%'}}
         showsVerticalScrollIndicator={false}
@@ -144,6 +205,34 @@ export default function Home({navigation}) {
       {
         openRegistrationModal &&
         <IdeaRegistrationModal onClose={closeModal}/>
+      }
+      {
+        Boolean(openModalToAllowPick) &&
+        <InfoModal isVisible={Boolean(openModalToAllowPick)} onClose={() => setOpenModalToAllowPick(null)}>
+          <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
+              Pick 초대
+          </Text>
+          <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24}}>
+              {`‘${askForPickNotification.ideaOwner.nickName}님’이 회원님을\n아이디어 참여자로 pick했어요!`}
+          </Text>
+          <TouchableOpacity style={{marginBottom: 24, padding: 8}}>
+              <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
+          </TouchableOpacity>
+          <View style={{flexDirection: 'row'}}>
+              <CBButton
+                  text='거절'
+                  variant='outlined'
+                  containerStyle={{paddingVertical: 16, paddingHorizontal: 32, marginRight: 16, borderRadius: 50}}
+                  onPress={() => setOpenModalToAllowPick(null)}
+              />
+              <CBButton
+                  text='수락'
+                  variant='contained'
+                  containerStyle={{paddingVertical: 16, paddingHorizontal: 32, borderRadius: 50}}
+                  onPress={() => setOpenModalToAllowPick(null)}
+              />
+          </View>
+        </InfoModal>
       }
     </SafeAreaView>
   );
