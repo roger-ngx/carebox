@@ -2,7 +2,7 @@ import React from 'react';
 import Modal from 'react-native-modal';
 import { View } from 'react-native';
 
-const InfoModal = ({isVisible, children, onClose, clickOutsideToClose=false}) => {
+const InfoModal = ({isVisible, children, onClose, clickOutsideToClose=true}) => {
 
     return (
         <Modal

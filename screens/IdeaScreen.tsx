@@ -68,7 +68,7 @@ export default function IdeaScreen({route, navigation}) {
   const renderScene = SceneMap({
     first: () => (<IdeaDetailScreen idea={currentIdea} />),
     second: () => (<IdeaCommentScreen idea={ideaData} />),
-    third: () => (<PickedList pickes={currentIdea && currentIdea.pickes} />)
+    third: () => (<PickedList picks={currentIdea && currentIdea.picks} />)
   });
 
   const [index, setIndex] = React.useState(0);

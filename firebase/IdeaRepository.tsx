@@ -1,7 +1,7 @@
 import { firebase } from "@react-native-firebase/functions";
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
-import { get, isEmpty, map, forEach, set } from 'lodash';
+import { get, isEmpty, map, forEach, set, findIndex } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 
 import { setIdeas } from "../stores/slices/userSlice";
@@ -332,10 +332,13 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
 
         const commentData = commentDoc.data();
 
+        const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
+        const ideaData = ideaDoc.data();
+
         await batch.update(
             firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId),
             {
-                isPicked: true,
+                pickStatus: 'ASKED_FOR_PICK',
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
         )
@@ -343,7 +346,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
         await batch.update(
             firestore().collection('ideas').doc(ideaId),
             {
-                pickes: firestore.FieldValue.arrayUnion(commentData.owner),
+                picks: firestore.FieldValue.arrayUnion({...commentData.owner, status: 'ASKED_FOR_PICK'}),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
         )
@@ -362,10 +365,82 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
             firestore().collection('users').doc(commentData.owner.uid).collection('notifications').doc(),
             {
                 ideaId,
-                type: 'ASK_FOR_PICK',
+                type: 'ASKED_FOR_PICK',
                 ideaOwner: ideaData.owner,
+                comment: commentData,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp(),
+                unRead: true
+            }
+        )
+
+        await batch.commit();
+
+        return true;
+    }catch(ex){
+        console.log('pickAnIdea', ex);
+    }
+
+    return false;
+}
+
+export const acceptPicking = async ({uid, ideaId, commentId}) => {
+    const batch = firestore().batch();
+
+    try{
+
+        const commentDoc = await firestore().collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId).get();
+
+        if(!commentDoc.exists){
+            return;
+        }
+
+        const commentData = commentDoc.data();
+
+        const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
+        const ideaData = ideaDoc.data();
+
+        await batch.update(
+            firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId),
+            {
+                pickStatus: 'ACCEPTED_TO_PICK',
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        const { owner, picks } = ideaData;
+
+        const index = findIndex(picks, pick => pick.uid === uid);
+        picks[index].type = 'ACCEPTED_TO_PICK'
+
+        await batch.update(
+            firestore().collection('ideas').doc(ideaId),
+            {
+                picks,
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.set(
+            firestore().collection('history').doc(uid).collection('picked').doc(),
+            {
+                ...commentDoc.data(),
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        //inform to the idea's owner 
+        batch.set(
+            firestore().collection('users').doc(owner.uid).collection('notifications').doc(),
+            {
+                ideaId,
+                type: 'ACCEPTED_TO_PICK',
+                commentOwner: commentData.owner,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp(),
+                unRead: true
             }
         )
 

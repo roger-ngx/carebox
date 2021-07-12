@@ -15,6 +15,7 @@ import { requestPushNotificationPermission, subscribeForUserInformation, subscri
 import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
+import { acceptPicking } from '../firebase/IdeaRepository';
 
 export default function Home({navigation}) {
 
@@ -33,6 +34,9 @@ export default function Home({navigation}) {
   const [ openModalToAllowPick, setOpenModalToAllowPick ] = useState(false);
   const [ askForPickNotification, setAskForPickNotification ] = useState({});
 
+  const [ openPickRequestAccepted, setOpenPickRequestAccepted ] = useState(false);
+  const [ pickAcceptedNotification, setPickAcceptedNotification ] = useState({});
+
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
 
@@ -48,10 +52,16 @@ export default function Home({navigation}) {
   }, []);
 
   useEffect(() => {
-    const notification = find(notifications, notification => notification.unRead && notification.type==='ASK_FOR_PICK');
+    const notification = find(notifications, notification => notification.unRead && notification.type==='ASKED_FOR_PICK');
     if(notification){
       setAskForPickNotification(notification);
-      setOpenRegistrationModal(true);
+      setOpenModalToAllowPick(true);
+    }
+
+    const acceptedNotification = find(notifications, notification => notification.unRead && notification.type==='ACCEPTED_TO_PICK');
+    if(acceptedNotification){
+      setPickAcceptedNotification(acceptedNotification);
+      setOpenPickRequestAccepted(true);
     }
   }, [notifications]);
 
@@ -85,6 +95,14 @@ export default function Home({navigation}) {
           (typeof userNotificationsUnsubscriber === 'function') && userNotificationsUnsubscriber();
         }
       }
+    }
+  }
+
+  const acceptPick = async() => {
+    try{
+      await acceptPicking(askForPickNotification.ideaId, );
+    }catch(ex){
+
     }
   }
 
@@ -232,6 +250,26 @@ export default function Home({navigation}) {
                   onPress={() => setOpenModalToAllowPick(null)}
               />
           </View>
+        </InfoModal>
+      }
+      {
+        Boolean(openPickRequestAccepted) &&
+        <InfoModal isVisible={Boolean(openPickRequestAccepted)} onClose={() => setOpenPickRequestAccepted(null)}>
+          <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
+            Pick하기
+          </Text>
+          <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24}}>
+              {`‘${pickAcceptedNotification.commentOwner.nickName}님’이 회원님의 pick을 수락했어요!`}
+          </Text>
+          <TouchableOpacity style={{marginBottom: 24, padding: 8}}>
+              <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
+          </TouchableOpacity>
+          <CBButton
+              text='거절'
+              variant='outlined'
+              containerStyle={{width: '100%', paddingVertical: 16, borderRadius: 50}}
+              onPress={() => setOpenPickRequestAccepted(null)}
+          />
         </InfoModal>
       }
     </SafeAreaView>

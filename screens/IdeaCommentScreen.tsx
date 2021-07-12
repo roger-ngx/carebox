@@ -218,13 +218,13 @@ const IdeaCommentScreen = ({idea}) => {
     const pickIdea = async () => {
         setLoading(true);
         try{
-            await pickAnIdea({uid: user.uid, ideaId: idea.id, commentId: isShowingConfirmToPick});
+            await pickAnIdea({uid: user.uid, ideaId: idea.id, commentId: isShowingConfirmToPick.id});
         }catch(ex){
             console.log('pickIdea', ex)
         }
 
         setPickedIdeaSuccessful(true);
-        // setShowingConfirmToPick(null);
+        setShowingConfirmToPick(null);
         setLoading(false);
     }
 
@@ -240,7 +240,7 @@ const IdeaCommentScreen = ({idea}) => {
                                 
                                 <CBButton
                                     text='Pick하기'
-                                    onPress={() => setShowingConfirmToPick(comment.id)}
+                                    onPress={() => setShowingConfirmToPick(comment)}
                                 />
                             </View>
 
@@ -277,7 +277,7 @@ const IdeaCommentScreen = ({idea}) => {
                         Pick하기
                     </Text>
                     <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24, marginBottom: 24}}>
-                        {`pick을 하면 같은 팀으로 활동할 수 있어요!\n000님을 아이디어 참여자로 pick 하시겠어요?`}
+                        {`pick을 하면 같은 팀으로 활동할 수 있어요!\n${isShowingConfirmToPick.owner.nickName}님을 아이디어 참여자로 pick 하시겠어요?`}
                     </Text>
                     <RoundButton
                         text='확인'
