@@ -22,33 +22,40 @@ const NotificationScreen = ({navigation}) => {
     }
 
     return (
-        <SafeAreaView>
-            <View style={{padding: 20}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+            <View>
                 <TitleNavigationBar
                     onBackPress={() => navigation.pop()}
                     title='알림'
-                    containerStyle={{marginBottom: 16}}
+                    containerStyle={{marginVertical: 16, marginHorizontal: 20}}
                 />
                 <FlatList
                     data={notifications}
                     renderItem={
                         ({item}) => {
-                            const { id, ideaId, commentUser, unRead } = item;
+                            const { id, ideaId, commentUser, ideaOwner, unRead } = item;
                             return (
                                 <TouchableOpacity
-                                    style={{flexDirection: 'row', alignItems: 'center'}}
+                                    style={{flexDirection: 'row', alignItems: 'center', backgroundColor: unRead ? '#eee' : 'white', paddingVertical: 16, paddingHorizontal: 20}}
                                     onPress={() => readNotification(ideaId, id, unRead)}
                                 >
                                     <Image
                                         style={{width: 50, height: 50, marginRight: 16}}
                                         source={require('assets/icons/notification.png')}
                                     />
-                                    <Text style={{flex: 1}}>{commentUser.nickName} {item.type}</Text>
+                                    {
+                                        commentUser &&
+                                        <Text style={{flex: 1}}>{commentUser.nickName} {item.type}</Text>
+                                    }
+                                    {
+                                        ideaOwner &&
+                                        <Text style={{flex: 1}}>{ideaOwner.nickName} {item.type}</Text>
+                                    }
                                 </TouchableOpacity>
                             )
                         }
                     }
-                    ItemSeparatorComponent={() => <Divider style={{marginVertical: 16}}/>}
+                    ItemSeparatorComponent={() => <Divider/>}
                     ListEmptyComponent={() => (<Text>No notifications</Text>)}
                 />
             </View>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
+import { ActivityIndicator } from 'react-native-paper';
 
-const CBButton = ({text, variant, onPress, containerStyle}) => (
+const CBButton = ({text, variant, loading, onPress, containerStyle}) => (
     <TouchableOpacity
         style={[{
             backgroundColor: variant==='contained' ? '#1379FF' : 'white',
@@ -12,16 +13,22 @@ const CBButton = ({text, variant, onPress, containerStyle}) => (
             paddingHorizontal: 16
         }, containerStyle]}
         onPress={onPress}
+        disabled={loading}
     >
-        <Text
-            style={{
-                fontSize: 16,
-                fontWeight: 'bold',
-                color: variant==='contained' ? 'white' : '#1379FF'
-            }}
-        >
-            {text}
-        </Text>
+        {
+            loading ?
+            <ActivityIndicator size='small' color={variant==='contained' ? 'white' : '#1379FF'} />
+            :
+            <Text
+                style={{
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    color: variant==='contained' ? 'white' : '#1379FF'
+                }}
+            >
+                {text}
+            </Text>
+        }
     </TouchableOpacity>
 )
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { size, get, filter, find } from 'lodash';
+import { size, get, filter, find, throttle } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
@@ -15,7 +15,7 @@ import { requestPushNotificationPermission, subscribeForUserInformation, subscri
 import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
-import { acceptPicking } from '../firebase/IdeaRepository';
+import { acceptPicking, rejectPicking } from '../firebase/IdeaRepository';
 
 export default function Home({navigation}) {
 
@@ -36,6 +36,8 @@ export default function Home({navigation}) {
 
   const [ openPickRequestAccepted, setOpenPickRequestAccepted ] = useState(false);
   const [ pickAcceptedNotification, setPickAcceptedNotification ] = useState({});
+
+  const [ loading, setLoading ] = useState(false);
 
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
@@ -99,11 +101,33 @@ export default function Home({navigation}) {
   }
 
   const acceptPick = async() => {
+    setLoading(true);
     try{
-      await acceptPicking(askForPickNotification.ideaId, );
+      const {ideaId, comment} = askForPickNotification;
+      if(!ideaId || !comment){
+        return;
+      }
+      await acceptPicking({uid: currentUser.uid, ideaId , commentId: comment.id});
     }catch(ex){
-
+      console.log('acceptPicking', ex);
     }
+    setLoading(false);
+    setOpenModalToAllowPick(null);
+  }
+
+  const rejectPick = async() => {
+    setLoading(true);
+    try{
+      const {ideaId, comment} = askForPickNotification;
+      if(!ideaId || !comment){
+        return;
+      }
+      await rejectPicking({uid: currentUser.uid, ideaId , commentId: comment.id});
+    }catch(ex){
+      console.log('rejectPicking', ex);
+    }
+    setLoading(false);
+    setOpenModalToAllowPick(null);
   }
 
   return (
@@ -240,14 +264,16 @@ export default function Home({navigation}) {
               <CBButton
                   text='거절'
                   variant='outlined'
+                  loading={loading}
                   containerStyle={{paddingVertical: 16, paddingHorizontal: 32, marginRight: 16, borderRadius: 50}}
-                  onPress={() => setOpenModalToAllowPick(null)}
+                  onPress={throttle(rejectPick, 10000, {trailing: false})}
               />
               <CBButton
                   text='수락'
                   variant='contained'
                   containerStyle={{paddingVertical: 16, paddingHorizontal: 32, borderRadius: 50}}
-                  onPress={() => setOpenModalToAllowPick(null)}
+                  loading={loading}
+                  onPress={throttle(acceptPick, 10000, {trailing: false})}
               />
           </View>
         </InfoModal>
