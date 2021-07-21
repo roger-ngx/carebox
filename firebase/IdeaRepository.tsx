@@ -365,7 +365,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
             firestore().collection('users').doc(commentData.owner.uid).collection('notifications').doc(),
             {
                 ideaId,
-                type: 'ASKED_FOR_PICK',
+                status: 'ASKED_FOR_PICK',
                 ideaOwner: ideaData.owner,
                 comment: {id: commentId, ...commentData},
                 createdAt: firestore.FieldValue.serverTimestamp(),
@@ -384,7 +384,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
     return false;
 }
 
-export const acceptPicking = async ({uid, ideaId, commentId}) => {
+export const acceptPicking = async ({uid, ideaId, commentId, notificationId}) => {
     const batch = firestore().batch();
 
     try{
@@ -412,7 +412,7 @@ export const acceptPicking = async ({uid, ideaId, commentId}) => {
         const { owner, picks } = ideaData;
 
         const index = findIndex(picks, pick => pick.uid === uid);
-        picks[index].type = 'ACCEPTED_TO_PICK'
+        picks[index].status = 'ACCEPTED_TO_PICK'
 
         await batch.update(
             firestore().collection('ideas').doc(ideaId),
@@ -426,6 +426,7 @@ export const acceptPicking = async ({uid, ideaId, commentId}) => {
             firestore().collection('history').doc(uid).collection('picked').doc(),
             {
                 ...commentDoc.data(),
+                pickStatus: 'ACCEPTED_TO_PICK',
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
@@ -444,6 +445,14 @@ export const acceptPicking = async ({uid, ideaId, commentId}) => {
             }
         )
 
+        batch.set(
+            firestore().collection('users').doc(uid).collection('notifications').doc(notificationId),
+            {
+                updatedAt: firestore.FieldValue.serverTimestamp(),
+                unRead: false
+            }
+        )
+
         await batch.commit();
 
         return true;
@@ -454,7 +463,7 @@ export const acceptPicking = async ({uid, ideaId, commentId}) => {
     return false;
 }
 
-export const rejectPicking = async ({uid, ideaId, commentId}) => {
+export const rejectPicking = async ({uid, ideaId, commentId, notificationId}) => {
     const batch = firestore().batch();
 
     try{
@@ -480,13 +489,21 @@ export const rejectPicking = async ({uid, ideaId, commentId}) => {
         const { picks } = ideaData;
 
         const index = findIndex(picks, pick => pick.uid === uid);
-        picks[index].type = 'REJECTED_TO_PICK'
+        picks[index].status = 'REJECTED_TO_PICK'
 
         await batch.update(
             firestore().collection('ideas').doc(ideaId),
             {
                 picks,
                 updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        batch.set(
+            firestore().collection('users').doc(uid).collection('notifications').doc(notificationId),
+            {
+                updatedAt: firestore.FieldValue.serverTimestamp(),
+                unRead: false
             }
         )
 

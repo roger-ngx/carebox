@@ -102,11 +102,11 @@ export async function subscribeForNotifications(userId, dispatch){
     }
 }
 
-export async function markReadingNotification(userId, notificationId){
+export async function markReadingNotification({uid, notificationId}){
     try{
-        console.log(userId, notificationId);
+        console.log(uid, notificationId);
 
-        await firestore().collection('users').doc(userId)
+        await firestore().collection('users').doc(uid)
         .collection('notifications').doc(notificationId)
         .update({
             unRead: false,

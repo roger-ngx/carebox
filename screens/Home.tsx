@@ -11,7 +11,7 @@ import PickedIdea from 'components/Idea/PickedIdea';
 import NewIdea from 'components/Idea/NewIdea';
 import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
 import { addIdeasListenner } from 'firebase/IdeaRepository';
-import { requestPushNotificationPermission, subscribeForUserInformation, subscribeForNotifications } from '../firebase/UserRepository';
+import { requestPushNotificationPermission, subscribeForUserInformation, subscribeForNotifications, markReadingNotification } from '../firebase/UserRepository';
 import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
@@ -103,11 +103,11 @@ export default function Home({navigation}) {
   const acceptPick = async() => {
     setLoading(true);
     try{
-      const {ideaId, comment} = askForPickNotification;
+      const {id, ideaId, comment} = askForPickNotification;
       if(!ideaId || !comment){
         return;
       }
-      await acceptPicking({uid: currentUser.uid, ideaId , commentId: comment.id});
+      await acceptPicking({uid: currentUser.uid, ideaId , commentId: comment.id, notificationId: id});
     }catch(ex){
       console.log('acceptPicking', ex);
     }
@@ -118,16 +118,30 @@ export default function Home({navigation}) {
   const rejectPick = async() => {
     setLoading(true);
     try{
-      const {ideaId, comment} = askForPickNotification;
+      const {id, ideaId, comment} = askForPickNotification;
       if(!ideaId || !comment){
         return;
       }
-      await rejectPicking({uid: currentUser.uid, ideaId , commentId: comment.id});
+      await rejectPicking({uid: currentUser.uid, ideaId , commentId: comment.id, notificationId: id});
     }catch(ex){
       console.log('rejectPicking', ex);
     }
     setLoading(false);
     setOpenModalToAllowPick(null);
+  }
+
+  const readNotification = async ({uid, notificationId, ideaId}) => {
+    setLoading(true);
+    try{
+      await markReadingNotification({uid, notificationId});
+      setOpenPickRequestAccepted(false);
+      if(ideaId){
+        navigation.navigate('Idea', {ideaId: ideaId})
+      }
+    }catch(ex){
+      console.log('readNotification', ex);
+    }
+    setLoading(false);
   }
 
   return (
@@ -287,14 +301,18 @@ export default function Home({navigation}) {
           <Text style={{textAlign: 'center', color: '#001240', lineHeight: 24}}>
               {`‘${pickAcceptedNotification.commentOwner.nickName}님’이 회원님의 pick을 수락했어요!`}
           </Text>
-          <TouchableOpacity style={{marginBottom: 24, padding: 8}}>
+          <TouchableOpacity
+            style={{marginBottom: 24, padding: 8}}
+            onPress={() => readNotification({uid: currentUser.uid, notificationId: pickAcceptedNotification.id, ideaId: pickAcceptedNotification.ideaId})}
+          >
               <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
           </TouchableOpacity>
           <CBButton
-              text='거절'
-              variant='outlined'
-              containerStyle={{width: '100%', paddingVertical: 16, borderRadius: 50}}
-              onPress={() => setOpenPickRequestAccepted(null)}
+              text='확인'
+              variant='contained'
+              loading={loading}
+              containerStyle={{width: '100%', paddingVertical: 16, borderRadius: 50, alignItems: 'center'}}
+              onPress={() => readNotification({uid: currentUser.uid, notificationId: pickAcceptedNotification.id})}
           />
         </InfoModal>
       }
