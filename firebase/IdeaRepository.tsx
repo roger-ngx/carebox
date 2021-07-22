@@ -33,6 +33,22 @@ export const loadIdeaFromId = async (ideaId) => {
     }
 }
 
+export const loadIdeaByIds = async (ids) => {
+    if(!ids){
+        return null;
+    }
+
+    try{
+        const promises = map(ids, async id => await firestore().collection('ideas').doc(id).get());
+
+        const docs = await Promise.all(promises);
+
+        return map(docs, doc => ({id: doc.id, ...doc.data()}));
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+    }
+}
+
 export async function addNewIdea(idea, owner){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
@@ -77,6 +93,15 @@ export async function addIdeasListenner(dispatch){
     }
 
     return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
+}
+
+export async function getPickedIdeas(uid){
+    try{
+        const ret = await firestore().collection('history').doc(uid).collection('picked').get();
+        return map(ret.docs, doc => doc.data().ideaId);
+    }catch(ex){
+        console.log('getPickedIdeas', ex);
+    }
 }
 
 export async function addIdeaListenner(ideaId, dispatch){

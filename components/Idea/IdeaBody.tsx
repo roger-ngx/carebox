@@ -41,7 +41,7 @@ const IdeaBody = ({idea}) => {
                     alignItems: 'center'
                 }}
             >
-                <Text style={{color: '#898989'}}>{moment.unix(createdAt.seconds).format('YYYY.MM.DD')}</Text>
+                <Text style={{color: '#898989'}}>{createdAt && moment.unix(createdAt.seconds).format('YYYY.MM.DD')}</Text>
                 <IdeaHeart count={size(likes)}/>
             </View>
 

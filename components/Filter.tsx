@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, TouchableOpacity } from 'react-native';
 import { map } from 'lodash';
 import FilterItem from './FilterItem';
 
@@ -8,24 +8,26 @@ const FILTERS = [ '전체', '의료기기', '의료용품', '서비스', '업무
 const Filter = ({value, setValue, containerStyle}) => {
 
     return (
-        <ScrollView
-            horizontal
-            bounces={false}
-            style={{...containerStyle}}
-            showsHorizontalScrollIndicator={false}
-        >
-            {
-                map(FILTERS, filter => (
-                        <TouchableOpacity
-                            style={{marginRight: 16}}
-                            onPress={() => setValue(filter)}
-                        >
-                            <FilterItem text={filter} active={value===filter} />
-                        </TouchableOpacity>
+        <View style={[{maxHeight: 32, justifyContent: 'center', alignItems: 'center'}, containerStyle]}>
+            <ScrollView
+                horizontal
+                bounces={false}
+                contentContainerStyle={{width: '100%'}}
+                showsHorizontalScrollIndicator={false}
+            >
+                {
+                    map(FILTERS, filter => (
+                            <TouchableOpacity
+                                style={{marginRight: 16}}
+                                onPress={() => setValue(filter)}
+                            >
+                                <FilterItem text={filter} active={value===filter} />
+                            </TouchableOpacity>
+                        )
                     )
-                )
-            }
-        </ScrollView>
+                }
+            </ScrollView>
+        </View>
     )
 }
 

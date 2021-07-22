@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { size, get, filter, find, throttle } from 'lodash';
+import { size, get, filter, find, throttle, includes } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
@@ -15,7 +15,7 @@ import { requestPushNotificationPermission, subscribeForUserInformation, subscri
 import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
-import { acceptPicking, rejectPicking } from '../firebase/IdeaRepository';
+import { acceptPicking, getPickedIdeas, rejectPicking } from '../firebase/IdeaRepository';
 
 export default function Home({navigation}) {
 
@@ -33,6 +33,8 @@ export default function Home({navigation}) {
 
   const [ openModalToAllowPick, setOpenModalToAllowPick ] = useState(false);
   const [ askForPickNotification, setAskForPickNotification ] = useState({});
+
+  const [ pickedIdeaIds, setPickedIdeaIds ] = useState([]);
 
   const [ openPickRequestAccepted, setOpenPickRequestAccepted ] = useState(false);
   const [ pickAcceptedNotification, setPickAcceptedNotification ] = useState({});
@@ -81,8 +83,15 @@ export default function Home({navigation}) {
   }, [currentFilter, storeIdeas]);
 
   useEffect(() => {
-    subscribeForUserData(currentUser);
+    if(currentUser){
+      initUserData();
+    }
   }, [currentUser]);
+
+  const initUserData = async () => {
+    subscribeForUserData(currentUser);
+    setPickedIdeaIds(await getPickedIdeas(currentUser.uid))
+  }
 
   const subscribeForUserData = async (user) => {
     console.log('subscribeForUserData', user);
@@ -213,16 +222,16 @@ export default function Home({navigation}) {
         <View style={{paddingHorizontal: 20, marginBottom: 80}}>
           <PickedIdeaListHeader
             containerStyle={{paddingVertical: 20}}
-            onPress={() => navigation.navigate('PickedIdeas')}
+            onPress={() => navigation.navigate('PickedIdeas', {ids: pickedIdeaIds})}
           />
-          <PickedIdea idea={get(ideas, '0')}/>
+          <PickedIdea idea={find(ideas, idea => includes(pickedIdeaIds, idea.id))}/>
 
           <Divider style={{marginVertical: 20, color: '#B7BCC9'}} />
           <View>
             <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 20}}>New Idea</Text>
 
             <FlatList
-              data={ideas}
+              data={filter(ideas, idea => !includes(pickedIdeaIds, idea.id))}
               keyExtractor={item => item.id}
               renderItem={
                 ({item}) => (
