@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import FirstStep from './IdeaRegistration/FirstStep';
 import RoundButton from '../components/RoundButton';
@@ -53,29 +54,31 @@ const IdeaRegistrationModal = ({onClose}) => {
     return (
         <Modal
             isVisible={true}
-            style={{margin: 0}}
+            style={{margin: 0, justifyContent: 'flex-end'}}
             onBackButtonPress={onClose}
         >
             <SafeAreaView
                 style={{
-                    flex: 1,
+                    borderTopLeftRadius: 20,
+                    borderTopRightRadius: 20,
                     backgroundColor: '#F1F7FF',
+                    height: '90%',
                 }}
             >
                 <View
                     style={{
                         position: 'absolute',
-                        // top: 40,
                         zIndex: 999,
                         width: '100%',
-                        backgroundColor: 'white'
+                        backgroundColor: 'white',
+                        borderTopLeftRadius: 20,
+                        borderTopRightRadius: 20,
                     }}
                 >
                     <View 
                         style={{
                             flexDirection: 'row',
-                            marginTop: 16,
-                            marginBottom: 24,
+                            marginVertical: 24,
                             alignItems: 'center'
                         }}
                     >
@@ -123,7 +126,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                     style={{
                         flex: 1,
                         padding: 20,
-                        marginTop: 120
+                        marginTop: 140,
                     }}
                 >
                     <ScrollView>
@@ -150,7 +153,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                 </KeyboardAwareScrollView>
                 {
                     !isTextFocused &&
-                    <View style={{margin: 20}}>
+                    <View style={{marginHorizontal: 20}}>
                         <RoundButton
                             text='저장하고 다음'
                             onPress={onNextStep}

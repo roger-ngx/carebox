@@ -3,7 +3,7 @@ import { View, TouchableOpacity, TextInput, StyleSheet, Image, ActivityIndicator
 import { Icon } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { IImage } from '../models/Idea'; 
+import { isEmpty } from 'lodash';
 
 const IdeaImageUpload = ({onImageChanged}) => {
 
@@ -54,7 +54,7 @@ const IdeaImageUpload = ({onImageChanged}) => {
                     <ActivityIndicator color='#A1A1A1' size={44}/>
                     :
                     (
-                        !!ideaImage ?
+                        !isEmpty(ideaImage) ?
                         <Image source={ideaImage} style={{flex: 1, width: '100%'}}/>
                         :
                         <Icon
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
     btn: {
         borderWidth: 1,
         borderColor: '#9C9C9C',
-        borderRadius: 4,
-        marginBottom: 8,
+        borderTopRightRadius: 4,
+        borderTopLeftRadius: 4,
         backgroundColor: 'white',
         height: 120,
         alignItems: 'center',
@@ -89,8 +89,10 @@ const styles = StyleSheet.create({
     },
     textInput: {
         borderWidth: 1,
+        borderTopWidth: 0,
         borderColor: '#9C9C9C',
-        borderRadius: 4,
+        borderBottomRightRadius: 4,
+        borderBottomLeftRadius: 4,
         padding: 16,
         fontSize: 16,
         backgroundColor: 'white'
