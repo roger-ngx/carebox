@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { split, map } from 'lodash';
+import { split, map, includes, size } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RatingView from '../components/RatingView';
 import OutlinedTag from '../components/OutlinedTag';
@@ -10,34 +10,51 @@ import LikeCommentNumber from '../components/LikeCommentNumber';
 import { Divider } from 'react-native-elements/dist/divider/Divider';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import TitleNavigationBar from '../components/TitleNavigationBar';
-import { addCommenRepliestListenner } from '../firebase/IdeaRepository';
+import { addCommentRepliestListenner } from '../firebase/IdeaRepository';
 import { useDispatch, useSelector } from 'react-redux';
 import UserComment from '../components/UserComment';
 import CommentInput from '../components/CommentInput';
 
-const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComment}) => {
+const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitCommentReply}) => {
 
     if(!parentComment) return null;
 
     const dispatch = useDispatch();
 
-    const comments = useSelector(state => state.idea.subComments);
+    const replies = useSelector(state => state.idea.subComments);
+
+    const [ commentReplies, setCommentReplies ] = useState(replies || []);
+    const [ loading, setLoading ] = useState(false);
     
     const {
-        id, ideaId, practicalityRate, creativityRate, valuableRate,
-        scamper, content
+        id, ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
+        scamper, content, links, images, likes
     } = parentComment;
     
-    console.log('sub comments', id, ideaId)
+    console.log('sub replies', id, ideaId)
 
     useEffect(() => {
         if(!ideaId) return;
 
-        const unsubscriber = addCommenRepliestListenner({ideaId, commentId: id, dispatch})
+        const unsubscriber = addCommentRepliestListenner({ideaId, commentId: id, dispatch})
         return () => {
             typeof unsubscriber === 'function' && unsubscriber();
         }
     }, [ideaId])
+
+    const onSubmitReply = async reply => {
+        setLoading(true);
+
+        const ret = await onSubmitCommentReply(id, reply);
+        if(ret){
+            setCommentReplies([{reply, owner: user}, ...commentReplies]);
+        }else{
+            //error
+            console.log('error');
+        }
+
+        setLoading(false);
+    }
 
     const scamperSplits = split(scamper, ' : ');
 
@@ -52,7 +69,7 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
             useNativeDriver={true}
         >
             <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
-                <View style={{}}>
+                <View style={{marginBottom: 16}}>
                     <TitleNavigationBar
                         title='댓글'
                         onBackPress={onClose}
@@ -74,15 +91,19 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
                         <ExpandableText text={content}/>
                     </View>
                     <View style={{marginBottom: 10}}>
-                        <LikeCommentNumber liked={true}/>
+                    <LikeCommentNumber
+                        liked={includes(likes, user.uid)}
+                        likeNumber={size(likes)}
+                        commentNumber={size(commentReplies)}
+                    />
                     </View>
                     <Divider />
                     {
-                        map(comments, ({owner, comment}) => (
+                        map(commentReplies, ({id, owner, reply}) => (
                             <UserComment
-                                key={comment.id}
+                                key={id}
                                 user={owner}
-                                comment={comment}
+                                comment={reply}
                             />
                         ))
                     }
@@ -91,7 +112,8 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
                 <CommentInput
                     profileImageUrl={user.profileImageUrl}
                     containerStyle={{paddingHorizontal: 0}}
-                    onSubmit={comment => onSubmitComment(id, comment)}
+                    onSubmit={onSubmitReply}
+                    loading={loading}
                 />
             </SafeAreaView>
         </Modal>

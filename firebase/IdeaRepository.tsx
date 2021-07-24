@@ -190,11 +190,13 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
     }
 }
 
-export async function addReplyToComment({ideaId, owner, parentCommentId, comment}){
+export async function addReplyToComment({ideaId, owner, commentId, reply}){
 
     try{
+        console.log(reply, owner)
+
         const doc = {
-            comment,
+            reply,
             owner,
             createdAt: firestore.FieldValue.serverTimestamp(),
             updatedAt: firestore.FieldValue.serverTimestamp(),
@@ -202,12 +204,12 @@ export async function addReplyToComment({ideaId, owner, parentCommentId, comment
 
         await firestore()
         .collection('ideas').doc(ideaId)
-        .collection('comments').doc(parentCommentId)
+        .collection('comments').doc(commentId)
         .collection('replies').add(doc);
 
         return true;
     }catch(ex){
-        console.log('addCommentToIdea', ex);
+        console.log('addReplyToComment', ex);
     }
 
     return false;

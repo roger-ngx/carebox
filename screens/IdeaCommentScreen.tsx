@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { includes, map, reduce, size, throttle } from 'lodash';
+import { includes, map, reduce, size, throttle, head } from 'lodash';
 
 import IdeaOverallRating from 'components/IdeaOverallRating';
 import NewIdeaHead from 'components/Idea/NewIdeaHead';
@@ -13,7 +13,7 @@ import ExpandableText from 'components/ExpandableText';
 import RatingView from 'components/RatingView';
 import LikeCommentNumber from 'components/LikeCommentNumber';
 import { addIdeaCommentsListenner } from 'firebase/IdeaRepository';
-import { addReplyToComment, getIdeaCommentReplies, likeIdeaComment, pickAnIdea } from '../firebase/IdeaRepository';
+import { addReplyToComment, getIdeaCommentReplies, likeIdeaComment, pickAnIdea, addCommentRepliestListenner } from '../firebase/IdeaRepository';
 import CommentListModal from '../modals/CommentListModal';
 import ExternalLink from '../components/ExternalLink';
 import UserComment from '../components/UserComment';
@@ -21,31 +21,65 @@ import RoundButton from '../components/RoundButton';
 import CBButton from '../components/CBButton';
 import InfoModal from '../modals/InfoModal';
 
-const Comment = ({user, comment, showCommentInput, onShowComments}) => {
+const Comment = ({user, comment, onShowComments}) => {
 
-    const [ subCommentCount, setSubCommentCount ] = useState();
-    const [ latestSubComment, setLatestSubComment ] = useState();
-
+    const [ replyCount, setReplyCount ] = useState();
+    const [ latestReply, setLatestReply ] = useState();
+    const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
+    const [ loading, setLoading ] = useState(false);
     
+    const dispatch = useDispatch();
+
+    const replies = useSelector(state => state.idea.subComments);
+
     const {
-        ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
+        id, ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
         scamper, content, links, images, likes
     } = comment;
     
     const scamperSplits = scamper.split(' : ');
     
     useEffect(() => {
-        getSubCommentCount();
+        getReplyCount();
     }, [comment]);
 
-   const getSubCommentCount = async () => {
+    useEffect(() => {
+        setLatestReply(head(replies));
+        setReplyCount(size(replies));
+    }, [replies]);
+
+    useEffect(() => {
+        if(!ideaId) return;
+
+        const unsubscriber = addCommentRepliestListenner({ideaId, commentId: id, dispatch})
+        return () => {
+            typeof unsubscriber === 'function' && unsubscriber();
+        }
+    }, [ideaId])
+
+   const getReplyCount = async () => {
         const ret = await getIdeaCommentReplies(ideaId, comment.id);
-        setSubCommentCount(ret?.count);
-        setLatestSubComment(ret?.lastReply);
+        setReplyCount(ret?.count);
+        setLatestReply(ret?.lastReply);
     }
 
     const likeComment = () => {
         likeIdeaComment({ideaId, commentId: comment.id, uid: user.uid, isLike: true})
+    }
+
+    const onSubmitCommentReply = async (commentId, reply) => {
+        setLoading(true);
+
+        const ret = await addReplyToComment({commentId, reply, owner: user, ideaId})
+
+        if(ret){
+            setShowCommentInputModal(false);
+
+            setReplyCount(replyCount + 1);
+            setLatestReply({reply, owner: user});
+        }
+
+        setLoading(false);
     }
 
     return (<View>
@@ -89,7 +123,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
             <LikeCommentNumber
                 liked={includes(likes, user.uid)}
                 likeNumber={size(likes)}
-                commentNumber={subCommentCount}
+                commentNumber={replyCount}
                 onLikeComment={likeComment}
             />
         </View>
@@ -97,19 +131,19 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
         <Divider/>
 
         {
-            !!latestSubComment &&
+            !!latestReply &&
             <UserComment
-                user={latestSubComment.owner}
-                comment={latestSubComment.comment}
+                user={latestReply.owner}
+                comment={latestReply.reply}
             />
         }
         {
-            (subCommentCount > 0) &&
+            (replyCount > 0) &&
             <TouchableOpacity
                 style={{paddingBottom: 10}}
                 onPress={onShowComments}
             >
-                <Text style={{color: '#898989'}}>댓글 {subCommentCount}개 모두 보기</Text>
+                <Text style={{color: '#898989'}}>댓글 {replyCount}개 모두 보기</Text>
             </TouchableOpacity>
         }
 
@@ -121,7 +155,7 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
                 paddingVertical: 16,
                 alignItems: 'center'
             }}
-            onPress={showCommentInput}
+            onPress={() => setShowCommentInputModal(true)}
         >
             <FastImage
                 style={{width: 32, height: 32, borderRadius: 32}}
@@ -140,13 +174,21 @@ const Comment = ({user, comment, showCommentInput, onShowComments}) => {
                 />
             </View>
         </TouchableOpacity>
+        {
+            showCommentInputModal &&
+            <CommentInputModal
+                profileImageUrl={user.profileImageUrl}
+                onClose={() => setShowCommentInputModal(false)}
+                onSubmitCommentReply={cmt => onSubmitCommentReply(comment.id, cmt)}
+                loading={loading}
+            />
+        }
     </View>
 )}
 
 const IdeaCommentScreen = ({idea}) => {
     if(!idea) return null;
 
-    const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
     const [ showInnerCommentsModal, setShowInnerCommentsModal ] = useState(false);
     const [ selectedComment, setSelectedComment ] = useState({});
 
@@ -198,19 +240,8 @@ const IdeaCommentScreen = ({idea}) => {
 
     const comments = useSelector(state => state.idea.comments)
 
-    onSubmitComment = async (parentCommentId, comment) => {
-        setLoading(true);
 
-        const ret = await addReplyToComment({parentCommentId, comment, owner: user, ideaId: idea.id})
-
-        if(ret){
-            setShowCommentInputModal(false);
-        }
-
-        setLoading(false);
-    }
-
-    onShowInnerComments = (comment) => {
+    const onShowInnerComments = (comment) => {
         setShowInnerCommentsModal(true);
         setSelectedComment(comment);
     }
@@ -228,48 +259,52 @@ const IdeaCommentScreen = ({idea}) => {
         setLoading(false);
     }
 
+    const onSubmitCommentReply = async (commentId, reply) => {
+
+        try{
+            const ret = await addReplyToComment({commentId, reply, owner: user, ideaId: idea.id})
+            return ret;
+        }catch(ex){
+            console.log('onSubmitCommentReply', ex);
+        }
+
+        return false;
+
+    }
+
     return (
         <ScrollView>
             <IdeaOverallRating overallRate={overallRate}/>
             {
                 map(comments, comment => (
-                    <>
-                        <View style={{padding: 20}}>
-                            <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
-                                <NewIdeaHead owner={comment.owner}/>
-                                
-                                <CBButton
-                                    text='Pick하기'
-                                    onPress={() => setShowingConfirmToPick(comment)}
-                                />
-                            </View>
-
-                            <Comment
-                                user={user}
-                                comment={comment}
-                                showCommentInput={() => setShowCommentInputModal(true)}
-                                onShowComments={() => onShowInnerComments(comment)}
+                    <View style={{padding: 20}}>
+                        <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
+                            <NewIdeaHead owner={comment.owner}/>
+                            
+                            <CBButton
+                                text='Pick하기'
+                                onPress={() => setShowingConfirmToPick(comment)}
                             />
                         </View>
-                        {
-                            showCommentInputModal &&
-                            <CommentInputModal
-                                profileImageUrl={user.profileImageUrl}
-                                onClose={() => setShowCommentInputModal(false)}
-                                onSubmitComment={cmt => onSubmitComment(comment.id, cmt)}
-                                loading={loading}
-                            />
-                        }
-                    </>
+
+                        <Comment
+                            user={user}
+                            comment={comment}
+                            onShowComments={() => onShowInnerComments(comment)}
+                        />
+                    </View>
                 ))
             }
-            <CommentListModal
-                isVisible={showInnerCommentsModal}
-                onClose={() => setShowInnerCommentsModal(false)}
-                parentComment={selectedComment}
-                user={user}
-                onSubmitComment={onSubmitComment}
-            />
+            {
+                !!showInnerCommentsModal &&
+                <CommentListModal
+                    isVisible={showInnerCommentsModal}
+                    onClose={() => setShowInnerCommentsModal(false)}
+                    parentComment={selectedComment}
+                    user={user}
+                    onSubmitCommentReply={onSubmitCommentReply}
+                />
+            }
             {
                 Boolean(isShowingConfirmToPick) &&
                 <InfoModal isVisible={Boolean(isShowingConfirmToPick)} onClose={() => setShowingConfirmToPick(false)}>

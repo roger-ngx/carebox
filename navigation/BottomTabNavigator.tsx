@@ -23,6 +23,7 @@ import RegisterdIdeas from '../screens/UserProfile/RegisterdIdeas';
 import UserAccountSetting from '../screens/UserProfile/UserAccountSetting';
 import NotificationScreen from '../screens/NotificationScreen';
 import { useSelector } from 'react-redux';
+import BulletinBoard from '../screens/BulletinBoard';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -44,13 +45,13 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="마이페이지"
-        component={UserProfileNavigator}
+        name="게시판"
+        component={BulletinBoard}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="person-outline" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={30} type='material-community' name="format-list-bulleted" color={color} />,
         }}
       />
-      <BottomTab.Screen
+      {/* <BottomTab.Screen
         name="아림"
         component={NotificationScreen}
         options={{
@@ -76,6 +77,13 @@ export default function BottomTabNavigator() {
               }
             </View>
           ),
+        }}
+      /> */}
+      <BottomTab.Screen
+        name="마이페이지"
+        component={UserProfileNavigator}
+        options={{
+          tabBarIcon: ({ color }) => <Icon size={30} type='material-community' name="account-outline" color={color} />,
         }}
       />
       {/* <BottomTab.Screen

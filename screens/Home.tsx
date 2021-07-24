@@ -288,13 +288,22 @@ export default function Home({navigation}) {
                   text='거절'
                   variant='outlined'
                   loading={loading}
-                  containerStyle={{paddingVertical: 16, paddingHorizontal: 32, marginRight: 16, borderRadius: 50}}
+                  containerStyle={{
+                    paddingVertical: 16,
+                    paddingHorizontal: 32,
+                    marginRight: 16,
+                    borderRadius: 50
+                  }}
                   onPress={throttle(rejectPick, 10000, {trailing: false})}
               />
               <CBButton
                   text='수락'
                   variant='contained'
-                  containerStyle={{paddingVertical: 16, paddingHorizontal: 32, borderRadius: 50}}
+                  containerStyle={{
+                    paddingVertical: 16,
+                    paddingHorizontal: 32,
+                    borderRadius: 50
+                  }}
                   loading={loading}
                   onPress={throttle(acceptPick, 10000, {trailing: false})}
               />

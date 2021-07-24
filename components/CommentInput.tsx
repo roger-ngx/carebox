@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { throttle } from 'lodash';
@@ -6,6 +6,12 @@ import { throttle } from 'lodash';
 const CommentInput = ({profileImageUrl, loading, onSubmit, containerStyle}) => {
 
     const [ comment, setComment ] = useState();
+    
+    useEffect(() => {
+        if(!loading){
+            setComment();
+        }
+    }, [loading])
 
     return (
         <View
@@ -45,7 +51,7 @@ const CommentInput = ({profileImageUrl, loading, onSubmit, containerStyle}) => {
             >
                 {
                     loading ?
-                    <ActivityIndicator size='small' color='white' /> :
+                    <ActivityIndicator size='small' color='white' style={{height: 16}}/> :
                     <Text style={{color: 'white', fontWeight: 'bold', fontSize: 16}}>등록</Text>
                 }
             </TouchableOpacity>

@@ -5,13 +5,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image'
 import { ActivityIndicator } from 'react-native-paper';
 
-const CommentInputModal = ({profileImageUrl, onSubmitComment, onClose, loading}) => {
+const CommentInputModal = ({profileImageUrl, onSubmitCommentReply, onClose, loading}) => {
 
     const [ comment, setComment ] = useState('');
 
-    const onSubmit = () => {
-        onSubmitComment(comment);
-    };
+    const onSubmit = () => onSubmitCommentReply(comment);
 
     return (
         <Modal
@@ -53,7 +51,8 @@ const CommentInputModal = ({profileImageUrl, onSubmitComment, onClose, loading})
                             backgroundColor: '#1379FF',
                             borderRadius: 24,
                             paddingVertical: 8,
-                            paddingHorizontal: 16
+                            paddingHorizontal: 16,
+                            width: 60
                         }}
                         onPress={onSubmit}
                         disabled={loading}
