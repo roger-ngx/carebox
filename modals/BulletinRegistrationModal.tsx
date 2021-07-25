@@ -3,7 +3,7 @@ import Modal from 'react-native-modal';
 import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from 'react-native-elements';
-import { isEmpty, map } from 'lodash';
+import { size } from 'lodash';
 import { Snackbar } from 'react-native-paper';
 
 import CBTextInput from 'components/CBTextInput';
@@ -37,8 +37,8 @@ const BulletinRegistrationModal = ({onClose}) => {
     }
 
     useEffect(() => {
-        setShowingFinishButton(bulletinType && imageUris && content);
-    }, [bulletinType && imageUris && content]);
+        setShowingFinishButton(bulletinType && size(imageUris) > 0 && content);
+    }, [bulletinType, imageUris, content]);
 
     return (
         <Modal
@@ -99,15 +99,16 @@ const BulletinRegistrationModal = ({onClose}) => {
                             onImagesChange={setImageUris}
                         />
                     </View>
-                    
                 </ScrollView>
                 {
                     !!showingFinishButton &&
-                    <RoundButton
-                        text='등록'
-                        onPress={onAddCommentToIdea}
-                        loading={processing}
-                    />
+                    <View style={{backgroundColor: '#F1F7FF', padding: 20}}>
+                        <RoundButton
+                            text='등록'
+                            onPress={onAddCommentToIdea}
+                            loading={processing}
+                        />
+                    </View>
                 }
             </SafeAreaView>
             {/* <Snackbar

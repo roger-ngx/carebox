@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Platform, KeyboardAvoidingView, Alert } from 'react-native';
+import { View, Text, ScrollView, Platform, KeyboardAvoidingView, Alert, FlatList } from 'react-native';
 import Modal from 'react-native-modal';
 import { split, map, includes, size } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -67,15 +67,18 @@ const BulletinItemDetailScreen = ({navigation, route}) => {
                 <ScrollView>
                     <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
                     <Divider />
-                    {
-                        map(comments, ({id, owner, comment}) => (
+                    <FlatList
+                        data={comments}
+                        keyExtractor={item => item.id}
+                        renderItem={({item}) => (
                             <UserComment
-                                key={id}s
-                                user={owner}
-                                comment={comment}
+                                key={item.id}s
+                                user={item.owner}
+                                comment={item.comment}
                             />
-                        ))
-                    }
+                        )}
+                        showsVerticalScrollIndicator={false}
+                    />
                 </ScrollView>
                 <Divider style={{height: 4, marginHorizontal: -20}}/>
                 <CommentInput

@@ -4,6 +4,7 @@ import { Divider } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import { map, size, includes } from 'lodash';
 import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 import ExpandableText from './ExpandableText';
 import LikeCommentNumber from './LikeCommentNumber';
@@ -15,6 +16,47 @@ const BulletinBoardItem = ({item, containerStyle}) => {
 
     const [ liked, setLiked ] = useState();
     const [ likeNumber, setLikeNumber ] = useState();
+    const [ diffInMinites, setDiffInMinutes ] = useState();
+    const [ time, setTime ] = useState();
+
+    useEffect(() => {
+        setDiffInMinutes(moment().diff(moment.unix(item.createdAt.seconds), 'minutes'));
+
+        const interval = setInterval(() => { 
+            setDiffInMinutes(moment().diff(moment.unix(item.createdAt.seconds), 'minutes'));
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [item]);
+
+    useEffect(() => {
+        if(!diffInMinites) return ;
+        console.log('diffInMinites', diffInMinites)
+
+        let ret = diffInMinites;
+        let unit = '분';
+        if(ret > 60){
+            ret = diffInMinites/60;
+            unit = '시간';
+
+            if(ret > 24){
+                ret = ret / 24;
+                unit = '일';
+            }
+    
+            if(ret > 30){
+                ret = ret / 30;
+                unit = '개월';
+            }
+    
+            if(ret > 12){
+                ret=ret/12;
+                unit = '년';
+            }
+        }
+
+        setTime(`${ret|0}${unit} 전`);
+    }, [diffInMinites]);
 
     useEffect(() => {
         setLiked(includes(item.likes, user.uid));
@@ -46,10 +88,10 @@ const BulletinBoardItem = ({item, containerStyle}) => {
                 />
                 <View style={{flexDirection: 'column'}}>
                     <Text style={{color: '#1379FF', marginBottom: 4}}>{item.type}</Text>
-                    <Text>{item.owner.nickName}</Text>
+                    <Text style={{color: '#1D395F', fontSize: 14}}>{item.owner.nickName}</Text>
                 </View>
             </View>
-            <Text>1분 전</Text>
+            <Text style={{color: '#1D395F', fontSize: 12}}>{time}</Text>
         </View>
         <Divider style={{marginVertical: 16}}/>
         <View>

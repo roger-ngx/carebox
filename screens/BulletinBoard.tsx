@@ -48,18 +48,21 @@ const BulletinBoard = ({navigation}) => {
                 </Text>
             </View>
             <Divider />
-            <View style={{flex: 1, width: '100%', padding: 20}}>
+            <View style={{flex: 1, width: '100%', paddingHorizontal: 20, marginTop: 20}}>
                 <FlatList
                     style={{width: '100%'}}
                     data={boards}
                     renderItem={({item}) => (
                         <TouchableOpacity
                             onPress={() => navigation.navigate('BulletinItemDetail', { item })}
+                            style={{marginBottom: 20}}
                         >
                             <BulletinBoardItem item={item}/>
                         </TouchableOpacity>
                     )}
                     keyExtractor={item => item.id}
+                    showsVerticalScrollIndicator={false}
+                    ListFooterComponent={<View style={{height: 100}} />}
                 />
             </View>
             <View style={{position: 'absolute', bottom: 20, width: '60%'}}>
