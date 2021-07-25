@@ -28,6 +28,8 @@ export default function IdeaScreen({route, navigation}) {
     return null;
   };
 
+  console.log(ideaId, idea.id);
+
   const [ loading, setLoading ] = useState(true);
   const [ ideaData, setIdeaData ] = useState(idea || {});
 
@@ -99,7 +101,7 @@ export default function IdeaScreen({route, navigation}) {
           >
               <TouchableOpacity
                 style={{paddingTop: 8}}
-                onPress={() => navigation.navigate('Home')}
+                onPress={() => navigation.pop()}
               >
                   <Icon
                       name='arrow-back-ios'
@@ -117,6 +119,7 @@ export default function IdeaScreen({route, navigation}) {
               </TouchableOpacity>
           </View>
           <TabView
+            lazy
             navigationState={{ index, routes }}
             renderScene={renderScene}
             onIndexChange={setIndex}

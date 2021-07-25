@@ -3,6 +3,7 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import { get, isEmpty, map, forEach, set, findIndex } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
+import { remove, startsWith } from 'lodash';
 
 import { setIdeas } from "../stores/slices/userSlice";
 import { setComments, setCommentReplies, setCurrentIdea } from "../stores/slices/ideaSlice";
@@ -132,6 +133,10 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         if(!ideaDoc.exists){
             return false;
         }
+        const ideaData = ideaDoc.data();
+
+        //this one is for editting comment (which some images were uploaded to firebase)
+        const uploadedFirebaseImages = remove(imageUris, (image:string) => startsWith(image, 'https'));
 
         const imagePaths = map(imageUris, uri => {
             const uuid = uuidv4();
@@ -143,8 +148,9 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
         const doc = {
             ...commentDoc,
+            ideaId,
             owner,
-            images: imageUrls,
+            images: [...imageUrls, ...uploadedFirebaseImages],
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         }
@@ -161,14 +167,14 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         batch.set(firestore().collection('ideas').doc(ideaId).collection('comments').doc(), doc);
 
         batch.set(
-            firestore().collection('history').doc(owner.uid).collection('comments').doc(ideaId),
+            firestore().collection('history').doc(owner.uid).collection('comments').doc(),
             {
                 ideaId: ideaDoc.id,
-                comment: doc
+                comment: doc,
+                idea: ideaData
             }
         )
 
-        const ideaData = ideaDoc.data();
 
         //inform to the idea's owner a new comment 
         batch.set(

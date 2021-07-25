@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { map, size } from 'lodash';
+import { map, size, isEmpty } from 'lodash';
 import { View } from 'react-native';
 
 import PhotoUploadButton from './PhotoUploadButton';
 import UploadedPhoto from './UploadedPhoto';
 
-const CommentImagesUploader = ({onImagesChange}) => {
+const CommentImagesUploader = ({imageUris, onImagesChange}) => {
 
     const [ images, setImages ] = useState([])
+
+    useEffect(() => {
+        !isEmpty(imageUris) && setImages(imageUris);
+    }, [imageUris]);
 
     useEffect(() => {
         onImagesChange && onImagesChange(images);
@@ -22,7 +26,7 @@ const CommentImagesUploader = ({onImagesChange}) => {
         >
             {
                 map(images, (image, index) => (
-                    <View style={{marginRight: 8}}>
+                    <View style={{marginRight: 8}} key={image}>
                         <UploadedPhoto
                             key={image}
                             uri={image}

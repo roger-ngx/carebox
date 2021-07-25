@@ -24,6 +24,8 @@ import UserAccountSetting from '../screens/UserProfile/UserAccountSetting';
 import NotificationScreen from '../screens/NotificationScreen';
 import { useSelector } from 'react-redux';
 import BulletinBoard from '../screens/BulletinBoard';
+import RegisteredComments from '../screens/UserProfile/RegisteredComments';
+import BulletinItemDetailScreen from '../screens/BulletinItemDetailScreen';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -46,7 +48,7 @@ export default function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="게시판"
-        component={BulletinBoard}
+        component={BulletinBoardNavigator}
         options={{
           tabBarIcon: ({ color }) => <Icon size={30} type='material-community' name="format-list-bulleted" color={color} />,
         }}
@@ -135,6 +137,25 @@ function TabOneNavigator() {
   );
 }
 
+const BulletinBoardStack = createStackNavigator<TabOneParamList>();
+
+function BulletinBoardNavigator() {
+  return (
+    <BulletinBoardStack.Navigator>
+      <BulletinBoardStack.Screen
+        name="BulletinBoard"
+        component={BulletinBoard}
+        options={{ headerShown: false }}
+      />
+      <BulletinBoardStack.Screen
+        name="BulletinItemDetail"
+        component={BulletinItemDetailScreen}
+        options={{ headerShown: false }}
+      />
+    </BulletinBoardStack.Navigator>
+  );
+}
+
 const UserProfileStack = createStackNavigator<TabTwoParamList>();
 
 function UserProfileNavigator() {
@@ -156,9 +177,19 @@ function UserProfileNavigator() {
         options={{headerShown: false}}
       />
       <UserProfileStack.Screen
+        name='RegisteredComments'
+        component={RegisteredComments}
+        options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
         name='UserAccountSetting'
         component={UserAccountSetting}
         options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name='Idea'
+        component={IdeaScreen}
+        options={{ headerShown: false }}
       />
     </UserProfileStack.Navigator>
   );

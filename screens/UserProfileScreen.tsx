@@ -46,6 +46,7 @@ const UserProfileScreen = ({navigation}) => {
                 />
                 <ProfileSettingItem
                     text='내가 등록한 코멘트'
+                    onPress={() => navigation.navigate('RegisteredComments')}
                 />
                 <Divider />
                 <ProfileSettingItem

@@ -3,7 +3,7 @@ import { View, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'reac
 import FastImage from 'react-native-fast-image';
 import { throttle } from 'lodash';
 
-const CommentInput = ({profileImageUrl, loading, onSubmit, containerStyle}) => {
+const CommentInput = ({profileImageUrl, loading, autoFocus, onSubmit, containerStyle}) => {
 
     const [ comment, setComment ] = useState();
     
@@ -36,7 +36,7 @@ const CommentInput = ({profileImageUrl, loading, onSubmit, containerStyle}) => {
                 placeholder='댓글 달기...'
                 value={comment}
                 onChangeText={setComment}
-                autoFocus={true}
+                autoFocus={autoFocus}
                 multiline
             />
             <TouchableOpacity

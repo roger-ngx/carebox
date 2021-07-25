@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity} from 'react-native';
 import { size } from 'lodash';
 
-const ExpandableText = ({text}) => {
+const ExpandableText = ({text, maxLength=200, containerStyle}) => {
     const [ shownText, setShownText ] = useState();
     
     useEffect(() => {
-        if(size(text) > 200){
-            setShownText(text.substring(0, 197) + '...');
+        if(size(text) > maxLength){
+            setShownText(text.substring(0, (maxLength-3)) + '...');
         }else{
             setShownText(text);
         }
@@ -16,7 +16,7 @@ const ExpandableText = ({text}) => {
     const onExpandText = () => setShownText(text);
 
     return (
-        <View>
+        <View style={containerStyle}>
             <Text style={{fontSize: 16, color: '#334F74', lineHeight: 24}}>
                 {shownText}
                 {

@@ -3,7 +3,8 @@ import Modal from 'react-native-modal';
 import { View, Text, KeyboardAvoidingView, TouchableOpacity, ScrollView, TextInput, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from 'react-native-elements';
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
+import { Snackbar } from 'react-native-paper';
 
 import Rating from 'components/Rating';
 import CBDropDownPicker from 'components/CBDropDownPicker';
@@ -14,8 +15,7 @@ import { addCommentToIdea } from '../firebase/IdeaRepository';
 import CommentImagesUploader from '../components/CommentImagesUploader';
 import { useSelector } from 'react-redux';
 
-const CommentRegistrationModal = ({ideaId, onClose}) => {
-    console.log(ideaId);
+const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
 
     const [ practicalityRate, setPracticalityRate ] = useState(0);
     const [ creativityRate, setCreativityRate ] = useState(0);
@@ -27,6 +27,23 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
     const [ processing, setProcessing ] = useState(false);
     const [ imageUris, setImageUris ] = useState();
     const [ showingFinishButton, setShowingFinishButton ] = useState(false);
+
+    useEffect(() => {
+        if(!isEmpty(initData)){
+            const { practicalityRate, creativityRate, valuableRate, scamper, content, links, images } = initData;
+
+            setPracticalityRate(practicalityRate);
+            setCreativityRate(creativityRate);
+            setValuableRate(valuableRate);
+            setScamper(scamper);
+            setContent(content);
+
+            setExternalLinks(map(links, link => link.externalLink));
+            setExternalLinkTitles(map(links, link => link.externalLinkTitle));
+
+            setImageUris(images);
+        }
+    }, [initData]);
 
     const owner = useSelector(state => state.user.userProfileData);
 
@@ -43,10 +60,11 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
         }
 
         const ret = await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
-        if(!ret){
-            Alert.alert('add comment failed', '');
-        }
         setProcessing(false);
+        if(!ret){
+            return Alert.alert('add comment failed', '');
+        }
+
         onClose();
     }
 
@@ -61,7 +79,7 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
             avoidKeyboard={true}
             onBackButtonPress={onClose}
         >
-            <SafeAreaView style={{flex: 1, backgroundColor: 'white', padding: 20}}>
+            <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
                 <TouchableOpacity
                     style={{padding: 0, alignSelf: 'flex-end', padding: 8}}
                     onPress={onClose}
@@ -121,12 +139,13 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                     </View>
                     <View style={{flexDirection: 'row', marginBottom: 28}}>
                         <CommentImagesUploader
+                            imageUris={imageUris}
                             onImagesChange={setImageUris}
                         />
                     </View>
                     <View style={{marginBottom: 50}}>
                         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4}}>
-                            <Text style={{fontSize: 16, color: '#334F74'}}>링크</Text>
+                            <Text style={{fontSize: 16, color: '#334F74', fontWeight: 'bold'}}>링크</Text>
                             <TouchableOpacity
                                 style={{padding: 4}}
                                 onPress={() => {
@@ -144,7 +163,7 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                             </TouchableOpacity>
                         </View>
                         {
-                            map(externalLinks, (links, index) => (<View style={{marginBottom: 24}}>
+                            map(externalLinks, (link, index) => (<View key={link} style={{marginBottom: 24}}>
                                 <TextInput
                                     placeholder='title 입력해 주세요.'
                                     style={{
@@ -191,6 +210,14 @@ const CommentRegistrationModal = ({ideaId, onClose}) => {
                     />
                 }
             </SafeAreaView>
+            {/* <Snackbar
+                visible={true}
+                wrapperStyle={{marginBottom: 100}}
+            >
+                <Text style={{textAlign: 'center', color: 'white'}}>
+                    미입력 항목이 있습니다.
+                </Text>
+            </Snackbar> */}
         </Modal>
     )
 }

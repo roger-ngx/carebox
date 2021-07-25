@@ -10,7 +10,8 @@ const CBButton = ({text, variant, loading, onPress, containerStyle}) => (
             borderColor: '#1379FF',
             borderRadius: 20,
             paddingVertical: 8,
-            paddingHorizontal: 16
+            paddingHorizontal: 16,
+            alignItems: 'center'
         }, containerStyle]}
         onPress={onPress}
         disabled={loading}
