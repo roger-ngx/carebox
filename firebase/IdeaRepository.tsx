@@ -398,7 +398,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
             firestore().collection('users').doc(commentData.owner.uid).collection('notifications').doc(),
             {
                 ideaId,
-                status: 'ASKED_FOR_PICK',
+                type: 'ASKED_FOR_PICK',
                 ideaOwner: ideaData.owner,
                 comment: {id: commentId, ...commentData},
                 createdAt: firestore.FieldValue.serverTimestamp(),
@@ -478,7 +478,7 @@ export const acceptPicking = async ({uid, ideaId, commentId, notificationId}) =>
             }
         )
 
-        batch.set(
+        batch.update(
             firestore().collection('users').doc(uid).collection('notifications').doc(notificationId),
             {
                 updatedAt: firestore.FieldValue.serverTimestamp(),

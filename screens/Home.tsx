@@ -184,8 +184,8 @@ export default function Home({navigation}) {
             <View
               style={{
                 position: 'absolute',
-                bottom: 0,
-                right: -10,
+                bottom: 10,
+                right: 10,
                 backgroundColor: 'red',
                 width: 20,
                 height: 20,
@@ -272,7 +272,7 @@ export default function Home({navigation}) {
         <IdeaRegistrationModal onClose={closeModal}/>
       }
       {
-        Boolean(openModalToAllowPick) &&
+        !Boolean(openModalToAllowPick) &&
         <InfoModal isVisible={Boolean(openModalToAllowPick)} onClose={() => setOpenModalToAllowPick(null)}>
           <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
               Pick 초대
@@ -284,7 +284,9 @@ export default function Home({navigation}) {
               <Text style={{fontSize: 12, color: '#4A7CFF'}}>아이디어 상세 보기 ></Text>
           </TouchableOpacity>
           <View style={{flexDirection: 'row'}}>
-              <CBButton
+              {
+                loading ?
+                <CBButton
                   text='거절'
                   variant='outlined'
                   loading={loading}
@@ -295,18 +297,34 @@ export default function Home({navigation}) {
                     borderRadius: 50
                   }}
                   onPress={throttle(rejectPick, 10000, {trailing: false})}
-              />
-              <CBButton
-                  text='수락'
-                  variant='contained'
-                  containerStyle={{
-                    paddingVertical: 16,
-                    paddingHorizontal: 32,
-                    borderRadius: 50
-                  }}
-                  loading={loading}
-                  onPress={throttle(acceptPick, 10000, {trailing: false})}
-              />
+                />
+                :
+                <>
+                  <CBButton
+                      text='거절'
+                      variant='outlined'
+                      loading={loading}
+                      containerStyle={{
+                        paddingVertical: 16,
+                        paddingHorizontal: 32,
+                        marginRight: 16,
+                        borderRadius: 50
+                      }}
+                      onPress={throttle(rejectPick, 10000, {trailing: false})}
+                  />
+                  <CBButton
+                      text='수락'
+                      variant='contained'
+                      containerStyle={{
+                        paddingVertical: 16,
+                        paddingHorizontal: 32,
+                        borderRadius: 50
+                      }}
+                      loading={loading}
+                      onPress={throttle(acceptPick, 10000, {trailing: false})}
+                  />
+                </>
+              }
           </View>
         </InfoModal>
       }

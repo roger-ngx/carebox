@@ -10,6 +10,7 @@ import { setIdeaId } from '../stores/slices/ideaSlice';
 import PickedList from './PickedList';
 import { addIdeaListenner, loadIdeaFromId } from '../firebase/IdeaRepository';
 import { ActivityIndicator } from 'react-native-paper';
+import { filter } from 'lodash'; 
 
 const renderTabBar = props => (
   <TabBar
@@ -70,7 +71,7 @@ export default function IdeaScreen({route, navigation}) {
   const renderScene = SceneMap({
     first: () => (<IdeaDetailScreen idea={currentIdea} />),
     second: () => (<IdeaCommentScreen idea={ideaData} />),
-    third: () => (<PickedList picks={currentIdea && currentIdea.picks} />)
+    third: () => (<PickedList picks={currentIdea && filter(currentIdea.picks, pick => pick.status === 'ACCEPTED_TO_PICK')} />)
   });
 
   const [index, setIndex] = React.useState(0);
