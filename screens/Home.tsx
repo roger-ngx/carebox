@@ -287,16 +287,13 @@ export default function Home({navigation}) {
               {
                 loading ?
                 <CBButton
-                  text='거절'
-                  variant='outlined'
+                  variant='contained'
                   loading={loading}
                   containerStyle={{
                     paddingVertical: 16,
-                    paddingHorizontal: 32,
-                    marginRight: 16,
+                    width: '100%',
                     borderRadius: 50
                   }}
-                  onPress={throttle(rejectPick, 10000, {trailing: false})}
                 />
                 :
                 <>

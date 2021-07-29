@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import FastImage from 'react-native-fast-image'
 
-const Profile = ({user={}}) => {
+const Profile = ({user={}, avatarType='square'}) => {
 
     const { nickName, yearsOnJob, department, profileImageUrl, grade } = user;
     console.log('grade', grade);
@@ -16,7 +16,7 @@ const Profile = ({user={}}) => {
             }}
         >
             <FastImage
-                style={{width: 60, height: 60, borderRadius: 10}}
+                style={{width: 60, height: 60, borderRadius: avatarType==='square' ? 10 : 30}}
                 source={profileImageUrl ? {uri: profileImageUrl} : require('assets/icons/person.png')}
             />
 
