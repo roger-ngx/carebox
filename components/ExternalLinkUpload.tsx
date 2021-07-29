@@ -7,7 +7,9 @@ const ExternalLinkUpload = ({onLinkChanged}) => {
     const [ title, setTile ] = useState();
 
     useEffect(() => {
-        onLinkChanged({url, title})
+        if(url && title){
+            onLinkChanged({url, title})
+        }
     }, [url, title]);
 
     return (

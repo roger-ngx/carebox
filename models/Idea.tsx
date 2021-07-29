@@ -27,7 +27,8 @@ export default class Idea {
         subject: '',
         detail: {},
         images: [],
-        links: []
+        links: [],
+        imageAndLinkRequired: true
     };
 
     constructor()
@@ -89,5 +90,12 @@ export default class Idea {
     }
     setLinks(links: Link[]){
         return this.idea.links = links;
+    }
+
+    get imageAndLinkRequired(){
+        return this.idea.imageAndLinkRequired;
+    }
+    setImageAndLinkRequired(required){
+        return this.idea.imageAndLinkRequired = required;
     }
 }

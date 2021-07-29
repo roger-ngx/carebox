@@ -21,7 +21,7 @@ import { Snackbar } from 'react-native-paper';
 const IdeaRegistrationModal = ({onClose}) => {
 
     const [ currentStep, setCurrentStep ] = useState(1);
-    const [idea] = useState(new Idea());
+    const [ idea ] = useState(new Idea());
     const [ openResultModal, setOpenResultModal ] = useState(false);
     const [ progressing, setProgressing ] = useState(false);
 
@@ -33,7 +33,7 @@ const IdeaRegistrationModal = ({onClose}) => {
     const user = useSelector(state => state.user.currentUser);
     const userProfile = useSelector(state => state.user.userProfileData);
 
-    console.log('userProfile', userProfile);
+    console.log('idea', idea.images);
 
     const checkInput = () => {
         if(currentStep === 1){
@@ -41,10 +41,10 @@ const IdeaRegistrationModal = ({onClose}) => {
         } else if(currentStep === 2){
             return !isEmpty(idea.scampers);
         } else if(currentStep === 3){
-            return !(isEmpty(idea.subject) || isEmpty(idea.detail));
+            return !(isEmpty(idea.subject) || isEmpty(idea.ideaDetail));
+        }else{
+            return idea.imageAndLinkRequired ? !(isEmpty(idea.links) || isEmpty(idea.images)) : true;
         }
-
-        return true;
     }
 
     const onNextStep = () => {
@@ -174,7 +174,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                 </KeyboardAwareScrollView>
                 {
                     !isTextFocused &&
-                    <View style={{marginHorizontal: 20}}>
+                    <View style={{marginHorizontal: 20, marginBottom: 20}}>
                         <RoundButton
                             text='저장하고 다음'
                             onPress={onNextStep}
@@ -212,6 +212,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                 wrapperStyle={{marginBottom: 100}}
                 onDismiss={() => setShowSnackbar(false)}
                 duration={1500}
+                style={{position: 'absolute', bottom: 20}}
             >
                 <Text style={{textAlign: 'center', color: 'white'}}>
                     미입력 항목이 있습니다.

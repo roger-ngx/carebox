@@ -65,7 +65,7 @@ const BulletinBoard = ({navigation}) => {
                     ListFooterComponent={<View style={{height: 100}} />}
                 />
             </View>
-            <View style={{position: 'absolute', bottom: 20, width: '60%'}}>
+            <View style={{position: 'absolute', bottom: 10, width: '60%'}}>
                 <RoundButton
                     text='등록하기'
                     onPress={() => setOpenRegistrationModal(true)}

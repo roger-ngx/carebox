@@ -16,6 +16,7 @@ import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
 import { acceptPicking, getPickedIdeas, rejectPicking } from '../firebase/IdeaRepository';
+import RoundButton from '../components/RoundButton';
 
 export default function Home({navigation}) {
 
@@ -247,25 +248,12 @@ export default function Home({navigation}) {
           </View>
         </View>
       </ScrollView>
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 10,
-          width: '100%',
-          alignItems: 'center'
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#1379FF',
-            paddingVertical: 20,
-            paddingHorizontal: 32,
-            borderRadius: 32
-          }}
-          onPress={openModal}
-        >
-          <Text style={{fontWeight: 'bold', color: 'white', fontSize: 20}}>아이디어 등록하기</Text>
-        </TouchableOpacity>
+      
+      <View style={{position: 'absolute', bottom: 10, width: '60%'}}>
+          <RoundButton
+              text='아이디어 등록하기'
+              onPress={throttle(openModal, 2000, {trailing: false})}
+          />
       </View>
       {
         openRegistrationModal &&
@@ -356,7 +344,8 @@ export default function Home({navigation}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#EFF4F5'
+    backgroundColor: '#EFF4F5',
+    alignItems: 'center'
   },
   title: {
     fontSize: 20,

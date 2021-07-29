@@ -15,6 +15,8 @@ const IdeaImageUpload = ({onImageChanged}) => {
     const [ loadingImage, setLoadingImage ] = useState(false);
 
     useEffect(() => {
+        if(isEmpty(ideaImage)) return;
+
         image.url = ideaImage.uri;
         image.title = imageTitle;
 

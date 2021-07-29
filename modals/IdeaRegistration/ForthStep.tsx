@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements'
 
@@ -8,6 +8,10 @@ import ExternalLinkUpload from '../../components/ExternalLinkUpload';
 const ForthStep = ({idea}) => {
 
     const [ isNotUploadPhotoAndLink, setNotUploadPhotoAndLink ] = useState();
+    
+    useEffect(() => {
+        idea.setImageAndLinkRequired(!isNotUploadPhotoAndLink);
+    }, [isNotUploadPhotoAndLink])
 
     return(
         <ScrollView

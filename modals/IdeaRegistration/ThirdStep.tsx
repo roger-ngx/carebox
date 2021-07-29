@@ -7,7 +7,7 @@ const ThirdStep = ({idea, onFocusChange}) => {
     const [subject, setSubject] = useState();
     const [problemObject, setProblemObject] = useState();
     const [problemSituation, setProblemSituation] = useState();
-    const [problemSolution, setProblemSolution] = useState();
+    const [problemSolution, setProblemSolution] = useState({});
     const [ isTextFocused, setTextFocused ] = useState(false);
 
     useEffect(() => {
