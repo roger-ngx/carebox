@@ -272,7 +272,7 @@ export default function Home({navigation}) {
         <IdeaRegistrationModal onClose={closeModal}/>
       }
       {
-        !Boolean(openModalToAllowPick) &&
+        Boolean(openModalToAllowPick) &&
         <InfoModal isVisible={Boolean(openModalToAllowPick)} onClose={() => setOpenModalToAllowPick(null)}>
           <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 24}}>
               Pick 초대

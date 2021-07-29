@@ -200,11 +200,15 @@ const IdeaCommentScreen = ({idea}) => {
 
     const [ loading, setLoading ] = useState(false);
 
+    const [ isIdeaOwner, setIdeaOwner ] = useState(false);
+
     const dispatch = useDispatch();
     const user = useSelector(state => state.user.userProfileData);
 
     useEffect(() => {
         if(idea){
+            setIdeaOwner(user.uid === idea.ownerId);
+
             const unsubcriber = addIdeaCommentsListenner(idea.id, dispatch);
     
             return () => typeof unsubcriber === 'function' && unsubcriber();
@@ -280,11 +284,13 @@ const IdeaCommentScreen = ({idea}) => {
                     <View style={{padding: 20}}>
                         <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
                             <NewIdeaHead owner={comment.owner}/>
-                            
-                            <CBButton
-                                text='Pick하기'
-                                onPress={() => setShowingConfirmToPick(comment)}
-                            />
+                            {
+                                isIdeaOwner &&
+                                <CBButton
+                                    text='Pick하기'
+                                    onPress={() => setShowingConfirmToPick(comment)}
+                                />
+                            }
                         </View>
 
                         <Comment

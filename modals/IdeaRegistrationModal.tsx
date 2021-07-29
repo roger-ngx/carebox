@@ -4,6 +4,7 @@ import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { isEmpty } from 'lodash';
 
 import FirstStep from './IdeaRegistration/FirstStep';
 import RoundButton from '../components/RoundButton';
@@ -15,6 +16,7 @@ import StepIndicator from '../components/StepIndicator';
 import { useDispatch, useSelector } from 'react-redux';
 import { addNewIdea } from '../firebase/IdeaRepository';
 import InfoModal from './InfoModal';
+import { Snackbar } from 'react-native-paper';
 
 const IdeaRegistrationModal = ({onClose}) => {
 
@@ -25,13 +27,32 @@ const IdeaRegistrationModal = ({onClose}) => {
 
     const [ isTextFocused, setTextFocused ] = useState(false);
 
+    const [ showSnackbar, setShowSnackbar ] = useState(false);
+
 
     const user = useSelector(state => state.user.currentUser);
     const userProfile = useSelector(state => state.user.userProfileData);
 
     console.log('userProfile', userProfile);
 
+    const checkInput = () => {
+        if(currentStep === 1){
+            return !(isEmpty(idea.category) || isEmpty(idea.type));
+        } else if(currentStep === 2){
+            return !isEmpty(idea.scampers);
+        } else if(currentStep === 3){
+            return !(isEmpty(idea.subject) || isEmpty(idea.detail));
+        }
+
+        return true;
+    }
+
     const onNextStep = () => {
+        if(!checkInput()){
+            setShowSnackbar(true);
+            return;
+        }
+
         if(currentStep===4){
             addIdea();
         }else{
@@ -186,6 +207,16 @@ const IdeaRegistrationModal = ({onClose}) => {
                     </InfoModal>
                 }
             </SafeAreaView>
+            <Snackbar
+                visible={showSnackbar}
+                wrapperStyle={{marginBottom: 100}}
+                onDismiss={() => setShowSnackbar(false)}
+                duration={1500}
+            >
+                <Text style={{textAlign: 'center', color: 'white'}}>
+                    미입력 항목이 있습니다.
+                </Text>
+            </Snackbar>
         </Modal>
     )
 }

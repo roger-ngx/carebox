@@ -4,7 +4,9 @@ import FastImage from 'react-native-fast-image'
 
 const Profile = ({user={}}) => {
 
-    const { nickName, yearsOnJob, department, profileImageUrl } = user;
+    const { nickName, yearsOnJob, department, profileImageUrl, grade } = user;
+    console.log('grade', grade);
+    const gradeIcon = grade === 2 ? require('assets/icons/grade2.png') : require('assets/icons/grade1.png')
 
     return (
         <View
@@ -19,9 +21,9 @@ const Profile = ({user={}}) => {
             />
 
             <View style={{marginLeft: 8, alignItems: 'flex-start'}}>
-                <View style={{flexDirection: 'row', marginBottom: 2}}>
+                <View style={{flexDirection: 'row', marginBottom: 2, alignItems: 'center'}}>
                     <Text style={{fontSize: 18, marginRight: 2, color: '#334F74'}}>{nickName}</Text>
-                    <Image source={require('assets/icons/crown.png')} />
+                    <Image style={{width: 16, height: 16}} source={gradeIcon} />
                 </View>
                 <Text style={{color: '#334F74'}}>{yearsOnJob}년차 ∙ {department}</Text>
             </View>
