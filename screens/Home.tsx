@@ -204,8 +204,9 @@ export default function Home({navigation}) {
         }}
       >
         <Image
-          style={{marginVertical: 16, alignSelf: 'center'}}
+          style={{marginVertical: 16, alignSelf: 'center', height: 24}}
           source={require('assets/images/carebox.png')}
+          resizeMode='contain'
         />
         <TouchableOpacity
           style={{

@@ -14,7 +14,7 @@ const PickedIdeaListHeader = ({onPress, containerStyle}) => {
             ]}
             onPress={onPress}
         >
-            <Image source={require('assets/icons/verified_black.png')} />
+            <Image style={{width: 24, height: 24}} source={require('assets/icons/verified_black.png')} />
             <Text style={{flex: 1, fontSize: 24, color: '#1D395F', marginLeft: 8}}>Pick Idea</Text>
             <Icon
                 name='arrow-forward-ios'

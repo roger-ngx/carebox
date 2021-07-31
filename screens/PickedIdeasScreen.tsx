@@ -62,7 +62,7 @@ export default function PickedIdeasScreen({navigation, route}) {
                 />
             </TouchableOpacity>
             <View style={{flex: 1, zIndex: -1, marginLeft: -24, flexDirection: 'row', alignItems: 'center', justifyContent: 'center'}}>
-                <Image source={require('assets/icons/verified_black.png')} />
+                <Image style={{width: 24, height: 24}} source={require('assets/icons/verified_black.png')} />
                 <Text style={{fontSize: 24, color: '#1D395F', marginLeft: 8}}>Pick Idea</Text>
             </View>
         </View>
