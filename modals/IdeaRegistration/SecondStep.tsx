@@ -19,7 +19,7 @@ const SCAMPERS =[
 
 const SecondStep = ({idea}) => {
     const [ showModal, setShowModal ] = useState(false);
-    const [ ideaScampers, setIdeaScampers ] = useState([]);
+    const [ ideaScampers, setIdeaScampers ] = useState(idea.idea.scampers);
 
     useEffect(() => {
         idea.setScampers(ideaScampers);
@@ -66,7 +66,7 @@ const SecondStep = ({idea}) => {
                 }
             </View>
             <InfoModal isVisible={showModal}>
-                <View style={{backgroundColor: 'white', width: '80%', padding: 24, borderRadius: 20}}>
+                <View style={{backgroundColor: 'white', width: '100%'}}>
                     <Text style={{color: '#1D395F', fontSize: 24, marginBottom: 24}}>Scamper란?</Text>
                     <Text style={{color: '#1D395F', fontSize: 15}}>창의력 증진기법으로 아이디어를 얻기 위해 의도적으로 시험할 수 있는 7가지 규칙을 의미한다.</Text>
                     <View style={{marginVertical: 32}}>

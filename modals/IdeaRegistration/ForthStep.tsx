@@ -2,16 +2,22 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements'
 
-import IdeaPhotoUpload from 'components/IdeaPhotoUpload';
 import ExternalLinkUpload from '../../components/ExternalLinkUpload';
+import CommentImagesUploader from '../../components/CommentImagesUploader';
 
 const ForthStep = ({idea}) => {
 
     const [ isNotUploadPhotoAndLink, setNotUploadPhotoAndLink ] = useState();
+    const [ imageUris, setImageUris ] = useState(idea.idea.image.urls);
+    const [ imageTitle, setImageTitle ] = useState(idea.idea.image.title)
     
     useEffect(() => {
         idea.setImageAndLinkRequired(!isNotUploadPhotoAndLink);
     }, [isNotUploadPhotoAndLink])
+
+    useEffect(() => {
+        idea.setImages({title: imageTitle, urls: imageUris})
+    }, [imageTitle, imageUris]);
 
     return(
         <ScrollView
@@ -26,11 +32,20 @@ const ForthStep = ({idea}) => {
                     <Text style={styles.headerTxt}>
                         * 이미지
                     </Text>
-                    <TouchableOpacity>
-                        <Text style={styles.headerTxt}>+ 추가</Text>
-                    </TouchableOpacity>
                 </View>
-                <IdeaPhotoUpload onImageChanged={image => idea.setImages([image])}/>
+                <View style={{flexDirection: 'column', marginBottom: 28}}>
+                    <CommentImagesUploader
+                        imageUris={imageUris}
+                        onImagesChange={setImageUris}
+                    />
+                    <TextInput
+                        placeholder='설명 추가'
+                        style={[styles.textInput, {marginTop: 8}]}
+                        maxLength={50}
+                        value={imageTitle}
+                        onChangeText={setImageTitle}
+                    />
+                </View>
             </View>
             <View
                 style={{
@@ -41,9 +56,9 @@ const ForthStep = ({idea}) => {
                     <Text style={styles.headerTxt}>
                         * 링크
                     </Text>
-                    <TouchableOpacity>
+                    {/* <TouchableOpacity>
                         <Text style={styles.headerTxt}>+ 추가</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 <ExternalLinkUpload onLinkChanged={link => idea.setLinks([link])} />
             </View>

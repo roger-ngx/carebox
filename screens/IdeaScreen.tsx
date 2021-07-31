@@ -29,8 +29,6 @@ export default function IdeaScreen({route, navigation}) {
     return null;
   };
 
-  console.log(ideaId, idea.id);
-
   const [ loading, setLoading ] = useState(true);
   const [ ideaData, setIdeaData ] = useState(idea || {});
 

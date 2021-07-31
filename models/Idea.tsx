@@ -4,7 +4,7 @@ interface IIdea {
     scamper: string,
     subject: string,
     detail: object,
-    images: string[],
+    image: {},
     links: string[]
 }
 
@@ -26,7 +26,7 @@ export default class Idea {
         scampers: [],
         subject: '',
         detail: {},
-        images: [],
+        image: {},
         links: [],
         imageAndLinkRequired: true
     };
@@ -34,6 +34,10 @@ export default class Idea {
     constructor()
     constructor(idea?: IIdea){
         idea && (this.idea = idea);
+    }
+
+    get data(){
+        return this.idea;
     }
 
     get ownerId(){

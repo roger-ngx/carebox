@@ -23,7 +23,7 @@ const RoundButton = ({text, onPress, loading, ...props}) => {
                     color='white'
                 />
                 :
-                <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
+                <Text style={{fontWeight: 'bold', fontSize: 20, color: 'white', textAlign: 'center'}}>
                     {text}
                 </Text>
             }

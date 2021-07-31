@@ -204,7 +204,7 @@ const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
                 {
                     !!showingFinishButton &&
                     <RoundButton
-                        text='확인'
+                        text='등록'
                         onPress={onAddCommentToIdea}
                         loading={processing}
                     />

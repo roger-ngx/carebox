@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView } from 'react-native';
+import { Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Linking } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements';
 import { size } from 'lodash';
 import auth from '@react-native-firebase/auth';
@@ -12,6 +12,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
     const [ loading, setLoading ] = useState(false);
     const [ verificationCode, setVerificationCode ] = useState();
     const [ isTextOnFocus, setTextOnFocus ] = useState(false);
+    const [ isPolicyAgreed, setPolicyAgreed ] = useState(false);
 
     async function signInWithPhoneNumber() {
         setLoading(true);
@@ -80,21 +81,40 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             onBlur={() => setTextOnFocus(false)}
                         />
 
-                        <CheckBox
-                            center
-                            iconRight
-                            title='사이트 이용약관 및 개인정보 수집 동의'
-                            textStyle={{
-                                textDecorationLine: 'underline',
-                                fontSize: 12,
-                                color: '#979797',
-                                fontWeight: 'normal'
-                            }}
-                            containerStyle={{
-                                backgroundColor: 'white',
-                                borderWidth: 0
-                            }}
-                        />
+                        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                            <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                                <Text
+                                    style={{color: '#434A3F', fontSize: 12, textDecorationLine: 'underline'}}
+                                    onPress={() => Linking.openURL('https://docs.google.com/document/d/1FmijOedXk1TOUkgy39xL_714zeG4mXBIHhQuI9nZS20')}
+                                >
+                                    사이트 이용약관
+                                </Text>
+                                <Text style={{color: '#434A3F', fontSize: 12}}> 및 </Text>
+                                <Text
+                                    style={{color: '#434A3F', fontSize: 12, textDecorationLine: 'underline'}}
+                                    onPress={() => Linking.openURL('https://docs.google.com/document/d/1imMytH_puooCflrw1Ln9kuSMaVYw8Pi7PVdyOw7lA-E')}
+                                >
+                                    개인정보 수집 동의
+                                </Text>
+                            </View>
+                            <CheckBox
+                                center
+                                iconRight
+                                title=''
+                                textStyle={{
+                                    textDecorationLine: 'underline',
+                                    fontSize: 12,
+                                    color: '#979797',
+                                    fontWeight: 'normal'
+                                }}
+                                containerStyle={{
+                                    backgroundColor: 'white',
+                                    borderWidth: 0
+                                }}
+                                checked={isPolicyAgreed}
+                                onPress={() => setPolicyAgreed(!isPolicyAgreed)}
+                            />
+                        </View>
                     </>
                 }
 
@@ -165,9 +185,9 @@ const PhoneNumberVerification = ({onSuccess}) => {
                         paddingVertical: 16,
                         borderRadius: 50,
                         width: '100%',
-                        // alignSelf: 'flex-end'
+                        opacity: isPolicyAgreed ? 1 : 0.5
                     }}
-                    disabled={(step===1&&size(phoneNumber)!==11) || loading}
+                    disabled={(step===1&&size(phoneNumber)!==11) || loading || !isPolicyAgreed}
                     onPress={step===1?signInWithPhoneNumber:confirmCode}
                 >
                     {

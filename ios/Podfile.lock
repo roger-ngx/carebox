@@ -265,6 +265,8 @@ PODS:
     - UMCore
   - EXStructuredHeaders (1.1.1):
     - UMCore
+  - EXTrackingTransparency (1.1.2):
+    - UMCore
   - EXUpdates (0.8.2):
     - EXStructuredHeaders
     - EXUpdatesInterface
@@ -825,6 +827,7 @@ DEPENDENCIES:
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - EXStructuredHeaders (from `../node_modules/expo-structured-headers/ios`)
+  - EXTrackingTransparency (from `../node_modules/expo-tracking-transparency/ios`)
   - EXUpdates (from `../node_modules/expo-updates/ios`)
   - EXUpdatesInterface (from `../node_modules/expo-updates-interface/ios`)
   - EXWebBrowser (from `../node_modules/expo-web-browser/ios`)
@@ -949,6 +952,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-splash-screen/ios"
   EXStructuredHeaders:
     :path: "../node_modules/expo-structured-headers/ios"
+  EXTrackingTransparency:
+    :path: "../node_modules/expo-tracking-transparency/ios"
   EXUpdates:
     :path: "../node_modules/expo-updates/ios"
   EXUpdatesInterface:
@@ -1068,6 +1073,7 @@ SPEC CHECKSUMS:
   EXSecureStore: 1aa80d49a3a101418bbd2675e2a0d32dceea10c2
   EXSplashScreen: 6208ca88470ff5979fd49a08ef3feb01143a2b79
   EXStructuredHeaders: e52b880264d15b8ad07d36670226c29476af6334
+  EXTrackingTransparency: 3c4dd1ec833e827137480de3ee041c14c5c1f7b8
   EXUpdates: dcc9d0432e1ad0a3f51b8721375401b4708bf7a1
   EXUpdatesInterface: b68e78b912a03fff7901a5f46ec200c45e3506a5
   EXWebBrowser: 76783ba5dcb8699237746ecf41a9643d428a4cc5

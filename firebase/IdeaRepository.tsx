@@ -54,22 +54,23 @@ export async function addNewIdea(idea, owner){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
 
-        const images = idea.images;
-        if(!isEmpty(images)){
+        const {image} = idea;
+
+        if(!isEmpty(image)){
             const ownerId = idea.ownerId;
 
-            const imagePaths = map(images, image => {
+            const imagePaths = map(image.urls, url => {
                 const uuid = uuidv4();
     
                 return `/images/${ownerId}/ideas/${uuid}.jpg`;
             })
 
-            const downloadUrls = await uploadImages(map(images, image => image.url), imagePaths);
+            const downloadUrls = await uploadImages(image.urls, imagePaths);
 
-            forEach(downloadUrls, (url, index) => set(images, `${index}.url`, url))
+            set(image, 'urls', downloadUrls);
         }
 
-        const ret = await addNewIdea({idea: {...idea, images, owner}});
+        const ret = await addNewIdea({idea: {...idea, image, owner}});
 
         if(get(ret, 'data.ret')){
             return true;

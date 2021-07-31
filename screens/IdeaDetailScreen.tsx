@@ -31,28 +31,28 @@ const IdeaDetailScreen = ({idea}) => {
                 <PickedIdea idea={idea}/>
                 <Divider/>
                 <View style={{padding: 20}}>
-                    <View style={{marginBottom: 8}}>
-                        <Text style={{color: '#898989', marginBottom: 2}}>구체적 대상</Text>
+                    <View style={{marginBottom: 24}}>
+                        <Text style={{color: '#898989', marginBottom: 8}}>구체적 대상</Text>
                         <Text style={{color: '#334F74', fontSize: 16}}>{detail.object}</Text>
                     </View>
-                    <View style={{marginBottom: 8}}>
-                        <Text style={{color: '#898989', marginBottom: 2}}>구체적 상황</Text>
+                    <View style={{marginBottom: 24}}>
+                        <Text style={{color: '#898989', marginBottom: 8}}>구체적 상황</Text>
                         <Text style={{color: '#334F74', fontSize: 16}}>{detail.situation}</Text>
                     </View>
-                    <View style={{marginBottom: 8}}>
-                        <Text style={{color: '#898989', marginBottom: 2}}>해결방법</Text>
+                    <View style={{marginBottom: 24}}>
+                        <Text style={{color: '#898989', marginBottom: 8}}>해결방법</Text>
                         {
                             map(solutionKeys, (key, index) => {
 
                                 const [sign, text] = split(key, ' : ');
 
-                                return (<View style={{marginTop: 8}} key={key}>
+                                return (<View style={{marginBottom: 12}} key={key}>
                                     <OutlinedTag
                                         sign={sign}
                                         text={text}
                                         style={{alignSelf: 'flex-start', marginLeft: 0}}
                                     />
-                                    <Text style={{color: '#334F74', fontSize: 16}}>{solutionValues[index]}</Text>
+                                    <Text style={{color: '#334F74', fontSize: 16, marginTop: 4}}>{solutionValues[index]}</Text>
                                 </View>)
                             })
                         }
@@ -61,12 +61,21 @@ const IdeaDetailScreen = ({idea}) => {
                 <Divider />
                 <View style={{padding: 20}}>
                     <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
-                    {
-                        map(images, ({title, url}) => (<View key={title}>
-                            <FastImage style={{height: 150, marginBottom: 8}} source={{uri: url}} />
-                            <Text  style={{color: '#334F74', fontSize: 16}}>{title}</Text>
-                        </View>))
-                    }
+                    <ScrollView
+                        horizontal
+                        style={{marginBottom: 20}}
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        {
+                            map(images.urls, image => (
+                                <FastImage
+                                    style={{width: 150, height: 150, marginRight: 8}}
+                                    source={{uri: image}}
+                                />
+                            ))
+                        }
+                    </ScrollView>
+                    <Text  style={{color: '#334F74', fontSize: 16}}>{images.title}</Text>
                 </View>
                 <Divider />
                 <View style={{padding: 20, marginBottom: 120}}>

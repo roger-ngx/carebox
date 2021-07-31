@@ -103,7 +103,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
             <ScrollView
                 horizontal
                 style={{marginBottom: 20}}
-                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
             >
                 {
                     map(item.images, image => (

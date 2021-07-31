@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, FlatList, Text, View } from 'react-native';
-import { size } from 'lodash';
+import { size, filter } from 'lodash';
 import { Divider, Icon } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +14,9 @@ import { ActivityIndicator } from 'react-native-paper';
 export default function PickedIdeasScreen({navigation, route}) {
     const [ currentFilter, setCurrentFilter ] = useState('전체');
     const [ pickedIdeas, setPickedIdeas ] = useState([]);
+
+    const [ filteredIdeas, setFilteredIdeas ] = useState([]);
+
     const [ loading, setLoading ] = useState(false);
 
     const { ids } = route.params;
@@ -31,6 +34,19 @@ export default function PickedIdeasScreen({navigation, route}) {
 
         setLoading(false);
     }
+
+    useEffect(() => {
+        if(!currentFilter) return;
+    
+        console.log('currentFilter', currentFilter);
+    
+        if(currentFilter === '전체'){
+            setFilteredIdeas(pickedIdeas);
+        } else {
+            setFilteredIdeas(filter(pickedIdeas, idea => idea.category === currentFilter));
+        }
+    
+      }, [currentFilter, pickedIdeas]);
 
     return (
     <SafeAreaView edges={['top']} style={styles.container}>
@@ -59,13 +75,13 @@ export default function PickedIdeasScreen({navigation, route}) {
         {
             loading ?
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                <ActivityIndicator size='large' color='blue' />
+                <ActivityIndicator size='large' color='#1379FF' />
             </View>
             :
             <View style={{flex: 1}}>
 
                 <FlatList
-                    data={pickedIdeas}
+                    data={filteredIdeas}
                     keyExtractor={item => item.id}
                     renderItem={
                         ({item}) => (
@@ -77,7 +93,9 @@ export default function PickedIdeasScreen({navigation, route}) {
                         </TouchableOpacity>
                         )
                     }
-                    // contentContainerStyle={{flex: 1}}
+                    ListEmptyComponent={() => <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 60}}>
+                        <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>{`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}</Text>
+                    </View>}
                 />
             </View>
         }

@@ -15,8 +15,8 @@ const IDEA_TYPES=[
 
 const FirstStep = ({idea}) => {
 
-    const [ category, setCategory ] = useState();
-    const [ ideaType, setIdeaType ] = useState();
+    const [ category, setCategory ] = useState(idea.idea.category);
+    const [ ideaType, setIdeaType ] = useState(idea.idea.type);
 
     useEffect(() => {
         idea.setCategory(category);

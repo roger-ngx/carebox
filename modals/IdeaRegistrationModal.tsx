@@ -43,7 +43,8 @@ const IdeaRegistrationModal = ({onClose}) => {
         } else if(currentStep === 3){
             return !(isEmpty(idea.subject) || isEmpty(idea.ideaDetail));
         }else{
-            return idea.imageAndLinkRequired ? !(isEmpty(idea.links) || isEmpty(idea.images)) : true;
+            const { urls, title } = idea.images;
+            return idea.imageAndLinkRequired ? !(isEmpty(idea.links) || isEmpty(urls) || isEmpty(title)) : true;
         }
     }
 
@@ -161,7 +162,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                         }
                         {
                             currentStep === 3 &&
-                            <ThirdStep idea={idea} onFocusChange={setTextFocused}/>
+                            <ThirdStep idea={idea} onFocusChange={setTextFocused} />
                         }
 
                         {
@@ -174,7 +175,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                 </KeyboardAwareScrollView>
                 {
                     !isTextFocused &&
-                    <View style={{marginHorizontal: 20, marginBottom: 20}}>
+                    <View style={{marginBottom: 10, marginHorizontal: '20%'}}>
                         <RoundButton
                             text='저장하고 다음'
                             onPress={onNextStep}
@@ -189,7 +190,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                         isVisible={openResultModal}
                         onClose={() => setOpenResultModal(false)}
                     >
-                        <View style={{width: '80%', backgroundColor: 'white', padding: 20, borderRadius: 20}}>
+                        <View style={{width: '100%', backgroundColor: 'white', padding: 20, borderRadius: 20}}>
                             <Icon
                                 name='mood'
                                 color='#001240'

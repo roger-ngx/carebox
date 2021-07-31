@@ -37,7 +37,7 @@ const BulletinRegistrationModal = ({onClose}) => {
     }
 
     useEffect(() => {
-        setShowingFinishButton(bulletinType && size(imageUris) > 0 && content);
+        setShowingFinishButton(bulletinType && content);
     }, [bulletinType, imageUris, content]);
 
     return (

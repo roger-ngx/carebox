@@ -102,7 +102,7 @@ export async function subscribeForNotifications(userId, dispatch){
     }
 }
 
-export async function markReadingNotification({uid, notificationId}){
+export async function markReadingNotification(uid, notificationId){
     try{
         console.log(uid, notificationId);
 
@@ -177,4 +177,15 @@ export async function getRegisteredComments(uid){
         console.log('getLikedIdeas', ex);
     }
 } 
+
+export async function signOut(){
+    try{
+        await auth().signOut();
+        await SecureStore.deleteItemAsync('userToken');
+        return true;
+    }catch(ex){
+        console.log('logOut', ex);
+    }
+    return false;
+}
 

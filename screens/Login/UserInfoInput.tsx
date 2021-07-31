@@ -198,7 +198,7 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
                 >
                     <View
                         style={{
-                            width: '80%',
+                            width: '100%',
                             padding: 24,
                             borderRadius: 36,
                             backgroundColor: 'white',

@@ -85,7 +85,7 @@ const Comment = ({user, comment, onShowComments}) => {
     return (<View>
         <View style={{marginBottom: 10}}>
             <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>{avgRating}점</Text></Text>
-            <RatingView {...{practicalityRate, creativityRate, valuableRate}}/>
+            <RatingView {...{practicalityRate, creativityRate, valuableRate}} isDisabled={true}/>
         </View>
         <View style={{marginBottom: 10}}>
             <OutlinedTag
@@ -278,7 +278,7 @@ const IdeaCommentScreen = ({idea}) => {
 
     return (
         <ScrollView>
-            <IdeaOverallRating overallRate={overallRate}/>
+            <IdeaOverallRating overallRate={overallRate} isDisabled={true}/>
             {
                 map(comments, comment => (
                     <View style={{padding: 20}}>

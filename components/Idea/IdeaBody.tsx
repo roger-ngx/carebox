@@ -11,7 +11,7 @@ import IdeaHeart from './IdeaHeart';
 const IdeaBody = ({idea}) => {
     if(!idea) return null;
 
-    const {category, scampers, subject, createdAt, likes, commentCount, rating } = idea;
+    const {category, scampers, subject, createdAt, likes, commentCount=0, rating } = idea;
 
     const avgRating = size(rating) > 0 ? reduce(rating, (sum, rate) => {
         return sum + rate.avgRating
@@ -19,7 +19,7 @@ const IdeaBody = ({idea}) => {
 
     return (
         <>
-            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 16}}>
+            <View style={{flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', marginBottom: 16, marginLeft: -4}}>
                 <ContainedTag text={category}/>
                 {
                     map(scampers, scamper => {
@@ -32,7 +32,7 @@ const IdeaBody = ({idea}) => {
             <Text style={{fontSize: 16, fontWeight: 'bold', marginBottom: 8}}>
                 {subject}
             </Text>
-            <IdeaRate count={commentCount} rate={avgRating} />
+            <IdeaRate count={commentCount} rate={avgRating} isDisabled={true} containerStyle={{marginLeft: -3}}/>
             <View
                 style={{
                     flexDirection: 'row',

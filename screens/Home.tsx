@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform } from 'react-native';
+import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform, StatusBar } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
-import { size, get, filter, find, throttle, includes } from 'lodash';
+import { size, isEmpty, filter, find, throttle, includes } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  requestTrackingPermissionsAsync,
+  getTrackingPermissionsAsync,
+} from 'expo-tracking-transparency';
+
+import * as Updates from 'expo-updates';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
 import Filter from 'components/Filter';
@@ -17,6 +23,7 @@ import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
 import { acceptPicking, getPickedIdeas, rejectPicking } from '../firebase/IdeaRepository';
 import RoundButton from '../components/RoundButton';
+import { UpdateEventType } from 'expo-updates';
 
 export default function Home({navigation}) {
 
@@ -49,12 +56,43 @@ export default function Home({navigation}) {
 
     if(Platform.OS === 'ios'){
       requestPushNotificationPermission();
+      requestAppTracking();
     }
 
     const unsubscriber = addIdeasListenner(dispatch);
 
     return () => (typeof unsubscriber === 'function') && unsubscriber();
   }, []);
+
+  const requestAppTracking = async() => {
+    try{
+      const { granted } = await getTrackingPermissionsAsync();
+
+      if (granted) {
+        const { granted } = await requestTrackingPermissionsAsync();
+
+        if (granted) {
+          // Your app is authorized to track the user or their device
+        }
+      }
+    }catch(ex){
+      console.log('requestAppTracking', ex);
+    }
+  }
+
+  const expoUpdateListenner = () => {
+    const eventSubscription =  Updates.addListener(async e => {
+      if(e.type === UpdateEventType.UPDATE_AVAILABLE){
+        const ret = await Updates.checkForUpdateAsync();
+        if(ret.isAvailable){
+          const ret = await Updates.fetchUpdateAsync();
+          if(ret.isNew){
+            await Updates.reloadAsync();
+          }
+        }
+      }
+    })
+  }
 
   useEffect(() => {
     const notification = find(notifications, notification => notification.unRead && notification.type==='ASKED_FOR_PICK');
@@ -154,12 +192,15 @@ export default function Home({navigation}) {
     setLoading(false);
   }
 
+  const pickedIdea = find(ideas, idea => includes(pickedIdeaIds, idea.id));
+
   return (
     <SafeAreaView edges={['top']} style={styles.container}>
       <View
         style={{
           flexDirection: 'row',
           justifyContent: 'center',
+          width: '100%'
         }}
       >
         <Image
@@ -221,18 +262,23 @@ export default function Home({navigation}) {
           <Filter value={currentFilter} setValue={setCurrentFilter}/>
         </View>
         <View style={{paddingHorizontal: 20, marginBottom: 80}}>
-          <PickedIdeaListHeader
-            containerStyle={{paddingVertical: 20}}
-            onPress={() => navigation.navigate('PickedIdeas', {ids: pickedIdeaIds})}
-          />
-          <PickedIdea idea={find(ideas, idea => includes(pickedIdeaIds, idea.id))}/>
-
-          <Divider style={{marginVertical: 20, color: '#B7BCC9'}} />
-          <View>
+          {
+            !isEmpty(pickedIdea) &&
+            <>
+              <PickedIdeaListHeader
+                containerStyle={{paddingVertical: 20}}
+                onPress={() => navigation.navigate('PickedIdeas', {ids: pickedIdeaIds})}
+              />
+              <PickedIdea idea={pickedIdea}/>
+              <Divider style={{marginTop: 20}} />
+            </>
+          }
+          <View style={{marginTop: 20}}>
             <Text style={{fontSize: 24, color: '#1D395F', marginBottom: 20}}>New Idea</Text>
 
             <FlatList
               data={filter(ideas, idea => !includes(pickedIdeaIds, idea.id))}
+              // data={[]}
               keyExtractor={item => item.id}
               renderItem={
                 ({item}) => (
@@ -240,10 +286,13 @@ export default function Home({navigation}) {
                     style={{marginBottom: 20}}
                     onPress={() => navigation.navigate('Idea', {idea: item})}
                   >
-                    <NewIdea idea={item} containerStyle={{marginBottom: 20}}/>
+                    <NewIdea idea={item} />
                   </TouchableOpacity>
                 )
               }
+              ListEmptyComponent={() => <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 60}}>
+                <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>{`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}</Text>
+              </View>}
             />
           </View>
         </View>

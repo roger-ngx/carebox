@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, TouchableOpacity, Linking } from 'react-native';
+import { View, FlatList, TouchableOpacity, Linking, Text } from 'react-native';
 import Profile from 'components/Profile';
 import { Icon } from 'react-native-elements';
 
