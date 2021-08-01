@@ -73,6 +73,8 @@
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Give carebox permission to access your photos</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>허용 시 carebox 개인화된 추천 정보를 받으실 수 있습니다</string>
 	<key>UIAppFonts</key>
 	<array/>
 	<key>UILaunchStoryboardName</key>
@@ -92,7 +94,5 @@
 	<string>Light</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSUserTrackingUsageDescription</key>
-	<string>허용 시 carebox 개인화된 추천 정보를 받으실 수 있습니다</string>
 </dict>
 </plist>

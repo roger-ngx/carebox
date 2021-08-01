@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, TouchableOpacity, SafeAreaView, TextInput, ScrollView, Linking } from 'react-native';
+import { Text, View, TouchableOpacity, Alert, TextInput, ScrollView, Linking } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements';
 import { size } from 'lodash';
 import auth from '@react-native-firebase/auth';
@@ -22,12 +22,13 @@ const PhoneNumberVerification = ({onSuccess}) => {
             console.log(number);
             const confirmation = await auth().signInWithPhoneNumber(number);
             setConfirmation(confirmation);
+            setStep(2);
         }catch(e){
             console.log('signInWithPhoneNumber', e);
+            Alert.alert('An internal error has occurred, please try again.');
         }
 
         setLoading(false);
-        setStep(2);
     }
 
     const confirmCode = async () => {
@@ -40,6 +41,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
             await onSuccess(user.uid, additionalUserInfo.isNewUser, user.phoneNumber);
         }catch(ex){
             console.log('confirmCode', ex);
+            Alert.alert('Wrong verification code.Press 재발송하기');
         }
 
         setLoading(false);
@@ -141,6 +143,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             onChangeText={setVerificationCode}
                             onFocus={() => setTextOnFocus(true)}
                             onBlur={() => setTextOnFocus(false)}
+                            autoFocus
                         />
 
                         <View

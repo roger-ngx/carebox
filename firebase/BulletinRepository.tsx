@@ -32,6 +32,7 @@ export async function addBulletinItem({owner, type, content, imageUris}){
 
         firestore().collection('bulletinBoards').doc().set({
             type, content,
+            ownerId: owner.uid,
             owner,
             images: imageUrls,
             createdAt: firestore.FieldValue.serverTimestamp(),
@@ -42,6 +43,20 @@ export async function addBulletinItem({owner, type, content, imageUris}){
     }catch(ex){
         console.log('addBulletinItem', ex);
         return false;
+    }
+}
+
+export async function getRegisteredBulletinItems(uid){
+    try{
+        console.log('uid', uid);
+
+        const ret = await firestore().collection('bulletinBoards')
+        .where('ownerId', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .get();
+        return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
+    }catch(ex){
+        console.log('getRegisteredBulletinItems', ex);
     }
 }
 
@@ -86,6 +101,17 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
             {
                 commentCount: firebase.firestore.FieldValue.increment(1),
                 updatedAt: firestore.FieldValue.serverTimestamp(),
+            }
+        )
+
+        batch.set(
+            firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
+            {
+                bulletinItemId,
+                comment,
+                owner,
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp()
             }
         )
 

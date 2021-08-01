@@ -17,6 +17,7 @@ const PickedUser = ({user}) => (
                 <Icon
                     type='material-community'
                     name='chat-processing-outline'
+                    color='#4A7CFF'
                 />
             </TouchableOpacity>
             <TouchableOpacity
@@ -28,6 +29,7 @@ const PickedUser = ({user}) => (
                 <Icon
                     type='material-community'
                     name='phone'
+                    color='#4A7CFF'
                 />
             </TouchableOpacity>
         </View>

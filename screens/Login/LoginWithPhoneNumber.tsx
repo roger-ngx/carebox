@@ -64,7 +64,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
 
             dispatch(setAuthToken(authToken));
 
-            navigation.navigate('Home');
+            // navigation.navigate('Home');
         }catch(ex){
             console.log(ex);
         }

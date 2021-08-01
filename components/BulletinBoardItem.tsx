@@ -12,6 +12,9 @@ import { likeBulletinItem, unlikeBulletinItem } from '../firebase/BulletinReposi
 import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const BulletinBoardItem = ({item, containerStyle}) => {
+    if(!item) return null;
+
+    const { createdAt, owner, type, images, commentCount } = item;
 
     const user = useSelector(state => state.user.currentUser)
 
@@ -22,10 +25,10 @@ const BulletinBoardItem = ({item, containerStyle}) => {
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     useEffect(() => {
-        setDiffInMinutes(moment().diff(moment.unix(item.createdAt.seconds), 'minutes'));
+        setDiffInMinutes(moment().diff(moment.unix(createdAt.seconds), 'minutes'));
 
         const interval = setInterval(() => { 
-            setDiffInMinutes(moment().diff(moment.unix(item.createdAt.seconds), 'minutes'));
+            setDiffInMinutes(moment().diff(moment.unix(createdAt.seconds), 'minutes'));
         }, 60000);
 
         return () => clearInterval(interval);
@@ -86,11 +89,11 @@ const BulletinBoardItem = ({item, containerStyle}) => {
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <FastImage
                     style={{width: 32, height: 32, borderRadius: 16, marginRight: 8}}
-                    source={{uri: item.owner.profileImageUrl}}
+                    source={owner.profileImageUrl ? {uri: owner.profileImageUrl} : require('assets/icons/person.png')}
                 />
                 <View style={{flexDirection: 'column'}}>
-                    <Text style={{color: '#1379FF', marginBottom: 4}}>{item.type}</Text>
-                    <Text style={{color: '#1D395F', fontSize: 14}}>{item.owner.nickName}</Text>
+                    <Text style={{color: '#1379FF', marginBottom: 4}}>{type}</Text>
+                    <Text style={{color: '#1D395F', fontSize: 14}}>{owner.nickName}</Text>
                 </View>
             </View>
             <Text style={{color: '#1D395F', fontSize: 12}}>{time}</Text>
@@ -108,7 +111,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
                 showsVerticalScrollIndicator={false}
             >
                 {
-                    map(item.images, (image, index) => (
+                    map(images, (image, index) => (
                         <TouchableOpacity onPress={() => setOpenGalleryModal(index)}>
                             <FastImage
                                  key={image}
@@ -121,7 +124,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
             </ScrollView>
             <LikeCommentNumber
                 liked={liked}
-                commentNumber={item.commentCount}
+                commentNumber={commentCount}
                 likeNumber={likeNumber}
                 onLikeComment={onLikeComment}
             />
@@ -130,7 +133,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
             openGalleryModal >= 0 &&
             <ImageGalleryModal
                 onClose={() => setOpenGalleryModal(-1)}
-                imageUris={item.images}
+                imageUris={images}
                 initialPage={openGalleryModal}
             />
         }

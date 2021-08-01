@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, SafeAreaView, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Icon, Input } from 'react-native-elements';
 import { isEmpty } from 'lodash';
 import { ActivityIndicator } from 'react-native-paper';
+import * as SecureStore from 'expo-secure-store';
 
 import InfoModal from 'modals/InfoModal';
 import CBDropDownPicker from 'components/CBDropDownPicker';
 import { checkNicknameExists, signUp } from '../../firebase/UserRepository';
+import { useDispatch } from 'react-redux';
+import { setAuthToken } from '../../stores/slices/tokenSlice';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -31,6 +34,8 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
 
     const [ isOpenConfirmModal, setOpenConfirmModal ] = useState(false);
 
+    const dispatch = useDispatch();
+
     useEffect(() => {
         if(isNicknameExists === false){
             setNickNameVerifiedIcon(<Icon name='check' color='green' />)
@@ -51,6 +56,7 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
             setOpenConfirmModal(ret);
         }catch(ex){
             console.log('signUp', ex);
+            Alert.alert('Login failed', 'Plz try again');
         }
         setLoading(false);
     }
@@ -182,7 +188,7 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
                     >
                         {
                             loading ?
-                            <ActivityIndicator size='small' color='#4A7CFF' />
+                            <ActivityIndicator size='small' color='white' />
                             :
                             <Text style={{fontWeight: 'bold', fontSize: 25, color: 'white', textAlign: 'center'}}>
                                 다음
@@ -218,9 +224,10 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
                                 alignItems: 'center',
                                 marginTop: 48
                             }}
-                            onPress={() => {
+                            onPress={async () => {
                                 setOpenConfirmModal(false);
-                                navigation.navigate('Home');
+                                const token = await SecureStore.getItemAsync('userToken');
+                                dispatch(setAuthToken(token));
                             }}
                         >
                             <Text style={{fontSize: 20, fontWeight: '500', color: 'white'}}>확인</Text>

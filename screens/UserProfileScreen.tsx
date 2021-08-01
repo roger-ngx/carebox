@@ -51,6 +51,7 @@ const UserProfileScreen = ({navigation}) => {
                 <Divider />
                 <ProfileSettingItem
                     text='내가 쓴 게시글'
+                    onPress={() => navigation.navigate('RegisteredBulletinItems')}
                 />
                 <ProfileSettingItem
                     text='내가 쓴 댓글'

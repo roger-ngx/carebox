@@ -26,6 +26,7 @@ import { useSelector } from 'react-redux';
 import BulletinBoard from '../screens/BulletinBoard';
 import RegisteredComments from '../screens/UserProfile/RegisteredComments';
 import BulletinItemDetailScreen from '../screens/BulletinItemDetailScreen';
+import RegisteredBulletinItems from '../screens/UserProfile/RegisteredBulletinItems';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -180,6 +181,16 @@ function UserProfileNavigator() {
         name='RegisteredComments'
         component={RegisteredComments}
         options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name='RegisteredBulletinItems'
+        component={RegisteredBulletinItems}
+        options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name="BulletinItemDetail"
+        component={BulletinItemDetailScreen}
+        options={{ headerShown: false }}
       />
       <UserProfileStack.Screen
         name='UserAccountSetting'
