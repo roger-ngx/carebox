@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform, StatusBar } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Image, ScrollView, Text, View, TouchableOpacity, FlatList, Platform, AppState } from 'react-native';
 import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { size, isEmpty, filter, find, throttle, includes } from 'lodash';
@@ -49,11 +49,17 @@ export default function Home({navigation}) {
 
   const [ loading, setLoading ] = useState(false);
 
+  const appState = useRef(AppState.currentState);
+  const [ hasNewExpoUpdate, setHasNewExpoUpdate ] = useState(false);
+
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
 
   useEffect(() => {
     expoUpdateListenner();
+
+    AppState.addEventListener("change", _handleAppStateChange);
+
 
     if(Platform.OS === 'ios'){
       requestPushNotificationPermission();
@@ -62,8 +68,25 @@ export default function Home({navigation}) {
 
     const unsubscriber = addIdeasListenner(dispatch);
 
-    return () => (typeof unsubscriber === 'function') && unsubscriber();
+    return () => {
+      (typeof unsubscriber === 'function') && unsubscriber();
+      AppState.removeEventListener("change", _handleAppStateChange);
+    }
   }, []);
+
+  const _handleAppStateChange = async (nextAppState) => {
+    if (
+      appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
+      console.log("App has come to the foreground!");
+      setHasNewExpoUpdate(false);
+      await Updates.reloadAsync();
+    }
+
+    appState.current = nextAppState;
+    console.log("AppState", appState.current);
+  };
 
   const requestAppTracking = async() => {
     try{
@@ -87,9 +110,7 @@ export default function Home({navigation}) {
         const ret = await Updates.checkForUpdateAsync();
         if(ret.isAvailable){
           const ret = await Updates.fetchUpdateAsync();
-          if(ret.isNew){
-            await Updates.reloadAsync();
-          }
+          setHasNewExpoUpdate(ret.isNew);
         }
       }
     })
