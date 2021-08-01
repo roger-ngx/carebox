@@ -53,6 +53,7 @@ export default function Home({navigation}) {
   const closeModal = () => setOpenRegistrationModal(false)
 
   useEffect(() => {
+    expoUpdateListenner();
 
     if(Platform.OS === 'ios'){
       requestPushNotificationPermission();

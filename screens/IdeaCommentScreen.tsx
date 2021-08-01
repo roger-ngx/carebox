@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, ScrollView, TouchableOpacity, TextInput } from 'react-native';
+import { View, Image, Text, ScrollView, TouchableOpacity, TextInput, Touchable } from 'react-native';
 import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
@@ -20,6 +20,7 @@ import UserComment from '../components/UserComment';
 import RoundButton from '../components/RoundButton';
 import CBButton from '../components/CBButton';
 import InfoModal from '../modals/InfoModal';
+import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const Comment = ({user, comment, onShowComments}) => {
 
@@ -27,6 +28,7 @@ const Comment = ({user, comment, onShowComments}) => {
     const [ latestReply, setLatestReply ] = useState();
     const [ showCommentInputModal, setShowCommentInputModal ] = useState(false);
     const [ loading, setLoading ] = useState(false);
+    const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
     
     const dispatch = useDispatch();
 
@@ -104,11 +106,13 @@ const Comment = ({user, comment, onShowComments}) => {
             showsHorizontalScrollIndicator={false}
         >
             {
-                map(images, image => (
-                    <FastImage
-                        style={{width: 150, height: 150, marginRight: 8}}
-                        source={{uri: image}}
-                    />
+                map(images, (image, index) => (
+                    <TouchableOpacity onPress={() => setOpenGalleryModal(index)}>
+                        <FastImage
+                            style={{width: 150, height: 150, marginRight: 8}}
+                            source={{uri: image}}
+                        />
+                    </TouchableOpacity>
                 ))
             }
         </ScrollView>
@@ -183,6 +187,14 @@ const Comment = ({user, comment, onShowComments}) => {
                 loading={loading}
             />
         }
+        {
+                openGalleryModal >= 0 &&
+                <ImageGalleryModal
+                    onClose={() => setOpenGalleryModal(-1)}
+                    imageUris={images}
+                    initialPage={openGalleryModal}
+                />
+            }
     </View>
 )}
 

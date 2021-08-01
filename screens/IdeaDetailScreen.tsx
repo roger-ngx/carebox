@@ -10,9 +10,11 @@ import { likeIdea, addIdeaListenner } from '../firebase/IdeaRepository';
 import ExternalLink from '../components/ExternalLink';
 import FastImage from 'react-native-fast-image';
 import OutlinedTag from '../components/OutlinedTag';
+import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
+    const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     const user = useSelector(state => state.user.currentUser);
 
@@ -22,6 +24,8 @@ const IdeaDetailScreen = ({idea}) => {
 
     const solutionKeys = keys(detail.solution);
     const solutionValues = values(detail.solution);
+
+    console.log(images.urls);
 
     return (
         <View
@@ -67,11 +71,15 @@ const IdeaDetailScreen = ({idea}) => {
                         showsHorizontalScrollIndicator={false}
                     >
                         {
-                            map(images.urls, image => (
-                                <FastImage
-                                    style={{width: 150, height: 150, marginRight: 8}}
-                                    source={{uri: image}}
-                                />
+                            map(images.urls, (image, index) => (
+                                <TouchableOpacity
+                                    onPress={() => setOpenGalleryModal(index)}
+                                >
+                                    <FastImage
+                                        style={{width: 150, height: 150, marginRight: 8}}
+                                        source={{uri: image}}
+                                    />
+                                </TouchableOpacity>
                             ))
                         }
                     </ScrollView>
@@ -106,6 +114,14 @@ const IdeaDetailScreen = ({idea}) => {
                 <CommentRegistrationModal
                     ideaId={idea.id}
                     onClose={() => setShowingCommentRegistrationModal(false)}
+                />
+            }
+            {
+                openGalleryModal >= 0 &&
+                <ImageGalleryModal
+                    onClose={() => setOpenGalleryModal(-1)}
+                    imageUris={images.urls}
+                    initialPage={openGalleryModal}
                 />
             }
         </View>
