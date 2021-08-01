@@ -188,13 +188,13 @@ const Comment = ({user, comment, onShowComments}) => {
             />
         }
         {
-                openGalleryModal >= 0 &&
-                <ImageGalleryModal
-                    onClose={() => setOpenGalleryModal(-1)}
-                    imageUris={images}
-                    initialPage={openGalleryModal}
-                />
-            }
+            openGalleryModal >= 0 &&
+            <ImageGalleryModal
+                onClose={() => setOpenGalleryModal(-1)}
+                imageUris={images}
+                initialPage={openGalleryModal}
+            />
+        }
     </View>
 )}
 

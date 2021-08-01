@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { Divider } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import { map, size, includes } from 'lodash';
@@ -9,6 +9,7 @@ import moment from 'moment';
 import ExpandableText from './ExpandableText';
 import LikeCommentNumber from './LikeCommentNumber';
 import { likeBulletinItem, unlikeBulletinItem } from '../firebase/BulletinRepository';
+import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const BulletinBoardItem = ({item, containerStyle}) => {
 
@@ -18,6 +19,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
     const [ likeNumber, setLikeNumber ] = useState();
     const [ diffInMinites, setDiffInMinutes ] = useState();
     const [ time, setTime ] = useState();
+    const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     useEffect(() => {
         setDiffInMinutes(moment().diff(moment.unix(item.createdAt.seconds), 'minutes'));
@@ -106,12 +108,14 @@ const BulletinBoardItem = ({item, containerStyle}) => {
                 showsVerticalScrollIndicator={false}
             >
                 {
-                    map(item.images, image => (
-                        <FastImage
-                            key={image}
-                            style={{width: 100, height: 100, marginRight: 8}}
-                            source={{uri: image}}
-                        />
+                    map(item.images, (image, index) => (
+                        <TouchableOpacity onPress={() => setOpenGalleryModal(index)}>
+                            <FastImage
+                                 key={image}
+                                 style={{width: 100, height: 100, marginRight: 8}}
+                                 source={{uri: image}}
+                            />
+                        </TouchableOpacity>
                     ))
                 }
             </ScrollView>
@@ -122,6 +126,14 @@ const BulletinBoardItem = ({item, containerStyle}) => {
                 onLikeComment={onLikeComment}
             />
         </View>
+        {
+            openGalleryModal >= 0 &&
+            <ImageGalleryModal
+                onClose={() => setOpenGalleryModal(-1)}
+                imageUris={item.images}
+                initialPage={openGalleryModal}
+            />
+        }
     </View>)
 }
 
