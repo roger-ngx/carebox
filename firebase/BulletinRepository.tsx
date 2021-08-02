@@ -34,6 +34,7 @@ export async function addBulletinItem({owner, type, content, imageUris}){
             type, content,
             ownerId: owner.uid,
             owner,
+            isActive: true,
             images: imageUrls,
             createdAt: firestore.FieldValue.serverTimestamp(),
             updatedAt: firestore.FieldValue.serverTimestamp()
@@ -91,6 +92,7 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
                 bulletinItemId,
                 comment,
                 owner,
+                isActive: true,
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
@@ -110,6 +112,7 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
                 bulletinItemId,
                 comment,
                 owner,
+                isActive: true,
                 createdAt: firestore.FieldValue.serverTimestamp(),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }

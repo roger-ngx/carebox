@@ -41,7 +41,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
             const token = await messaging().getToken();
             return await updateUserPushToken(uid, token);
         }catch(ex){
-            console.log('createPushToken', ex);
+            Sentry.captureException(`createPushToken: ${ex}`);
         }
     }
 
@@ -67,6 +67,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
             // navigation.navigate('Home');
         }catch(ex){
             console.log(ex);
+            Sentry.captureException(`getAuthToken: ${ex}`);
         }
     }
 

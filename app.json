@@ -20,7 +20,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.carebox"
+      "bundleIdentifier": "com.carebox",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "Allow this app to collect app-related data that can be used for tracking you or your device."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -34,7 +37,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-tracking-transparency"
-    ]
+      "expo-tracking-transparency",
+      "sentry-expo"
+    ],
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "carebox",
+            "project": "carebox",
+            "authToken": "fd263cedb05c42fc999da262eca304ecefd29c3f01814e9b9b71ae3b8fc2587e"
+          }
+        }
+      ]
+    }
   }
 }

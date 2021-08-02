@@ -9,6 +9,7 @@ import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 import { Provider } from 'react-redux';
 import { store } from './stores/store';
+import './env';
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

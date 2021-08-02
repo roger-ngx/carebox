@@ -50,6 +50,33 @@ export const loadIdeaByIds = async (ids) => {
     }
 }
 
+export const removeIdea = async (id) => {
+    if(!id){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(id)
+        .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+    }
+}
+
+export const removeIdeaComment = async (ideaId, commentId) => {
+    if(!ideaId || !commentId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId)
+        .collection('comments').doc(commentId)
+        .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});        
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+    }
+}
+
 export async function addNewIdea(idea, owner){
     try{
         const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
@@ -114,7 +141,7 @@ export async function addIdeaListenner(ideaId, dispatch){
     }
       
     function onError(error) {
-        console.error(error);
+        Sentry.captureException(`addIdeaListenner: ${error}`);
     }
 
     return firestore().collection('ideas').doc(ideaId).onSnapshot(onResult, onError);
@@ -152,6 +179,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
             ...commentDoc,
             ideaId,
             owner,
+            isActive: true,
             images: [...imageUrls, ...uploadedFirebaseImages],
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),

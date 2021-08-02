@@ -57,7 +57,7 @@ export async function signUp({uid, nickName, gender, department, yearsOnJob, pho
             return true;
         }
     }catch(ex){
-        console.log('signUp', ex);
+        Sentry.captureException(`signUp: ${ex}`);
     }
     return false;
 }
@@ -149,7 +149,7 @@ export async function getLikedIdeas(uid){
         const ret = await firestore().collection('history').doc(uid).collection('likes').get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        console.log('getLikedIdeas', ex);
+        Sentry.captureException(`getLikedIdeas: ${ex}`);
     }
 }
 
@@ -163,7 +163,7 @@ export async function getRegisteredIdeas(uid){
         .get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        console.log('getLikedIdeas', ex);
+        Sentry.captureException(`getRegisteredIdeas: ${ex}`);
     }
 }
 

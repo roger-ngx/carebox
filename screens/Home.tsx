@@ -56,10 +56,10 @@ export default function Home({navigation}) {
   const closeModal = () => setOpenRegistrationModal(false)
 
   useEffect(() => {
-    expoUpdateListenner();
-
-    AppState.addEventListener("change", _handleAppStateChange);
-
+    if(!__DEV__){
+      expoUpdateListenner();
+      AppState.addEventListener("change", _handleAppStateChange);
+    }
 
     if(Platform.OS === 'ios'){
       requestPushNotificationPermission();
@@ -70,7 +70,7 @@ export default function Home({navigation}) {
 
     return () => {
       (typeof unsubscriber === 'function') && unsubscriber();
-      AppState.removeEventListener("change", _handleAppStateChange);
+      !__DEV__ && AppState.removeEventListener("change", _handleAppStateChange);
     }
   }, []);
 
