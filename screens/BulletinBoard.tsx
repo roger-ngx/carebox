@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Divider } from 'react-native-elements';
-import FastImage from 'react-native-fast-image';
-import { map } from 'lodash';
 
 import RoundButton from '../components/RoundButton';
 import BulletinRegistrationModal from '../modals/BulletinRegistrationModal';
 import { addBulletinBoardsListenner } from '../firebase/BulletinRepository';
-import ExpandableText from '../components/ExpandableText';
-import LikeCommentNumber from '../components/LikeCommentNumber';
-import TitleNavigationBar from '../components/TitleNavigationBar';
 import BulletinBoardItem from '../components/BulletinBoardItem';
+import BulletinItemDetailModal from '../modals/BulletinItemDetailModal';
 
 const BulletinBoard = ({navigation}) => {
     const [ openRegistrationModal, setOpenRegistrationModal ] = useState(false);
+    const [ openBulletinItemDetail, setOpenBulletinItemDetail ] = useState(false);
+    const [ currentItem, setCurrentItem ] = useState();
 
     const dispatch = useDispatch();
 
@@ -54,7 +52,10 @@ const BulletinBoard = ({navigation}) => {
                     data={boards}
                     renderItem={({item}) => (
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('BulletinItemDetail', { item })}
+                            onPress={() =>{
+                                setCurrentItem(item);
+                                setOpenBulletinItemDetail(true);
+                            }}
                             style={{marginBottom: 20}}
                         >
                             <BulletinBoardItem item={item}/>
@@ -77,6 +78,14 @@ const BulletinBoard = ({navigation}) => {
                 onClose={() => setOpenRegistrationModal(false)}
             />
         }
+        {
+            openBulletinItemDetail &&
+            <BulletinItemDetailModal
+                isVisible={openBulletinItemDetail}
+                item={currentItem}
+                onClose={() => setOpenBulletinItemDetail(false)}
+            />
+    }
     </SafeAreaView>)
 }
 

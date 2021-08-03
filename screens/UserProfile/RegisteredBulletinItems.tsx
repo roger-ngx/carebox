@@ -38,7 +38,7 @@ const RegisteredBulletinItems = ({navigation}) => {
                     data={items}
                     renderItem={({item}) => (
                         <TouchableOpacity
-                            onPress={() => navigation.navigate('BulletinItemDetail', { item })}
+                            // onPress={() => navigation.navigate('BulletinItemDetail', { item })}
                             style={{marginTop: 20, marginHorizontal: 20}}
                         >
                             <BulletinBoardItem item={item}/>

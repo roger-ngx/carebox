@@ -17,9 +17,7 @@ import CommentInput from '../components/CommentInput';
 import BulletinBoardItem from '../components/BulletinBoardItem';
 import { onSubmitBulletinItemComment, addBulletinItemCommentsListenner, addBulletinItemListenner } from '../firebase/BulletinRepository';
 
-const BulletinItemDetailScreen = ({navigation, route}) => {
-
-    const { item } = route.params;
+const BulletinItemDetailModel = ({item, isVisible, onClose}) => {
 
     if(!item) return null;
 
@@ -57,39 +55,44 @@ const BulletinItemDetailScreen = ({navigation, route}) => {
     }
 
     return (
-        <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
-            <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
-                <View style={{marginBottom: 16}}>
-                    <TitleNavigationBar
-                        onBackPress={() => navigation.pop()}
+        <Modal
+            isVisible={isVisible}
+            style={{margin: 0}}
+            avoidKeyboard
+        >
+            <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
+                <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
+                    <View style={{marginTop: 16}}>
+                        <TitleNavigationBar
+                            onBackPress={onClose}
+                        />
+                    </View>
+                    <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
+                        <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
+                        <Divider />
+                        <FlatList
+                            data={comments}
+                            keyExtractor={item => item.id}
+                            renderItem={({item}) => (
+                                <UserComment
+                                    key={item.id}s
+                                    user={item.owner}
+                                    comment={item.comment}
+                                />
+                            )}
+                        />
+                    </ScrollView>
+                    <Divider style={{height: 4, marginHorizontal: -20}}/>
+                    <CommentInput
+                        profileImageUrl={user&&user.profileImageUrl}
+                        containerStyle={{paddingHorizontal: 0}}
+                        onSubmit={onSubmitComment}
+                        loading={loading}
                     />
-                </View>
-                <ScrollView>
-                    <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
-                    <Divider />
-                    <FlatList
-                        data={comments}
-                        keyExtractor={item => item.id}
-                        renderItem={({item}) => (
-                            <UserComment
-                                key={item.id}s
-                                user={item.owner}
-                                comment={item.comment}
-                            />
-                        )}
-                        showsVerticalScrollIndicator={false}
-                    />
-                </ScrollView>
-                <Divider style={{height: 4, marginHorizontal: -20}}/>
-                <CommentInput
-                    profileImageUrl={user&&user.profileImageUrl}
-                    containerStyle={{paddingHorizontal: 0}}
-                    onSubmit={onSubmitComment}
-                    loading={loading}
-                />
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        </Modal>
     )
 }
 
-export default BulletinItemDetailScreen;
+export default BulletinItemDetailModel;
