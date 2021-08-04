@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { remove } from 'lodash';
+import { remove, size } from 'lodash';
 import { ActivityIndicator } from 'react-native-paper';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
@@ -70,6 +70,12 @@ const RegisteredComments = ({navigation}) => {
             </View>
 
             <View style={{flex: 1}}>
+            {
+                !size(comments) ?
+                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 등록한 코멘트가 없습니다</Text>
+                </View>
+                :
                 <FlatList
                     data={comments}
                     renderItem={({item}) => (<View style={{backgroundColor: 'white', marginBottom: 20, borderRadius: 10}}>
@@ -121,6 +127,7 @@ const RegisteredComments = ({navigation}) => {
                     keyExtractor={item => item.id}
                     style={{padding: 20}}
                 />
+            }
             </View>
             {
                 openCommentEditModal &&

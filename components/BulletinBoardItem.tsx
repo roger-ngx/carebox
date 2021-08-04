@@ -25,6 +25,8 @@ const BulletinBoardItem = ({item, containerStyle}) => {
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     useEffect(() => {
+        if(!createdAt) return;
+
         setDiffInMinutes(moment().diff(moment.unix(createdAt.seconds), 'minutes'));
 
         const interval = setInterval(() => { 
@@ -32,7 +34,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
         }, 60000);
 
         return () => clearInterval(interval);
-    }, [item]);
+    }, [createdAt]);
 
     useEffect(() => {
         if(!diffInMinites) return ;

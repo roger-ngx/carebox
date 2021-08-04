@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FlatList, View, TouchableOpacity, Text, Animated, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import { remove } from 'lodash';
+import { remove, size } from 'lodash';
 import { Icon } from 'react-native-elements';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
@@ -73,31 +73,39 @@ const RegisterdIdeas = ({navigation}) => {
                 />
             </View>
 
-            <FlatList
-                data={ideas}
-                renderItem={({item}) => (
-                    <TouchableOpacity
-                        style={{marginBottom: 20}}
-                        onPress={() => navigation.push('Idea', {idea: item})}
-                    >
-                        <NewIdea idea={item} />
+            {
+                !size(ideas) ?
+                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 등록한 아이디어가 없습니다</Text>
+                </View>
+                :
+                <FlatList
+                    data={ideas}
+                    renderItem={({item}) => (
                         <TouchableOpacity
-                            style={{position: 'absolute', top: 0, right: 0, paddingVertical: 24, paddingHorizontal: 20}}
-                            onPress={() => onDeleteIdea(item)}
-                            disabled={loading}
+                            style={{marginBottom: 20}}
+                            onPress={() => navigation.push('Idea', {idea: item})}
                         >
-                            {
-                                loading ?
-                                <ActivityIndicator size='small' color='#787878' />
-                                :
-                                <Icon name='delete' color={selectedItemToDelete === item.id ? '#1379FF' : '#787878'} />
-                            }
+                            <NewIdea idea={item} />
+                            <TouchableOpacity
+                                style={{position: 'absolute', top: 0, right: 0, paddingVertical: 24, paddingHorizontal: 20}}
+                                onPress={() => onDeleteIdea(item)}
+                                disabled={loading}
+                            >
+                                {
+                                    loading ?
+                                    <ActivityIndicator size='small' color='#787878' />
+                                    :
+                                    <Icon name='delete' color={selectedItemToDelete === item.id ? '#1379FF' : '#787878'} />
+                                }
+                            </TouchableOpacity>
                         </TouchableOpacity>
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id}
-                style={{padding: 20}}
-            />
+                    )}
+                    keyExtractor={item => item.id}
+                    style={{padding: 20}}
+                />
+            }
+
             {
                 openToast &&
                 <Animated.View style={{opacity: opacityAnim, position: 'absolute', bottom: 0, right: 0, left: 0, backgroundColor: '#333', paddingVertical: 8}}>

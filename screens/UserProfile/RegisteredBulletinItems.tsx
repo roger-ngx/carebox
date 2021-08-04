@@ -3,7 +3,7 @@ import { FlatList, View, TouchableOpacity, Animated, ActivityIndicator, Text } f
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { Icon } from 'react-native-elements';
-import { remove } from 'lodash';
+import { remove, size } from 'lodash';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
 import { getRegisteredBulletinItems, deleteBulletinItemById } from '../../firebase/BulletinRepository';
@@ -81,33 +81,40 @@ const RegisteredBulletinItems = ({navigation}) => {
                 />
             </View>
 
-            <FlatList
-                style={{width: '100%'}}
-                data={items}
-                renderItem={({item}) => (
-                    <TouchableOpacity
-                        onPress={() => openItemDetail(item)}
-                        style={{marginTop: 20, marginHorizontal: 20}}
-                    >
-                        <BulletinBoardItem item={item}/>
+            {
+                !size(items) ?
+                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 쓴 게시글 없습니다</Text>
+                </View>
+                :
+                <FlatList
+                    style={{width: '100%'}}
+                    data={items}
+                    renderItem={({item}) => (
                         <TouchableOpacity
-                            style={{position: 'absolute', bottom: 0, right: 0, paddingVertical: 20, paddingHorizontal: 20}}
-                            onPress={() => onDeletePost(item)}
-                            disabled={loading}
+                            onPress={() => openItemDetail(item)}
+                            style={{marginTop: 20, marginHorizontal: 20}}
                         >
-                            {
-                                loading ?
-                                <ActivityIndicator size='small' color='#787878' />
-                                :
-                                <Icon name='delete' color={selectedItemToDelete === item.id ? '#1379FF' : '#787878'} />
-                            }
+                            <BulletinBoardItem item={item}/>
+                            <TouchableOpacity
+                                style={{position: 'absolute', bottom: 0, right: 0, paddingVertical: 20, paddingHorizontal: 20}}
+                                onPress={() => onDeletePost(item)}
+                                disabled={loading}
+                            >
+                                {
+                                    loading ?
+                                    <ActivityIndicator size='small' color='#787878' />
+                                    :
+                                    <Icon name='delete' color={selectedItemToDelete === item.id ? '#1379FF' : '#787878'} />
+                                }
+                            </TouchableOpacity>
                         </TouchableOpacity>
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id}
-                showsVerticalScrollIndicator={false}
-                ListFooterComponent={<View style={{height: 100}} />}
-            />
+                    )}
+                    keyExtractor={item => item.id}
+                    showsVerticalScrollIndicator={false}
+                    ListFooterComponent={<View style={{height: 100}} />}
+                />
+            }
             {
                 openBulletinItemDetail &&
                 <BulletinItemDetailModel
