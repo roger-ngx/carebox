@@ -2,17 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
-import PickedIdea from '../../components/Idea/PickedIdea';
+import { remove } from 'lodash';
+import { ActivityIndicator } from 'react-native-paper';
+
 import TitleNavigationBar from '../../components/TitleNavigationBar';
-import { getLikedIdeas, getRegisteredComments } from '../../firebase/UserRepository';
+import { getRegisteredComments } from '../../firebase/UserRepository';
 import { Divider } from 'react-native-elements';
 import NewIdea from '../../components/Idea/NewIdea';
 import CommentRegistrationModal from '../../modals/CommentRegistrationModal';
+import { deleteIdeaComment } from '../../firebase/IdeaRepository';
 
 const RegisteredComments = ({navigation}) => {
 
     const [comments, setComments] = useState([]);
     const [ selectedComment, setSelectedComment ] = useState();
+    const [ loading, setLoading ] = useState(false);
 
     const [ openCommentEditModal, setOpenCommentEditModal ] = useState(false);
 
@@ -32,6 +36,27 @@ const RegisteredComments = ({navigation}) => {
     const editComment = (comment) => {
         setSelectedComment(comment);
         setOpenCommentEditModal(true);
+    }
+
+    const deleteComment = async (selectedComment) => {
+        console.log(selectedComment);
+        const {id, ideaId} = selectedComment;
+        if(!id || !ideaId){
+            return;
+        }
+        setLoading(true);
+
+        try{
+            const ret = await deleteIdeaComment(ideaId, id);
+            if(ret){
+                remove(comments, comment => comment.id === selectedComment.id);
+                setComments([...comments]);
+            }
+        }catch(ex){
+            console.log('deleteComment', ex);
+        }
+
+        setLoading(false);
     }
 
     return (
@@ -66,8 +91,9 @@ const RegisteredComments = ({navigation}) => {
                                         marginRight: 16
                                     }}
                                     onPress={() => editComment(item.comment)}
+                                    disabled={loading}
                                 >
-                                    <Text>수정</Text>
+                                    <Text style={{color: '#6B7A8E'}}>수정</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -79,8 +105,15 @@ const RegisteredComments = ({navigation}) => {
                                         width: 100,
                                         alignItems: 'center'
                                     }}
+                                    onPress={() => deleteComment(item.comment)}
+                                    disabled={loading}
                                 >
-                                    <Text>삭제</Text>
+                                    {
+                                        loading ?
+                                        <ActivityIndicator size='small' color='#6B7A8E' />
+                                        :
+                                        <Text style={{color: '#6B7A8E'}}>삭제</Text>
+                                    }
                                 </TouchableOpacity>
                             </View>
                         </View>

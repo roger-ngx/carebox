@@ -3,6 +3,8 @@ import { View, Text, ScrollView, Platform, KeyboardAvoidingView, Alert, FlatList
 import Modal from 'react-native-modal';
 import { split, map, includes, size } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import moment from 'moment';
+
 import RatingView from '../components/RatingView';
 import OutlinedTag from '../components/OutlinedTag';
 import ExpandableText from '../components/ExpandableText';
@@ -59,37 +61,39 @@ const BulletinItemDetailModel = ({item, isVisible, onClose}) => {
             isVisible={isVisible}
             style={{margin: 0}}
             avoidKeyboard
+            onBackButtonPress={onClose}
         >
-            <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
-                <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
-                    <View style={{marginTop: 16}}>
-                        <TitleNavigationBar
-                            onBackPress={onClose}
-                        />
-                    </View>
-                    <ScrollView style={{flex: 1}} showsVerticalScrollIndicator={false}>
-                        <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
-                        <Divider />
-                        <FlatList
-                            data={comments}
-                            keyExtractor={item => item.id}
-                            renderItem={({item}) => (
-                                <UserComment
-                                    key={item.id}s
-                                    user={item.owner}
-                                    comment={item.comment}
-                                />
-                            )}
-                        />
-                    </ScrollView>
-                    <Divider style={{height: 4, marginHorizontal: -20}}/>
+            <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
+                <View style={{marginTop: 16}}>
+                    <TitleNavigationBar
+                        onBackPress={onClose}
+                    />
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
+                    <Divider />
+                    <FlatList
+                        data={comments}
+                        keyExtractor={item => item.id}
+                        renderItem={({item}) => (
+                            <UserComment
+                                createdTime={moment.unix(item.createdAt.seconds)}
+                                key={item.id}s
+                                user={item.owner}
+                                comment={item.comment}
+                            />
+                        )}
+                    />
+                </ScrollView>
+                <Divider style={{height: 4, marginHorizontal: -20}}/>
+                <View style={{height: 60}}>
                     <CommentInput
                         profileImageUrl={user&&user.profileImageUrl}
                         containerStyle={{paddingHorizontal: 0}}
                         onSubmit={onSubmitComment}
                         loading={loading}
                     />
-                </KeyboardAvoidingView>
+                </View>
             </SafeAreaView>
         </Modal>
     )

@@ -201,3 +201,17 @@ export async function addBulletinItemListenner(id, dispatch){
 
     return firestore().collection('bulletinBoards').doc(id).onSnapshot(onResult, onError);
 }
+
+export const deleteBulletinItemById = async (itemId) => {
+    if(!itemId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('bulletinBoards').doc(itemId).delete();
+    }catch(ex){
+        console.log('deleteBulletinItemById', ex);
+        return false;
+    }
+    return true;
+}

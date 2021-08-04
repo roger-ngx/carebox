@@ -6,16 +6,18 @@ const FilterItem = ({text, active}) => {
     return (
         <View
             style={{
+                width: '100%',
                 alignSelf: 'flex-start',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                justifyContent: 'center'
             }}
         >
             <Text
                 style={{
                     color: active ? '#1379FF' : '#334F74',
                     fontSize: 16,
-                    fontWeight: active ? 'bold' : 'normal'
+                    fontWeight: active ? 'bold' : 'normal',
                 }}
             >
                 {text}

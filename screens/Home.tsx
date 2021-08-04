@@ -81,7 +81,7 @@ export default function Home({navigation}) {
     ) {
       console.log("App has come to the foreground!");
       setHasNewExpoUpdate(false);
-      await Updates.reloadAsync();
+      hasNewExpoUpdate && (await Updates.reloadAsync());
     }
 
     appState.current = nextAppState;

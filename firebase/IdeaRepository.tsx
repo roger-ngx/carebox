@@ -551,3 +551,31 @@ export const rejectPicking = async ({uid, ideaId, commentId, notificationId}) =>
 
     return false;
 }
+
+export const deleteIdeaById = async (ideaId) => {
+    if(!ideaId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId).delete();
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+        return false;
+    }
+    return true;
+}
+
+export const deleteIdeaComment = async (ideaId, commentId) => {
+    if(!ideaId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId).delete();
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+        return false;
+    }
+    return true;
+}
