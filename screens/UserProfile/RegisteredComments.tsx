@@ -47,7 +47,7 @@ const RegisteredComments = ({navigation}) => {
         try{
             const ret = await deleteIdeaComment({ownerUid: user.uid, historyCommentId:id, ideaId, ideaCommentId: commentId});
             if(ret){
-                remove(comments, comment => comment.commentId === selectedComment.commentId);
+                remove(comments, comment => comment.id === selectedComment.id);
                 setComments([...comments]);
             }
         }catch(ex){
