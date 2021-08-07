@@ -106,17 +106,16 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
             }
         )
 
-        batch.set(
-            firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
-            {
-                bulletinItemId,
-                comment,
-                owner,
-                isActive: true,
-                createdAt: firestore.FieldValue.serverTimestamp(),
-                updatedAt: firestore.FieldValue.serverTimestamp()
-            }
-        )
+        // batch.set(
+        //     firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
+        //     {
+        //         bulletinItemId,
+        //         comment,
+        //         owner,
+        //         createdAt: firestore.FieldValue.serverTimestamp(),
+        //         updatedAt: firestore.FieldValue.serverTimestamp()
+        //     }
+        // )
 
         await batch.commit();
 
@@ -203,4 +202,18 @@ export async function addBulletinItemListenner(id, dispatch){
     }
 
     return firestore().collection('bulletinBoards').doc(id).onSnapshot(onResult, onError);
+}
+
+export const deleteBulletinItemById = async (itemId) => {
+    if(!itemId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('bulletinBoards').doc(itemId).delete();
+    }catch(ex){
+        console.log('deleteBulletinItemById', ex);
+        return false;
+    }
+    return true;
 }

@@ -8,7 +8,7 @@ const FILTERS = [ '전체', '의료기기', '의료용품', '서비스', '업무
 const Filter = ({value, setValue, containerStyle}) => {
 
     return (
-        <View style={[{maxHeight: 32, justifyContent: 'center', alignItems: 'center'}, containerStyle]}>
+        <View style={[{maxHeight: 36, justifyContent: 'center', alignItems: 'center'}, containerStyle]}>
             <ScrollView
                 horizontal
                 bounces={false}

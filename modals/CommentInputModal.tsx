@@ -52,7 +52,7 @@ const CommentInputModal = ({profileImageUrl, onSubmitCommentReply, onClose, load
                             borderRadius: 24,
                             paddingVertical: 8,
                             paddingHorizontal: 16,
-                            width: 60
+                            minWidth: 60
                         }}
                         onPress={onSubmit}
                         disabled={loading}

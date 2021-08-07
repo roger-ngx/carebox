@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
 import { filter, size } from 'lodash';
 import { View, Text } from 'react-native';
+import { useSelector } from 'react-redux';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
@@ -22,10 +23,8 @@ import LikedIdeas from '../screens/UserProfile/LikedIdeas';
 import RegisterdIdeas from '../screens/UserProfile/RegisterdIdeas';
 import UserAccountSetting from '../screens/UserProfile/UserAccountSetting';
 import NotificationScreen from '../screens/NotificationScreen';
-import { useSelector } from 'react-redux';
 import BulletinBoard from '../screens/BulletinBoard';
 import RegisteredComments from '../screens/UserProfile/RegisteredComments';
-import BulletinItemDetailScreen from '../screens/BulletinItemDetailScreen';
 import RegisteredBulletinItems from '../screens/UserProfile/RegisteredBulletinItems';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -148,11 +147,6 @@ function BulletinBoardNavigator() {
         component={BulletinBoard}
         options={{ headerShown: false }}
       />
-      <BulletinBoardStack.Screen
-        name="BulletinItemDetail"
-        component={BulletinItemDetailScreen}
-        options={{ headerShown: false }}
-      />
     </BulletinBoardStack.Navigator>
   );
 }
@@ -186,11 +180,6 @@ function UserProfileNavigator() {
         name='RegisteredBulletinItems'
         component={RegisteredBulletinItems}
         options={{headerShown: false}}
-      />
-      <UserProfileStack.Screen
-        name="BulletinItemDetail"
-        component={BulletinItemDetailScreen}
-        options={{ headerShown: false }}
       />
       <UserProfileStack.Screen
         name='UserAccountSetting'

@@ -80,8 +80,7 @@ export default function Home({navigation}) {
       nextAppState === "active"
     ) {
       console.log("App has come to the foreground!");
-      setHasNewExpoUpdate(false);
-      await Updates.reloadAsync();
+      hasNewExpoUpdate && (await Updates.reloadAsync());
     }
 
     appState.current = nextAppState;
@@ -281,7 +280,7 @@ export default function Home({navigation}) {
             간호 혁신 아이디어에 도전하세요!
           </Text>
         </View>
-        <View style={{backgroundColor: 'white', padding: 20}}>
+        <View style={{backgroundColor: 'white', padding: 20, borderBottomColor: '#eee', borderBottomWidth: 1}}>
           <Filter value={currentFilter} setValue={setCurrentFilter}/>
         </View>
         <View style={{paddingHorizontal: 20, marginBottom: 80}}>
@@ -314,7 +313,17 @@ export default function Home({navigation}) {
                 )
               }
               ListEmptyComponent={() => <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 60}}>
-                <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>{`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}</Text>
+                <Image source={require('assets/icons/idea_border.png')} style={{width: 84, height: 84}}/>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#334F74',
+                    fontSize: 16,
+                    marginTop: 24
+                  }}
+                >
+                  {`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}
+                </Text>
               </View>}
             />
           </View>

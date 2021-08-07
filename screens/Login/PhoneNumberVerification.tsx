@@ -4,6 +4,7 @@ import { CheckBox, Icon } from 'react-native-elements';
 import { size } from 'lodash';
 import auth from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native-paper';
+import { login } from '../../firebase/UserRepository';
 
 const PhoneNumberVerification = ({onSuccess}) => {
     const [ step, setStep ] = useState(1);
@@ -19,7 +20,13 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
         try{
             const number = phoneNumber.replace('0', '+82');
-            console.log(number);
+
+            const uid = await login(number);
+            console.log(uid);
+            if(uid){
+                return await onSuccess(uid, false, phoneNumber);
+            }
+            
             const confirmation = await auth().signInWithPhoneNumber(number);
             setConfirmation(confirmation);
             setStep(2);

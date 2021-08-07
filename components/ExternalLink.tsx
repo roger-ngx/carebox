@@ -25,7 +25,7 @@ const ExternalLink = ({title, link}) => {
                 onDismiss={() => setShowSnackbar(false)}
             >
                 <Text style={{textAlign: 'center', color: 'white'}}>
-                    미입력 항목이 있습니다.
+                    링크가 복사되었습니다
                 </Text>
             </Snackbar>
         </View>

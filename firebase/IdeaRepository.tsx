@@ -196,14 +196,14 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
         batch.set(firestore().collection('ideas').doc(ideaId).collection('comments').doc(), doc);
 
-        batch.set(
-            firestore().collection('history').doc(owner.uid).collection('comments').doc(),
-            {
-                ideaId: ideaDoc.id,
-                comment: doc,
-                idea: ideaData
-            }
-        )
+        // batch.set(
+        //     firestore().collection('history').doc(owner.uid).collection('comments').doc(),
+        //     {
+        //         ideaId: ideaDoc.id,
+        //         comment: doc,
+        //         idea: ideaData
+        //     }
+        // )
 
 
         //inform to the idea's owner a new comment 
@@ -495,6 +495,16 @@ export const acceptPicking = async ({uid, ideaId, commentId, notificationId}) =>
             }
         )
 
+        await batch.set(
+            firestore().collection('history').doc(owner.uid).collection('picked').doc(),
+            {
+                ...commentDoc.data(),
+                pickStatus: 'ACCEPTED_TO_PICK',
+                createdAt: firestore.FieldValue.serverTimestamp(),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
         //inform to the idea's owner 
         batch.set(
             firestore().collection('users').doc(owner.uid).collection('notifications').doc(),
@@ -578,4 +588,33 @@ export const rejectPicking = async ({uid, ideaId, commentId, notificationId}) =>
     }
 
     return false;
+}
+
+export const deleteIdeaById = async (ideaId) => {
+    if(!ideaId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId).delete();
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+        return false;
+    }
+    return true;
+}
+
+export const deleteIdeaComment = async ({ownerUid, historyCommentId, ideaId, ideaCommentId}) => {
+    if(!ideaId){
+        return null;
+    }
+
+    try{
+        await firestore().collection('ideas').doc(ideaId).collection('comments').doc(ideaCommentId).delete();
+        await firestore().collection('history').doc(ownerUid).collection('comments').doc(historyCommentId).delete();
+    }catch(ex){
+        console.log('loadIdeaFromId', ex);
+        return false;
+    }
+    return true;
 }

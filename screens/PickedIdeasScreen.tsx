@@ -78,7 +78,7 @@ export default function PickedIdeasScreen({navigation, route}) {
                 <ActivityIndicator size='large' color='#1379FF' />
             </View>
             :
-            <View style={{flex: 1}}>
+            <View style={{flex: 1, width: '100%', paddingHorizontal: 20}}>
 
                 <FlatList
                     data={filteredIdeas}

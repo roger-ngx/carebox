@@ -3,6 +3,8 @@ import { View, Text, ScrollView, Platform, KeyboardAvoidingView, Alert, FlatList
 import Modal from 'react-native-modal';
 import { split, map, includes, size } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import moment from 'moment';
+
 import RatingView from '../components/RatingView';
 import OutlinedTag from '../components/OutlinedTag';
 import ExpandableText from '../components/ExpandableText';
@@ -17,9 +19,7 @@ import CommentInput from '../components/CommentInput';
 import BulletinBoardItem from '../components/BulletinBoardItem';
 import { onSubmitBulletinItemComment, addBulletinItemCommentsListenner, addBulletinItemListenner } from '../firebase/BulletinRepository';
 
-const BulletinItemDetailScreen = ({navigation, route}) => {
-
-    const { item } = route.params;
+const BulletinItemDetailModel = ({item, isVisible, onClose}) => {
 
     if(!item) return null;
 
@@ -57,14 +57,19 @@ const BulletinItemDetailScreen = ({navigation, route}) => {
     }
 
     return (
-        <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
-            <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled>
-                <View style={{marginBottom: 16}}>
+        <Modal
+            isVisible={isVisible}
+            style={{margin: 0}}
+            avoidKeyboard
+            onBackButtonPress={onClose}
+        >
+            <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
+                <View style={{marginTop: 16}}>
                     <TitleNavigationBar
-                        onBackPress={() => navigation.pop()}
+                        onBackPress={onClose}
                     />
                 </View>
-                <ScrollView>
+                <ScrollView showsVerticalScrollIndicator={false}>
                     <BulletinBoardItem item={item} containerStyle={{paddingHorizontal: 0}}/>
                     <Divider />
                     <FlatList
@@ -72,24 +77,26 @@ const BulletinItemDetailScreen = ({navigation, route}) => {
                         keyExtractor={item => item.id}
                         renderItem={({item}) => (
                             <UserComment
+                                createdTime={item.createdAt}
                                 key={item.id}s
                                 user={item.owner}
                                 comment={item.comment}
                             />
                         )}
-                        showsVerticalScrollIndicator={false}
                     />
                 </ScrollView>
                 <Divider style={{height: 4, marginHorizontal: -20}}/>
-                <CommentInput
-                    profileImageUrl={user&&user.profileImageUrl}
-                    containerStyle={{paddingHorizontal: 0}}
-                    onSubmit={onSubmitComment}
-                    loading={loading}
-                />
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+                <View style={{height: 60}}>
+                    <CommentInput
+                        profileImageUrl={user&&user.profileImageUrl}
+                        containerStyle={{paddingHorizontal: 0}}
+                        onSubmit={onSubmitComment}
+                        loading={loading}
+                    />
+                </View>
+            </SafeAreaView>
+        </Modal>
     )
 }
 
-export default BulletinItemDetailScreen;
+export default BulletinItemDetailModel;

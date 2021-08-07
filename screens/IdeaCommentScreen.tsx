@@ -288,6 +288,29 @@ const IdeaCommentScreen = ({idea}) => {
 
     }
 
+    const pickButtonText = (type) => {
+        let text = '';
+
+        switch(type){
+            case 'ACCEPTED_TO_PICK':
+                text = 'Pick수락';
+            break;
+
+            case 'ASKED_FOR_PICK':
+                text = 'Pick요청';
+            break;
+
+            case 'REJECTED_TO_PICK':
+                text = 'Pick거절';
+                break;
+
+            default:
+                text='Pick하기';
+        }
+
+        return text;
+    };
+
     return (
         <ScrollView>
             <IdeaOverallRating overallRate={overallRate} isDisabled={true}/>
@@ -299,8 +322,9 @@ const IdeaCommentScreen = ({idea}) => {
                             {
                                 isIdeaOwner &&
                                 <CBButton
-                                    text='Pick하기'
+                                    text={pickButtonText(comment.pickStatus)}
                                     onPress={() => setShowingConfirmToPick(comment)}
+                                    disabled={pickButtonText(comment.pickStatus) != 'Pick하기'}
                                 />
                             }
                         </View>
