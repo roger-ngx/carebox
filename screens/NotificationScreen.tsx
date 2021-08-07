@@ -36,6 +36,30 @@ const NotificationItem = ({item, navigation}) => {
         }
     }
 
+    const notificationText = (username, type) => {
+        let text = '';
+
+        switch(type){
+            case 'NEW_COMMENT': 
+                text = `“${username}"님이 회원님의 아이디어에 코멘트를 남겼습니다.`;
+            break;
+
+            case 'ACCEPTED_TO_PICK':
+                text = `“${username}"님이 회원의 Pick을 수락했습니다.`;
+            break;
+
+            case 'REQUEST_FOR_PICK':
+                text = `“${username}"님이 회원님을 Pick 했습니다.`;
+            break;
+
+            case 'REJECTED_TO_PICK':
+                text = `“${username}"님이 회원의 Pick을 거절했습니다`;
+                break;
+        }
+
+        return text;
+    };
+
     useEffect(() => {
         if(!diffInMinites) return ;
         console.log('diffInMinites', diffInMinites)
@@ -49,23 +73,23 @@ const NotificationItem = ({item, navigation}) => {
             if(ret > 24){
                 ret = ret / 24;
                 unit = '일';
-            }
-    
-            if(ret > 30){
-                ret = ret / 30;
-                unit = '개월';
-            }
-    
-            if(ret > 12){
-                ret=ret/12;
-                unit = '년';
+
+                if(ret > 30){
+                    ret = ret / 30;
+                    unit = '개월';
+
+                    if(ret > 12){
+                        ret=ret/12;
+                        unit = '년';
+                    }
+                }
             }
         }
 
         setTime(`${ret|0}${unit} 전`);
     }, [diffInMinites]);
 
-        const { id, ideaId, commentUser, ideaOwner, unRead, type } = item;
+        const { id, ideaId, commentUser,commentOwner, ideaOwner, unRead, type } = item;
 
         if(type==='ADMIN'){
             return (
@@ -92,12 +116,19 @@ const NotificationItem = ({item, navigation}) => {
                     source={require('assets/icons/notification.png')}
                 />
                 {
+                    //NEW_COMMENT
                     commentUser &&
-                    <Text style={{flex: 1}}>{commentUser.nickName} {item.type}</Text>
+                    <Text style={{flex: 1}}>{notificationText(commentUser.nickName, item.type)}</Text>
                 }
                 {
+                    //REQUEST_FOR_PICK
                     ideaOwner &&
-                    <Text style={{flex: 1}}>{ideaOwner.nickName} {item.type}</Text>
+                    <Text style={{flex: 1}}>{notificationText(ideaOwner.nickName, item.type)}</Text>
+                }
+                {
+                    //ACCEPTED_TO_PICK, REJECTED_TO_PICK
+                    commentOwner &&
+                    <Text style={{flex: 1}}>{notificationText(commentOwner.nickName, item.type)}</Text>
                 }
                 <Text style={{color: '#666', marginLeft: 8}}>{time}</Text>
             </TouchableOpacity>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { FlatList, View, TouchableOpacity, Text, Animated, ActivityIndicator } from 'react-native';
+import { FlatList, View, TouchableOpacity, Text, Animated, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { remove, size } from 'lodash';
@@ -74,9 +74,10 @@ const RegisterdIdeas = ({navigation}) => {
             </View>
 
             {
-                !size(ideas) ?
-                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
-                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 등록한 아이디어가 없습니다</Text>
+                size(ideas)===0 ?
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={require('assets/icons/idea_border.png')}  style={{width: 84, height: 84}}/>             
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16, marginTop: 24}}>아직 등록한 아이디어가 없습니다</Text>
                 </View>
                 :
                 <FlatList

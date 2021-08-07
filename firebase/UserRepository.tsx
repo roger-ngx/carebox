@@ -4,7 +4,7 @@ import functions from '@react-native-firebase/functions';
 import storage, { firebase } from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
-import { map } from 'lodash';
+import { map, isEmpty } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
 import { setUserProfileData, setUserNotifications } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
@@ -62,6 +62,26 @@ export async function signUp({uid, nickName, gender, department, yearsOnJob, pho
     return false;
 }
 
+export async function login(phoneNumber){
+    if(isEmpty(phoneNumber)) return;
+
+    try{
+        const login = functions().httpsCallable('login');
+        const {data} = await login({phoneNumber});
+
+        const { uid, authToken} = data;
+
+        if(authToken){
+            await auth().signInWithCustomToken(authToken);
+            await SecureStore.setItemAsync('userToken', authToken);
+            return uid;
+        }
+    }catch(ex){
+        console.log('login', ex);
+    }
+    return null;
+}
+
 export async function subscribeForUserInformation(userId, dispatch){
     try{
         function onResult(doc) {
@@ -102,7 +122,7 @@ export async function subscribeForNotifications(userId, dispatch){
     }
 }
 
-export async function markReadingNotification(uid, notificationId){
+export async function markReadingNotification({uid, notificationId}){
     try{
         console.log(uid, notificationId);
 

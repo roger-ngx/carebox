@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { FlatList, View, TouchableOpacity, Animated, ActivityIndicator, Text } from 'react-native';
+import { FlatList, View, TouchableOpacity, Animated, ActivityIndicator, Text, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { Icon } from 'react-native-elements';
@@ -83,8 +83,9 @@ const RegisteredBulletinItems = ({navigation}) => {
 
             {
                 !size(items) ?
-                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
-                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 쓴 게시글 없습니다</Text>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={require('assets/icons/post_border.png')} style={{width: 84, height: 84}}/>             
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16, marginTop: 24}}>아직 쓴 게시글 없습니다</Text>
                 </View>
                 :
                 <FlatList

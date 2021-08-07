@@ -104,16 +104,16 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
             }
         )
 
-        batch.set(
-            firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
-            {
-                bulletinItemId,
-                comment,
-                owner,
-                createdAt: firestore.FieldValue.serverTimestamp(),
-                updatedAt: firestore.FieldValue.serverTimestamp()
-            }
-        )
+        // batch.set(
+        //     firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
+        //     {
+        //         bulletinItemId,
+        //         comment,
+        //         owner,
+        //         createdAt: firestore.FieldValue.serverTimestamp(),
+        //         updatedAt: firestore.FieldValue.serverTimestamp()
+        //     }
+        // )
 
         await batch.commit();
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { Divider, Icon } from 'react-native-elements';
@@ -80,6 +80,26 @@ const BulletinBoard = ({navigation}) => {
                     }
                 </View>
                 <Divider />
+                <View style={{flex: 1, width: '100%', paddingHorizontal: 20}}>
+                    <FlatList
+                        style={{width: '100%', paddingTop: 20}}
+                        data={currentBoards}
+                        renderItem={({item}) => (
+                            <TouchableOpacity
+                                onPress={() =>{
+                                    setCurrentItem(item);
+                                    setOpenBulletinItemDetail(true);
+                                }}
+                                style={{marginBottom: 20}}
+                            >
+                                <BulletinBoardItem item={item}/>
+                            </TouchableOpacity>
+                        )}
+                        keyExtractor={item => item.id}
+                        showsVerticalScrollIndicator={false}
+                        ListFooterComponent={<View style={{height: 100}} />}
+                    />
+                </View>
             </>
             :
             <View
@@ -89,32 +109,13 @@ const BulletinBoard = ({navigation}) => {
                     alignItems: 'center'
                 }}
             >
-                <Text style={{fontSize: 16, color: '#334F74'}}>
+                <Image source={require('assets/icons/post_border.png')} style={{width: 84, height: 84}}/>
+                <Text style={{fontSize: 16, color: '#334F74', marginTop: 24}}>
                     등록된 게시글이 없습니다.
                 </Text>
             </View>
         }
 
-        <View style={{flex: 1, width: '100%', paddingHorizontal: 20}}>
-            <FlatList
-                style={{width: '100%', paddingTop: 20}}
-                data={currentBoards}
-                renderItem={({item}) => (
-                    <TouchableOpacity
-                        onPress={() =>{
-                            setCurrentItem(item);
-                            setOpenBulletinItemDetail(true);
-                        }}
-                        style={{marginBottom: 20}}
-                    >
-                        <BulletinBoardItem item={item}/>
-                    </TouchableOpacity>
-                )}
-                keyExtractor={item => item.id}
-                showsVerticalScrollIndicator={false}
-                ListFooterComponent={<View style={{height: 100}} />}
-            />
-        </View>
         <View style={{position: 'absolute', bottom: 20, right: 20}}>
             <TouchableOpacity
                 style={{

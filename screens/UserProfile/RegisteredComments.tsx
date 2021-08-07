@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View, Text, TouchableOpacity } from 'react-native';
+import { FlatList, View, Text, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { remove, size } from 'lodash';
@@ -38,18 +38,16 @@ const RegisteredComments = ({navigation}) => {
         setOpenCommentEditModal(true);
     }
 
-    const deleteComment = async (selectedComment) => {
-        console.log(selectedComment);
-        const {id, ideaId} = selectedComment;
-        if(!id || !ideaId){
+    const deleteComment = async ({id, ideaId, commentId}) => {
+        if(!ideaId || !commentId){
             return;
         }
         setLoading(true);
 
         try{
-            const ret = await deleteIdeaComment(ideaId, id);
+            const ret = await deleteIdeaComment({ownerUid: user.uid, historyCommentId:id, ideaId, ideaCommentId: commentId});
             if(ret){
-                remove(comments, comment => comment.id === selectedComment.id);
+                remove(comments, comment => comment.commentId === selectedComment.commentId);
                 setComments([...comments]);
             }
         }catch(ex){
@@ -72,8 +70,9 @@ const RegisteredComments = ({navigation}) => {
             <View style={{flex: 1}}>
             {
                 !size(comments) ?
-                <View style={{flex: 1, justifyContent: 'center', alignItem: 'center'}}>
-                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>아직 등록한 코멘트가 없습니다</Text>
+                <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                    <Image source={require('assets/icons/idea_border.png')} style={{width: 84, height: 84}}/>             
+                    <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16, marginTop: 24}}>아직 등록한 코멘트가 없습니다</Text>
                 </View>
                 :
                 <FlatList
@@ -96,7 +95,7 @@ const RegisteredComments = ({navigation}) => {
                                         alignItems: 'center',
                                         marginRight: 16
                                     }}
-                                    onPress={() => editComment(item.comment)}
+                                    onPress={() => editComment(item)}
                                     disabled={loading}
                                 >
                                     <Text style={{color: '#6B7A8E'}}>수정</Text>
@@ -111,7 +110,7 @@ const RegisteredComments = ({navigation}) => {
                                         width: 100,
                                         alignItems: 'center'
                                     }}
-                                    onPress={() => deleteComment(item.comment)}
+                                    onPress={() => deleteComment(item)}
                                     disabled={loading}
                                 >
                                     {

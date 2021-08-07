@@ -77,7 +77,7 @@ const BulletinItemDetailModel = ({item, isVisible, onClose}) => {
                         keyExtractor={item => item.id}
                         renderItem={({item}) => (
                             <UserComment
-                                createdTime={moment.unix(item.createdAt.seconds)}
+                                createdTime={item.createdAt}
                                 key={item.id}s
                                 user={item.owner}
                                 comment={item.comment}
