@@ -114,7 +114,7 @@ const RegisteredComments = ({navigation}) => {
                                     disabled={loading}
                                 >
                                     {
-                                        loading ?
+                                        (loading && setSelectedComment.id===item.id) ?
                                         <ActivityIndicator size='small' color='#6B7A8E' />
                                         :
                                         <Text style={{color: '#6B7A8E'}}>삭제</Text>

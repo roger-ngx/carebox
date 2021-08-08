@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, FlatList, Image, Text, TouchableOpacity } from 'react-native';
-import { orderBy } from 'lodash';
+import { orderBy, size } from 'lodash';
 import moment from 'moment';
 
 import TitleNavigationBar from '../components/TitleNavigationBar';
@@ -137,28 +137,41 @@ const NotificationItem = ({item, navigation}) => {
 
 const NotificationScreen = ({navigation}) => {
 
-    const [ diffInMinites, setDiffInMinutes ] = useState();
-    const [ time, setTime ] = useState();
-
     const notifications = useSelector(state => state.user.userNotifications);
+
+    const items = orderBy(notifications, ['createdAt'], ['desc']);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-            <View>
+            <View style={{flex: 1}}>
                 <TitleNavigationBar
                     onBackPress={() => navigation.pop()}
                     title='알림'
                     containerStyle={{marginVertical: 16, marginHorizontal: 20}}
                 />
-                <FlatList
-                    data={orderBy(notifications, ['createdAt'], ['desc'])}
-                    renderItem={
-                        ({item}) => (<NotificationItem item={item} navigation={navigation}/>)
-                    }
-                    ItemSeparatorComponent={() => <Divider/>}
-                    ListEmptyComponent={() => (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>알림이 없습니다.</Text></View>)}
-                    keyExtractor={item => item.id}
-                />
+                {
+                    size(items) === 0 ?
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <Image source={require('assets/icons/notification_border.png')} style={{width: 84, height: 84}}/>             
+                        <Text style={{fontSize: 16, color: '#001240', marginTop: 24}}>알림이 없습니다.</Text>
+                    </View>
+                    :
+                    <FlatList
+                        data={items}
+                        renderItem={
+                            ({item}) => (<NotificationItem item={item} navigation={navigation}/>)
+                        }
+                        style={{flex: 1}}
+                        ItemSeparatorComponent={() => <Divider/>}
+                        ListEmptyComponent={() => (
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                                <Image source={require('assets/icons/notification_border.png')} style={{width: 84, height: 84}}/>             
+                                <Text style={{fontSize: 16, color: '#001240', marginTop: 24}}>알림이 없습니다.</Text>
+                            </View>
+                        )}
+                        keyExtractor={item => item.id}
+                    />
+                }
             </View>
         </SafeAreaView>
     )

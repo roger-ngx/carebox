@@ -598,7 +598,7 @@ export const deleteIdeaById = async (ideaId) => {
     try{
         await firestore().collection('ideas').doc(ideaId).delete();
     }catch(ex){
-        console.log('loadIdeaFromId', ex);
+        Sentry.captureException(`loadIdeaFromId reject: ${JSON.stringify(ex)}`);
         return false;
     }
     return true;

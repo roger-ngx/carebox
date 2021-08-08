@@ -26,6 +26,7 @@ import NotificationScreen from '../screens/NotificationScreen';
 import BulletinBoard from '../screens/BulletinBoard';
 import RegisteredComments from '../screens/UserProfile/RegisteredComments';
 import RegisteredBulletinItems from '../screens/UserProfile/RegisteredBulletinItems';
+import RegisteredBulletinComments from '../screens/UserProfile/RegisteredBulletinComments';
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -179,6 +180,11 @@ function UserProfileNavigator() {
       <UserProfileStack.Screen
         name='RegisteredBulletinItems'
         component={RegisteredBulletinItems}
+        options={{headerShown: false}}
+      />
+      <UserProfileStack.Screen
+        name='RegisteredBulletinComments'
+        component={RegisteredBulletinComments}
         options={{headerShown: false}}
       />
       <UserProfileStack.Screen
