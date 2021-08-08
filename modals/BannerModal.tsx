@@ -14,7 +14,7 @@ const BannerModal = ({onClose}) => (
             <TouchableOpacity
                 style={{
                     position: 'absolute',
-                    top: 40,
+                    top: 20,
                     right: 0,
                     padding: 24,
                     zIndex: 1
@@ -28,7 +28,7 @@ const BannerModal = ({onClose}) => (
             </TouchableOpacity>
             <ScrollView>
                 <Image
-                    source={require('assets/images/banner.png')}
+                    source={require('assets/images/banner.jpg')}
                     style={{width: '100%'}}
                     resizeMode='stretch'
                 />

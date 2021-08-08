@@ -29,7 +29,7 @@ const NotificationItem = ({item, navigation}) => {
         console.log(ideaId, notificationId, unRead);
 
         try{
-            unRead && await markReadingNotification(user.uid, notificationId);
+            unRead && await markReadingNotification({uid: user.uid, notificationId});
             ideaId && navigation.navigate('Idea', {ideaId: ideaId})
         }catch(ex){
             console.log(ex);
@@ -48,7 +48,7 @@ const NotificationItem = ({item, navigation}) => {
                 text = `“${username}"님이 회원의 Pick을 수락했습니다.`;
             break;
 
-            case 'REQUEST_FOR_PICK':
+            case 'ASKED_FOR_PICK':
                 text = `“${username}"님이 회원님을 Pick 했습니다.`;
             break;
 

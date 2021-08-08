@@ -37,7 +37,7 @@ export async function updateUserInfo({uid, profileImageUri, userInfo}){
 
         return true;
     }catch(ex){
-        console.log('updateUserInfo', ex);
+        Sentry.captureException(`updateUserInfo: ${ex}`);
     }
     return false;
 }
@@ -78,49 +78,41 @@ export async function login(phoneNumber){
             return uid;
         }
     }catch(ex){
-        console.log('login', ex);
+        Sentry.captureException(`login: ${JSON.stringify(ex)}`);
     }
     return null;
 }
 
 export async function subscribeForUserInformation(userId, dispatch){
-    try{
-        function onResult(doc) {
-            console.log('Got User data.');
+    function onResult(doc) {
+        console.log('Got User data.');
 
-            const userData = {uid: doc.id, ...doc.data()};
+        const userData = {uid: doc.id, ...doc.data()};
 
-            dispatch(setUserProfileData(userData));
-        }
-          
-        function onError(error) {
-            console.error(error);
-        }
-    
-        return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
-    }catch(ex){
-        console.log('subscribeForUserInformation', ex);
+        dispatch(setUserProfileData(userData));
     }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+    }
+
+    return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
 }
 
 export async function subscribeForNotifications(userId, dispatch){
-    try{
-        function onResult(snapShot) {
-            console.log('Got User notifications data.');
+    function onResult(snapShot) {
+        console.log('Got User notifications data.');
 
-            const userData = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
+        const userData = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
 
-            dispatch(setUserNotifications(userData));
-        }
-          
-        function onError(error) {
-            console.error(error);
-        }
-    
-        return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
-    }catch(ex){
-        console.log('subscribeForUserInformation', ex);
+        dispatch(setUserNotifications(userData));
     }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+    }
+
+    return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
 }
 
 export async function markReadingNotification({uid, notificationId}){
@@ -134,7 +126,7 @@ export async function markReadingNotification({uid, notificationId}){
             updatedAt: firestore.FieldValue.serverTimestamp()
         });    
     }catch(ex){
-        console.log('markReadingNotification', ex);
+        Sentry.captureException(`markReadingNotification: ${JSON.stringify(ex)}`);
     }
 }
 
@@ -147,7 +139,7 @@ export async function updateUserPushToken(userId, pushToken){
         })
         return true;
     }catch(ex){
-        console.log('updateUserPushToken', ex);
+        Sentry.captureException(`updateUserPushToken: ${JSON.stringify(ex)}`);
     }
     return false;
 }
@@ -159,7 +151,7 @@ export async function requestPushNotificationPermission() {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      Sentry.captureException(`Authorization status: ${authStatus}`);
     }
 }
 
@@ -195,7 +187,7 @@ export async function getRegisteredComments(uid){
         const ret = await firestore().collection('history').doc(uid).collection('comments').get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        console.log('getLikedIdeas', ex);
+        Sentry.captureException(`getRegisteredComments: ${JSON.stringify(ex)}`);
     }
 } 
 
@@ -205,7 +197,7 @@ export async function signOut(){
         await SecureStore.deleteItemAsync('userToken');
         return true;
     }catch(ex){
-        console.log('logOut', ex);
+        Sentry.captureException(`signOut: ${JSON.stringify(ex)}`);
     }
     return false;
 }
