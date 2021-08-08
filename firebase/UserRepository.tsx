@@ -62,6 +62,7 @@ export async function signUp({uid, nickName, gender, department, yearsOnJob, pho
     return false;
 }
 
+//+82
 export async function login(phoneNumber){
     if(isEmpty(phoneNumber)) return;
 

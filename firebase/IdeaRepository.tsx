@@ -189,7 +189,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
             firestore().collection('ideas').doc(ideaId),
             {
                 commentCount: firestore.FieldValue.increment(1),
-                rating: firestore.FieldValue.arrayUnion({ avgRating, practicalityRate, creativityRate, valuableRate }),
+                rating: firestore.FieldValue.arrayUnion({ avgRating, practicalityRate, creativityRate, valuableRate, uid: owner.uid }),
                 updatedAt: firestore.FieldValue.serverTimestamp()
             }
         )
@@ -609,9 +609,28 @@ export const deleteIdeaComment = async ({ownerUid, historyCommentId, ideaId, ide
         return null;
     }
 
+    const batch = firestore().batch();
+
     try{
-        await firestore().collection('ideas').doc(ideaId).collection('comments').doc(ideaCommentId).delete();
-        await firestore().collection('history').doc(ownerUid).collection('comments').doc(historyCommentId).delete();
+
+        const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
+        const { rating } = ideaDoc.data();
+
+        remove(rating, rate => rate.uid === ownerUid);
+
+        batch.delete(firestore().collection('ideas').doc(ideaId).collection('comments').doc(ideaCommentId));
+        batch.delete(firestore().collection('history').doc(ownerUid).collection('comments').doc(historyCommentId));
+
+        batch.update(
+            firestore().collection('ideas').doc(ideaId),
+            {
+                rating,
+                commentCount: firestore.FieldValue.increment(-1),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.commit();
     }catch(ex){
         Sentry.captureException(`loadIdeaFromId reject: ${JSON.stringify(ex)}`);
         return false;

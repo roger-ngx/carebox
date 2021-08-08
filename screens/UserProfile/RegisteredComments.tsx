@@ -47,7 +47,7 @@ const RegisteredComments = ({navigation}) => {
         try{
             const ret = await deleteIdeaComment({ownerUid: user.uid, historyCommentId:id, ideaId, ideaCommentId: commentId});
             if(ret){
-                remove(comments, comment => comment.id === selectedComment.id);
+                remove(comments, comment => comment.id === id);
                 setComments([...comments]);
             }
         }catch(ex){
@@ -95,7 +95,7 @@ const RegisteredComments = ({navigation}) => {
                                         alignItems: 'center',
                                         marginRight: 16
                                     }}
-                                    onPress={() => editComment(item)}
+                                    onPress={() => editComment(item.comment)}
                                     disabled={loading}
                                 >
                                     <Text style={{color: '#6B7A8E'}}>수정</Text>
