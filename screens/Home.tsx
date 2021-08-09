@@ -24,6 +24,7 @@ import CBButton from '../components/CBButton';
 import { acceptPicking, getPickedIdeas, rejectPicking } from '../firebase/IdeaRepository';
 import RoundButton from '../components/RoundButton';
 import { UpdateEventType } from 'expo-updates';
+import BannerModal from '../modals/BannerModal';
 
 export default function Home({navigation}) {
 
@@ -51,6 +52,8 @@ export default function Home({navigation}) {
 
   const appState = useRef(AppState.currentState);
   const [ hasNewExpoUpdate, setHasNewExpoUpdate ] = useState(false);
+
+  const [ openBanner, setOpenBanner ] = useState(false);
 
   const openModal = () => setOpenRegistrationModal(true)
   const closeModal = () => setOpenRegistrationModal(false)
@@ -80,8 +83,7 @@ export default function Home({navigation}) {
       nextAppState === "active"
     ) {
       console.log("App has come to the foreground!");
-      setHasNewExpoUpdate(false);
-      await Updates.reloadAsync();
+      hasNewExpoUpdate && (await Updates.reloadAsync());
     }
 
     appState.current = nextAppState;
@@ -269,19 +271,20 @@ export default function Home({navigation}) {
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={[1]}
       >
-        <View
+        <TouchableOpacity
           style={{
             backgroundColor: '#1379FF',
             height: 100, width: '100%',
             justifyContent: 'center',
             alignItems: 'center',
           }}
+          onPress={() => setOpenBanner(true)}
         >
           <Text style={{fontSize: 18, fontWeight: 'bold', color: 'white'}}>
             간호 혁신 아이디어에 도전하세요!
           </Text>
-        </View>
-        <View style={{backgroundColor: 'white', padding: 20}}>
+        </TouchableOpacity>
+        <View style={{backgroundColor: 'white', padding: 20, borderBottomColor: '#eee', borderBottomWidth: 1}}>
           <Filter value={currentFilter} setValue={setCurrentFilter}/>
         </View>
         <View style={{paddingHorizontal: 20, marginBottom: 80}}>
@@ -314,7 +317,17 @@ export default function Home({navigation}) {
                 )
               }
               ListEmptyComponent={() => <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 60}}>
-                <Text style={{textAlign: 'center', color: '#334F74', fontSize: 16}}>{`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}</Text>
+                <Image source={require('assets/icons/idea_border.png')} style={{width: 84, height: 84}}/>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    color: '#334F74',
+                    fontSize: 16,
+                    marginTop: 24
+                  }}
+                >
+                  {`등록된 아이디어가 없습니다.\n지금 아이디어를 등록해보세요!`}
+                </Text>
               </View>}
             />
           </View>
@@ -408,6 +421,12 @@ export default function Home({navigation}) {
               onPress={() => readNotification({uid: currentUser.uid, notificationId: pickAcceptedNotification.id})}
           />
         </InfoModal>
+      }
+      {
+        openBanner &&
+        <BannerModal
+          onClose={() => setOpenBanner(false)}
+        />
       }
     </SafeAreaView>
   );

@@ -10,6 +10,7 @@ const CommentImagesUploader = ({imageUris, onImagesChange}) => {
     const [ images, setImages ] = useState([])
 
     useEffect(() => {
+        console.log(imageUris);
         !isEmpty(imageUris) && setImages(imageUris);
     }, [imageUris]);
 

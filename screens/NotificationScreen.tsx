@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, FlatList, Image, Text, TouchableOpacity } from 'react-native';
-import { orderBy } from 'lodash';
+import { orderBy, size } from 'lodash';
 import moment from 'moment';
 
 import TitleNavigationBar from '../components/TitleNavigationBar';
@@ -29,12 +29,36 @@ const NotificationItem = ({item, navigation}) => {
         console.log(ideaId, notificationId, unRead);
 
         try{
-            unRead && await markReadingNotification(user.uid, notificationId);
+            unRead && await markReadingNotification({uid: user.uid, notificationId});
             ideaId && navigation.navigate('Idea', {ideaId: ideaId})
         }catch(ex){
             console.log(ex);
         }
     }
+
+    const notificationText = (username, type) => {
+        let text = '';
+
+        switch(type){
+            case 'NEW_COMMENT': 
+                text = `“${username}"님이 회원님의 아이디어에 코멘트를 남겼습니다.`;
+            break;
+
+            case 'ACCEPTED_TO_PICK':
+                text = `“${username}"님이 회원의 Pick을 수락했습니다.`;
+            break;
+
+            case 'ASKED_FOR_PICK':
+                text = `“${username}"님이 회원님을 Pick 했습니다.`;
+            break;
+
+            case 'REJECTED_TO_PICK':
+                text = `“${username}"님이 회원의 Pick을 거절했습니다`;
+                break;
+        }
+
+        return text;
+    };
 
     useEffect(() => {
         if(!diffInMinites) return ;
@@ -49,23 +73,23 @@ const NotificationItem = ({item, navigation}) => {
             if(ret > 24){
                 ret = ret / 24;
                 unit = '일';
-            }
-    
-            if(ret > 30){
-                ret = ret / 30;
-                unit = '개월';
-            }
-    
-            if(ret > 12){
-                ret=ret/12;
-                unit = '년';
+
+                if(ret > 30){
+                    ret = ret / 30;
+                    unit = '개월';
+
+                    if(ret > 12){
+                        ret=ret/12;
+                        unit = '년';
+                    }
+                }
             }
         }
 
         setTime(`${ret|0}${unit} 전`);
     }, [diffInMinites]);
 
-        const { id, ideaId, commentUser, ideaOwner, unRead, type } = item;
+        const { id, ideaId, commentUser,commentOwner, ideaOwner, unRead, type } = item;
 
         if(type==='ADMIN'){
             return (
@@ -92,12 +116,19 @@ const NotificationItem = ({item, navigation}) => {
                     source={require('assets/icons/notification.png')}
                 />
                 {
+                    //NEW_COMMENT
                     commentUser &&
-                    <Text style={{flex: 1}}>{commentUser.nickName} {item.type}</Text>
+                    <Text style={{flex: 1}}>{notificationText(commentUser.nickName, item.type)}</Text>
                 }
                 {
+                    //REQUEST_FOR_PICK
                     ideaOwner &&
-                    <Text style={{flex: 1}}>{ideaOwner.nickName} {item.type}</Text>
+                    <Text style={{flex: 1}}>{notificationText(ideaOwner.nickName, item.type)}</Text>
+                }
+                {
+                    //ACCEPTED_TO_PICK, REJECTED_TO_PICK
+                    commentOwner &&
+                    <Text style={{flex: 1}}>{notificationText(commentOwner.nickName, item.type)}</Text>
                 }
                 <Text style={{color: '#666', marginLeft: 8}}>{time}</Text>
             </TouchableOpacity>
@@ -106,28 +137,41 @@ const NotificationItem = ({item, navigation}) => {
 
 const NotificationScreen = ({navigation}) => {
 
-    const [ diffInMinites, setDiffInMinutes ] = useState();
-    const [ time, setTime ] = useState();
-
     const notifications = useSelector(state => state.user.userNotifications);
+
+    const items = orderBy(notifications, ['createdAt'], ['desc']);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-            <View>
+            <View style={{flex: 1}}>
                 <TitleNavigationBar
                     onBackPress={() => navigation.pop()}
                     title='알림'
                     containerStyle={{marginVertical: 16, marginHorizontal: 20}}
                 />
-                <FlatList
-                    data={orderBy(notifications, ['createdAt'], ['desc'])}
-                    renderItem={
-                        ({item}) => (<NotificationItem item={item} navigation={navigation}/>)
-                    }
-                    ItemSeparatorComponent={() => <Divider/>}
-                    ListEmptyComponent={() => (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><Text>알림이 없습니다.</Text></View>)}
-                    keyExtractor={item => item.id}
-                />
+                {
+                    size(items) === 0 ?
+                    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                        <Image source={require('assets/icons/notification_border.png')} style={{width: 84, height: 84}}/>             
+                        <Text style={{fontSize: 16, color: '#001240', marginTop: 24}}>알림이 없습니다.</Text>
+                    </View>
+                    :
+                    <FlatList
+                        data={items}
+                        renderItem={
+                            ({item}) => (<NotificationItem item={item} navigation={navigation}/>)
+                        }
+                        style={{flex: 1}}
+                        ItemSeparatorComponent={() => <Divider/>}
+                        ListEmptyComponent={() => (
+                            <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                                <Image source={require('assets/icons/notification_border.png')} style={{width: 84, height: 84}}/>             
+                                <Text style={{fontSize: 16, color: '#001240', marginTop: 24}}>알림이 없습니다.</Text>
+                            </View>
+                        )}
+                        keyExtractor={item => item.id}
+                    />
+                }
             </View>
         </SafeAreaView>
     )

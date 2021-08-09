@@ -25,6 +25,8 @@ const BulletinBoardItem = ({item, containerStyle}) => {
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     useEffect(() => {
+        if(!createdAt) return;
+
         setDiffInMinutes(moment().diff(moment.unix(createdAt.seconds), 'minutes'));
 
         const interval = setInterval(() => { 
@@ -32,7 +34,7 @@ const BulletinBoardItem = ({item, containerStyle}) => {
         }, 60000);
 
         return () => clearInterval(interval);
-    }, [item]);
+    }, [createdAt]);
 
     useEffect(() => {
         if(!diffInMinites) return ;
@@ -47,16 +49,16 @@ const BulletinBoardItem = ({item, containerStyle}) => {
             if(ret > 24){
                 ret = ret / 24;
                 unit = '일';
-            }
-    
-            if(ret > 30){
-                ret = ret / 30;
-                unit = '개월';
-            }
-    
-            if(ret > 12){
-                ret=ret/12;
-                unit = '년';
+
+                if(ret > 30){
+                    ret = ret / 30;
+                    unit = '개월';
+
+                    if(ret > 12){
+                        ret=ret/12;
+                        unit = '년';
+                    }
+                }
             }
         }
 

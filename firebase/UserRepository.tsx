@@ -4,7 +4,7 @@ import functions from '@react-native-firebase/functions';
 import storage, { firebase } from '@react-native-firebase/storage';
 import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
-import { map } from 'lodash';
+import { map, isEmpty } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
 import { setUserProfileData, setUserNotifications } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
@@ -37,7 +37,7 @@ export async function updateUserInfo({uid, profileImageUri, userInfo}){
 
         return true;
     }catch(ex){
-        console.log('updateUserInfo', ex);
+        Sentry.captureException(`updateUserInfo: ${ex}`);
     }
     return false;
 }
@@ -62,47 +62,60 @@ export async function signUp({uid, nickName, gender, department, yearsOnJob, pho
     return false;
 }
 
-export async function subscribeForUserInformation(userId, dispatch){
+//+82
+export async function login(phoneNumber){
+    if(isEmpty(phoneNumber)) return;
+
     try{
-        function onResult(doc) {
-            console.log('Got User data.');
+        const login = functions().httpsCallable('login');
+        const {data} = await login({phoneNumber});
 
-            const userData = {uid: doc.id, ...doc.data()};
+        const { uid, authToken} = data;
 
-            dispatch(setUserProfileData(userData));
+        if(authToken){
+            await auth().signInWithCustomToken(authToken);
+            await SecureStore.setItemAsync('userToken', authToken);
+            return uid;
         }
-          
-        function onError(error) {
-            console.error(error);
-        }
-    
-        return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
     }catch(ex){
-        console.log('subscribeForUserInformation', ex);
+        Sentry.captureException(`login: ${JSON.stringify(ex)}`);
     }
+    return null;
+}
+
+export async function subscribeForUserInformation(userId, dispatch){
+    function onResult(doc) {
+        console.log('Got User data.');
+
+        const userData = {uid: doc.id, ...doc.data()};
+
+        dispatch(setUserProfileData(userData));
+    }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+    }
+
+    return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
 }
 
 export async function subscribeForNotifications(userId, dispatch){
-    try{
-        function onResult(snapShot) {
-            console.log('Got User notifications data.');
+    function onResult(snapShot) {
+        console.log('Got User notifications data.');
 
-            const userData = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
+        const userData = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
 
-            dispatch(setUserNotifications(userData));
-        }
-          
-        function onError(error) {
-            console.error(error);
-        }
-    
-        return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
-    }catch(ex){
-        console.log('subscribeForUserInformation', ex);
+        dispatch(setUserNotifications(userData));
     }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+    }
+
+    return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
 }
 
-export async function markReadingNotification(uid, notificationId){
+export async function markReadingNotification({uid, notificationId}){
     try{
         console.log(uid, notificationId);
 
@@ -113,7 +126,7 @@ export async function markReadingNotification(uid, notificationId){
             updatedAt: firestore.FieldValue.serverTimestamp()
         });    
     }catch(ex){
-        console.log('markReadingNotification', ex);
+        Sentry.captureException(`markReadingNotification: ${JSON.stringify(ex)}`);
     }
 }
 
@@ -126,7 +139,7 @@ export async function updateUserPushToken(userId, pushToken){
         })
         return true;
     }catch(ex){
-        console.log('updateUserPushToken', ex);
+        Sentry.captureException(`updateUserPushToken: ${JSON.stringify(ex)}`);
     }
     return false;
 }
@@ -138,7 +151,7 @@ export async function requestPushNotificationPermission() {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
     if (enabled) {
-      console.log('Authorization status:', authStatus);
+      Sentry.captureException(`Authorization status: ${authStatus}`);
     }
 }
 
@@ -174,7 +187,7 @@ export async function getRegisteredComments(uid){
         const ret = await firestore().collection('history').doc(uid).collection('comments').get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        console.log('getLikedIdeas', ex);
+        Sentry.captureException(`getRegisteredComments: ${JSON.stringify(ex)}`);
     }
 } 
 
@@ -184,7 +197,7 @@ export async function signOut(){
         await SecureStore.deleteItemAsync('userToken');
         return true;
     }catch(ex){
-        console.log('logOut', ex);
+        Sentry.captureException(`signOut: ${JSON.stringify(ex)}`);
     }
     return false;
 }

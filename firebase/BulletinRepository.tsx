@@ -57,7 +57,34 @@ export async function getRegisteredBulletinItems(uid){
         .get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        console.log('getRegisteredBulletinItems', ex);
+        Sentry.captureException(`getRegisteredBulletinItems: ${JSON.stringify(ex)}`);
+    }
+}
+
+export async function getBulletinItemById(id){
+    try{
+        if(!id) return null;
+
+        const doc = await firestore().collection('bulletinBoards')
+        .doc(id).get();
+
+        return ({id: doc.id, ...doc.data()});
+    }catch(ex){
+        Sentry.captureException(`getBulletinItemById: ${JSON.stringify(ex)}`);
+    }
+}
+
+export async function getRegisteredBulletinComments(uid){
+    try{
+        console.log('uid', uid);
+
+        const ret = await firestore().collection('history')
+        .doc(uid).collection('bulletinComments')
+        .orderBy('updatedAt', 'desc')
+        .get();
+        return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
+    }catch(ex){
+        Sentry.captureException(`getRegisteredBulletinComments reject: ${JSON.stringify(ex)}`);
     }
 }
 
@@ -106,17 +133,16 @@ export async function onSubmitBulletinItemComment({bulletinItemId, comment, owne
             }
         )
 
-        batch.set(
-            firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
-            {
-                bulletinItemId,
-                comment,
-                owner,
-                isActive: true,
-                createdAt: firestore.FieldValue.serverTimestamp(),
-                updatedAt: firestore.FieldValue.serverTimestamp()
-            }
-        )
+        // batch.set(
+        //     firestore().collection('users').doc(owner.uid).collection('bulletinComments').doc(), 
+        //     {
+        //         bulletinItemId,
+        //         comment,
+        //         owner,
+        //         createdAt: firestore.FieldValue.serverTimestamp(),
+        //         updatedAt: firestore.FieldValue.serverTimestamp()
+        //     }
+        // )
 
         await batch.commit();
 
@@ -203,4 +229,30 @@ export async function addBulletinItemListenner(id, dispatch){
     }
 
     return firestore().collection('bulletinBoards').doc(id).onSnapshot(onResult, onError);
+}
+
+export const deleteBulletinItemById = async ({uid, historyBulletinItemId, bulletinItemId, commentId}) => {
+    console.log(uid, historyBulletinItemId, bulletinItemId, commentId);
+    
+    const batch = firestore().batch();
+
+    try{
+        batch.delete(firestore().collection('bulletinBoards').doc(bulletinItemId).collection('comments').doc(commentId));
+        batch.delete(firestore().collection('history').doc(uid).collection('bulletinComments').doc(historyBulletinItemId));
+
+        batch.update(
+            firestore().collection('bulletinBoards').doc(bulletinItemId),
+            {
+                commentCount: firestore.FieldValue.increment(-1),
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        await batch.commit();
+    }catch(ex){
+        Sentry.captureException(`deleteBulletinItemById: ${JSON.stringify(ex)}`);
+        return false;
+    }
+
+    return true;
 }
