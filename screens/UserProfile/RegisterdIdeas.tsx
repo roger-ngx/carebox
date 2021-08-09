@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, TouchableOpacity } from 'react-native';
+import { Divider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import PickedIdea from '../../components/Idea/PickedIdea';
@@ -24,7 +25,7 @@ const RegisterdIdeas = ({navigation}) => {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{flex: 1}}>
             <View style={{backgroundColor: 'white', paddingHorizontal: 20, alignItems: 'center'}}>
                 <TitleNavigationBar
                     title='내가 등록한 아이디어'
@@ -32,6 +33,7 @@ const RegisterdIdeas = ({navigation}) => {
                     onBackPress={() => navigation.pop()}
                 />
             </View>
+            <Divider />
 
             <FlatList
                 data={ideas}
@@ -45,6 +47,7 @@ const RegisterdIdeas = ({navigation}) => {
                 )}
                 keyExtractor={item => item.id}
                 style={{padding: 20}}
+                ListFooterComponent={() => <View style={{height: 100}} />}
             />
         </SafeAreaView>
     )

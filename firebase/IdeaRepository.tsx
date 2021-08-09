@@ -30,7 +30,7 @@ export const loadIdeaFromId = async (ideaId) => {
         const doc = await firestore().collection('users').doc(ideaId).get();
         return ({id: doc.id, ...doc.data()})
     }catch(ex){
-        console.log('loadIdeaFromId', ex);
+        Sentry.captureException(`loadIdeaFromId: ${ex}`);
     }
 }
 
@@ -46,7 +46,7 @@ export const loadIdeaByIds = async (ids) => {
 
         return map(docs, doc => ({id: doc.id, ...doc.data()}));
     }catch(ex){
-        console.log('loadIdeaFromId', ex);
+        Sentry.captureException(`loadIdeaFromId: ${ex}`);
     }
 }
 
@@ -59,7 +59,7 @@ export const removeIdea = async (id) => {
         await firestore().collection('ideas').doc(id)
         .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});
     }catch(ex){
-        console.log('loadIdeaFromId', ex);
+        Sentry.captureException(`removeIdea: ${ex}`);
     }
 }
 
@@ -73,7 +73,7 @@ export const removeIdeaComment = async (ideaId, commentId) => {
         .collection('comments').doc(commentId)
         .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});        
     }catch(ex){
-        console.log('loadIdeaFromId', ex);
+        Sentry.captureException(`loadIdeaFromId: ${ex}`);
     }
 }
 
@@ -104,7 +104,7 @@ export async function addNewIdea(idea, owner){
             return true;
         }
     }catch(ex){
-        console.log('addNewIdea', ex);
+        Sentry.captureException(`addNewIdea: ${ex}`);
     }
     return false;
 }
@@ -119,7 +119,7 @@ export async function addIdeasListenner(dispatch){
     }
       
     function onError(error) {
-        console.error(error);
+        Sentry.captureException(`addIdeasListenner: ${error}`);
     }
 
     return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
@@ -130,7 +130,7 @@ export async function getPickedIdeas(uid){
         const ret = await firestore().collection('history').doc(uid).collection('picked').get();
         return map(ret.docs, doc => doc.data().ideaId);
     }catch(ex){
-        console.log('getPickedIdeas', ex);
+        Sentry.captureException(`getPickedIdeas: ${ex}`);
     }
 }
 
@@ -221,7 +221,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         await batch.commit();
         return true;
     }catch(ex){
-        console.log('addCommentToIdea', ex);
+        Sentry.captureException(`addCommentToIdea: ${ex}`);
         return false;
     }
 }
@@ -245,7 +245,7 @@ export async function addReplyToComment({ideaId, owner, commentId, reply}){
 
         return true;
     }catch(ex){
-        console.log('addReplyToComment', ex);
+        Sentry.captureException(`addReplyToComment: ${ex}`);
     }
 
     return false;
@@ -263,7 +263,7 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
     }
       
     function onError(error) {
-        console.error(error);
+        Sentry.captureException(`addIdeaCommentsListenner: ${error}`);
     }
 
     return firestore()
@@ -287,7 +287,7 @@ export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
     }
       
     function onError(error) {
-        console.error(error);
+        Sentry.captureException(`addIdeaCommentsListenner: ${error}`);
     }
 
     return firestore()
@@ -311,7 +311,7 @@ export const getIdeaCommentReplies = async (ideaId, commentId) => {
             return {};
         }
     }catch(ex){
-        console.log('getIdeaCommentsOfComment', ex)
+        Sentry.captureException(`getIdeaCommentsOfComment: ${ex}`);
     }
 }
 
@@ -343,7 +343,7 @@ export async function likeIdea({ideaId, uid, isLike}){
 
         await batch.commit();
     }catch(ex){
-        console.log('likeIdea', ex);
+        Sentry.captureException(`likeIdea: ${ex}`);
     }
 }
 
@@ -377,7 +377,7 @@ export async function likeIdeaComment({ideaId, commentId, uid, isLike}){
 
         await batch.commit();
     }catch(ex){
-        console.log('likeIdea', ex);
+        Sentry.captureException(`likeIdeaComment: ${ex}`);
     }   
 }
 
@@ -441,7 +441,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
 
         return true;
     }catch(ex){
-        console.log('pickAnIdea', ex);
+        Sentry.captureException(`pickAnIdea: ${ex}`);
     }
 
     return false;
@@ -520,7 +520,7 @@ export const acceptPicking = async ({uid, ideaId, commentId, notificationId}) =>
 
         return true;
     }catch(ex){
-        console.log('pickAnIdea accept', ex);
+        Sentry.captureException(`pickAnIdea accept: ${ex}`);
     }
 
     return false;
@@ -574,7 +574,7 @@ export const rejectPicking = async ({uid, ideaId, commentId, notificationId}) =>
 
         return true;
     }catch(ex){
-        console.log('pickAnIdea reject', ex);
+        Sentry.captureException(`pickAnIdea reject: ${ex}`);
     }
 
     return false;

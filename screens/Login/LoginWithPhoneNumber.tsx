@@ -48,7 +48,6 @@ const LoginWithPhoneNumber = ({navigation}) => {
     const getAuthToken = async(uid) => {
         try{
             const currentUser = auth().currentUser;
-            console.log('currentUser', currentUser);
             currentUser && dispatch(setUser(currentUser));
             
             let authToken = await SecureStore.getItemAsync('userToken');
@@ -64,9 +63,8 @@ const LoginWithPhoneNumber = ({navigation}) => {
 
             dispatch(setAuthToken(authToken));
 
-            // navigation.navigate('Home');
+            Sentry.captureException(JSON.stringify(currentUser));
         }catch(ex){
-            console.log(ex);
             Sentry.captureException(`getAuthToken: ${ex}`);
         }
     }

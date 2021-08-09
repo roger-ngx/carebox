@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import TitleNavigationBar from '../../components/TitleNavigationBar';
 import { getRegisteredBulletinItems } from '../../firebase/BulletinRepository';
 import BulletinBoardItem from '../../components/BulletinBoardItem';
+import { Divider } from 'react-native-paper';
 
 const RegisteredBulletinItems = ({navigation}) => {
 
@@ -24,7 +25,7 @@ const RegisteredBulletinItems = ({navigation}) => {
     }
 
     return (
-        <SafeAreaView>
+        <SafeAreaView style={{flex: 1}}>
             <View style={{backgroundColor: 'white', paddingHorizontal: 20, alignItems: 'center'}}>
                 <TitleNavigationBar
                     title='내가 등록한 아이디어'
@@ -32,6 +33,7 @@ const RegisteredBulletinItems = ({navigation}) => {
                     onBackPress={() => navigation.pop()}
                 />
             </View>
+            <Divider />
 
             <FlatList
                     style={{width: '100%'}}
