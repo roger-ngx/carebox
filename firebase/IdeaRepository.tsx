@@ -342,9 +342,11 @@ export async function likeIdea({ideaId, uid, isLike}){
         await batch.delete(firestore().collection('history').doc(uid).collection('likes').doc(ideaId))
 
         await batch.commit();
+        return true;
     }catch(ex){
         Sentry.captureException(`likeIdea: ${JSON.stringify(ex)}`);
     }
+    return false;
 }
 
 export async function likeIdeaComment({ideaId, commentId, uid, isLike}){
