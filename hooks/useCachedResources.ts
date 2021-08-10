@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as React from 'react';
+import { Asset } from 'expo-asset';
 
 export default function useCachedResources() {
   const [isLoadingComplete, setLoadingComplete] = React.useState(false);
@@ -17,9 +18,11 @@ export default function useCachedResources() {
           ...Ionicons.font,
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
+
+        await Asset.loadAsync(require('../assets/images/banner.jpg'))
       } catch (e) {
         // We might want to provide this error information to an error reporting service
-        console.warn(e);
+        Sentry.captureException(`getBulletinItemById: ${JSON.stringify(e)}`);
       } finally {
         setLoadingComplete(true);
         SplashScreen.hideAsync();

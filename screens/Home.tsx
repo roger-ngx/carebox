@@ -4,12 +4,8 @@ import { Divider } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { size, isEmpty, filter, find, throttle, includes } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  requestTrackingPermissionsAsync,
-  getTrackingPermissionsAsync,
-} from 'expo-tracking-transparency';
-
 import * as Updates from 'expo-updates';
+import { getTrackingStatus, requestTrackingPermission } from 'react-native-tracking-transparency';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
 import Filter from 'components/Filter';
@@ -64,10 +60,8 @@ export default function Home({navigation}) {
       AppState.addEventListener("change", _handleAppStateChange);
     }
 
-    if(Platform.OS === 'ios'){
-      requestPushNotificationPermission();
-      requestAppTracking();
-    }
+    requestAppTracking();
+    requestPushNotificationPermission();
 
     const unsubscriber = addIdeasListenner(dispatch);
 
@@ -76,6 +70,33 @@ export default function Home({navigation}) {
       !__DEV__ && AppState.removeEventListener("change", _handleAppStateChange);
     }
   }, []);
+
+  // const requestAppTracking = async() => {
+  //   try{
+  //     const { granted } = await getTrackingPermissionsAsync();
+
+  //     Sentry.captureException(`requestAppTracking: ${granted}`);
+
+  //     if (!granted) {
+  //       const { status } = await requestTrackingPermissionsAsync();
+
+  //       if (status==='granted') {
+  //         // Your app is authorized to track the user or their device
+  //       }
+  //     }
+  //   }catch(ex){
+  //     Sentry.captureException(`requestAppTracking: ${ex}`);
+  //   }
+  // }
+
+  const requestAppTracking = async() => {
+    if(Platform.OS === 'ios'){
+      const trackingStatus = await getTrackingStatus();
+      if (trackingStatus === 'not-determined') {
+          await requestTrackingPermission();
+      }
+    }
+  }
 
   const _handleAppStateChange = async (nextAppState) => {
     if (
@@ -89,22 +110,6 @@ export default function Home({navigation}) {
     appState.current = nextAppState;
     console.log("AppState", appState.current);
   };
-
-  const requestAppTracking = async() => {
-    try{
-      const { granted } = await getTrackingPermissionsAsync();
-
-      if (granted) {
-        const { granted } = await requestTrackingPermissionsAsync();
-
-        if (granted) {
-          // Your app is authorized to track the user or their device
-        }
-      }
-    }catch(ex){
-      console.log('requestAppTracking', ex);
-    }
-  }
 
   const expoUpdateListenner = () => {
     const eventSubscription =  Updates.addListener(async e => {
@@ -181,7 +186,7 @@ export default function Home({navigation}) {
       }
       await acceptPicking({uid: currentUser.uid, ideaId , commentId: comment.id, notificationId: id});
     }catch(ex){
-      console.log('acceptPicking', ex);
+      Sentry.captureException(`acceptPicking: ${ex}`);
     }
     setLoading(false);
     setOpenModalToAllowPick(null);
@@ -196,7 +201,7 @@ export default function Home({navigation}) {
       }
       await rejectPicking({uid: currentUser.uid, ideaId , commentId: comment.id, notificationId: id});
     }catch(ex){
-      console.log('rejectPicking', ex);
+      Sentry.captureException(`rejectPicking: ${ex}`);
     }
     setLoading(false);
     setOpenModalToAllowPick(null);
@@ -211,7 +216,7 @@ export default function Home({navigation}) {
         navigation.navigate('Idea', {ideaId: ideaId})
       }
     }catch(ex){
-      console.log('readNotification', ex);
+      Sentry.captureException(`readNotification: ${ex}`);
     }
     setLoading(false);
   }

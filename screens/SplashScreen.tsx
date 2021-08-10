@@ -13,8 +13,12 @@ const SplashScreen = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        getToken();
+        initApp();
     }, []);
+
+    const initApp = async() => {
+        await getToken();
+    }
 
     const getToken = async() => {
         let userToken = null;
