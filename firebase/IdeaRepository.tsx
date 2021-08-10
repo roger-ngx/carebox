@@ -104,7 +104,7 @@ export async function addNewIdea(idea, owner){
             return true;
         }
     }catch(ex){
-        Sentry.captureException(`addNewIdea: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`addNewIdea: ${ex}`);
     }
     return false;
 }
@@ -221,7 +221,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         await batch.commit();
         return true;
     }catch(ex){
-        Sentry.captureException(`addCommentToIdea: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`addCommentToIdea: ${ex}`);
         return false;
     }
 }
@@ -245,7 +245,7 @@ export async function addReplyToComment({ideaId, owner, commentId, reply}){
 
         return true;
     }catch(ex){
-        Sentry.captureException(`addReplyToComment: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`addReplyToComment: ${ex}`);
     }
 
     return false;
@@ -263,7 +263,7 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
     }
       
     function onError(error) {
-        Sentry.captureException(`addIdeaCommentsListenner: ${JSON.stringify(error)}`);
+        Sentry.captureException(`addIdeaCommentsListenner: ${error}`);
     }
 
     return firestore()
@@ -287,7 +287,7 @@ export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
     }
       
     function onError(error) {
-        Sentry.captureException(`addCommentRepliestListenner: ${JSON.stringify(error)}`);
+        Sentry.captureException(`addCommentRepliestListenner: ${error}`);
     }
 
     return firestore()
@@ -311,7 +311,7 @@ export const getIdeaCommentReplies = async (ideaId, commentId) => {
             return {};
         }
     }catch(ex){
-        Sentry.captureException(`getIdeaCommentReplies: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`getIdeaCommentReplies: ${ex}`);
     }
 }
 
@@ -344,7 +344,7 @@ export async function likeIdea({ideaId, uid, isLike}){
         await batch.commit();
         return true;
     }catch(ex){
-        Sentry.captureException(`likeIdea: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`likeIdea: ${ex}`);
     }
     return false;
 }
@@ -379,7 +379,7 @@ export async function likeIdeaComment({ideaId, commentId, uid, isLike}){
 
         await batch.commit();
     }catch(ex){
-        Sentry.captureException(`likeIdeaComment: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`likeIdeaComment: ${ex}`);
     }   
 }
 
@@ -443,7 +443,7 @@ export const pickAnIdea = async ({uid, ideaId, commentId}) => {
 
         return true;
     }catch(ex){
-        Sentry.captureException(`pickAnIdea: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`pickAnIdea: ${ex}`);
     }
 
     return false;
@@ -532,7 +532,7 @@ export const acceptPicking = async ({uid, ideaId, commentId, notificationId}) =>
 
         return true;
     }catch(ex){
-        Sentry.captureException(`pickAnIdea accept: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`pickAnIdea accept: ${ex}`);
     }
 
     return false;
@@ -586,7 +586,7 @@ export const rejectPicking = async ({uid, ideaId, commentId, notificationId}) =>
 
         return true;
     }catch(ex){
-        Sentry.captureException(`pickAnIdea reject: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`pickAnIdea reject: ${ex}`);
     }
 
     return false;
@@ -600,7 +600,7 @@ export const deleteIdeaById = async (ideaId) => {
     try{
         await firestore().collection('ideas').doc(ideaId).delete();
     }catch(ex){
-        Sentry.captureException(`loadIdeaFromId reject: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`deleteIdeaById: ${ex}`);
         return false;
     }
     return true;
@@ -634,7 +634,7 @@ export const deleteIdeaComment = async ({ownerUid, historyCommentId, ideaId, ide
 
         await batch.commit();
     }catch(ex){
-        Sentry.captureException(`loadIdeaFromId reject: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`loadIdeaFromId reject: ${ex}`);
         return false;
     }
     return true;

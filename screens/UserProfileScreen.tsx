@@ -64,10 +64,13 @@ const UserProfileScreen = ({navigation}) => {
                 />
             </ScrollView>
 
-            <UserProfileEdit
-                isVisible={showingProfileEditModal}
-                onClose={() => setShowingProfileEditModal(false)}
-            />
+            {
+                showingProfileEditModal &&
+                <UserProfileEdit
+                    isVisible={showingProfileEditModal}
+                    onClose={() => setShowingProfileEditModal(false)}
+                />
+            }
         </SafeAreaView>
     )
 }

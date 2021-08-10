@@ -63,35 +63,43 @@ const IdeaDetailScreen = ({idea}) => {
                     </View>
                 </View>
                 <Divider />
-                <View style={{padding: 20}}>
-                    <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
-                    <ScrollView
-                        horizontal
-                        style={{marginBottom: 20}}
-                        showsHorizontalScrollIndicator={false}
-                    >
+                {
+                    size(images.urls) > 0 && <>
+                        <View style={{padding: 20}}>
+                            <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
+                            <ScrollView
+                                horizontal
+                                style={{marginBottom: 20}}
+                                showsHorizontalScrollIndicator={false}
+                            >
+                                {
+                                    map(images.urls, (image, index) => (
+                                        <TouchableOpacity
+                                            onPress={() => setOpenGalleryModal(index)}
+                                        >
+                                            <FastImage
+                                                style={{width: 150, height: 150, marginRight: 8}}
+                                                source={{uri: image}}
+                                            />
+                                        </TouchableOpacity>
+                                    ))
+                                }
+                            </ScrollView>
+                            <Text  style={{color: '#334F74', fontSize: 16}}>{images.title}</Text>
+                        </View>
+                        <Divider />
+                    </>
+                }
+                {
+                    size(links) > 0 &&
+                    <View style={{padding: 20, marginBottom: 120}}>
+                        <Text style={{color: '#7D7D7D', marginBottom: 8}}>링크</Text>
                         {
-                            map(images.urls, (image, index) => (
-                                <TouchableOpacity
-                                    onPress={() => setOpenGalleryModal(index)}
-                                >
-                                    <FastImage
-                                        style={{width: 150, height: 150, marginRight: 8}}
-                                        source={{uri: image}}
-                                    />
-                                </TouchableOpacity>
-                            ))
+                            map(links, link => <ExternalLink key={link.title} title={link.title} link={link.url}/>)
                         }
-                    </ScrollView>
-                    <Text  style={{color: '#334F74', fontSize: 16}}>{images.title}</Text>
-                </View>
-                <Divider />
-                <View style={{padding: 20, marginBottom: 120}}>
-                    <Text style={{color: '#7D7D7D', marginBottom: 8}}>링크</Text>
-                    {
-                        map(links, link => <ExternalLink key={link.title} title={link.title} link={link.url}/>)
-                    }
-                </View>
+                    </View>
+                }
+                <View style={{height: 50}} />
             </ScrollView>
             <View
                 style={{

@@ -57,7 +57,7 @@ export async function getRegisteredBulletinItems(uid){
         .get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        Sentry.captureException(`getRegisteredBulletinItems: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`getRegisteredBulletinItems: ${ex}`);
     }
 }
 
@@ -70,7 +70,7 @@ export async function getBulletinItemById(id){
 
         return ({id: doc.id, ...doc.data()});
     }catch(ex){
-        Sentry.captureException(`getBulletinItemById: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`getBulletinItemById: ${ex}`);
     }
 }
 
@@ -84,7 +84,7 @@ export async function getRegisteredBulletinComments(uid){
         .get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        Sentry.captureException(`getRegisteredBulletinComments reject: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`getRegisteredBulletinComments reject: ${ex}`);
     }
 }
 
@@ -231,7 +231,7 @@ export async function addBulletinItemListenner(id, dispatch){
     return firestore().collection('bulletinBoards').doc(id).onSnapshot(onResult, onError);
 }
 
-export const deleteBulletinItemById = async ({uid, historyBulletinItemId, bulletinItemId, commentId}) => {
+export const deleteBulletinComment = async ({uid, historyBulletinItemId, bulletinItemId, commentId}) => {
     console.log(uid, historyBulletinItemId, bulletinItemId, commentId);
     
     const batch = firestore().batch();
@@ -250,7 +250,22 @@ export const deleteBulletinItemById = async ({uid, historyBulletinItemId, bullet
 
         await batch.commit();
     }catch(ex){
-        Sentry.captureException(`deleteBulletinItemById: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`deleteBulletinComment: ${ex}`);
+        return false;
+    }
+
+    return true;
+}
+
+export const deleteBulletinItemById = async (postId) => {
+    
+    const batch = firestore().batch();
+
+    try{
+        batch.delete(firestore().collection('bulletinBoards').doc(postId));
+        await batch.commit();
+    }catch(ex){
+        Sentry.captureException(`deleteBulletinComment: ${ex}`);
         return false;
     }
 

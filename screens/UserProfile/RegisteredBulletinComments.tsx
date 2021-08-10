@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 import { remove, size } from 'lodash';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
-import { getRegisteredBulletinComments, deleteBulletinItemById } from '../../firebase/BulletinRepository';
+import { getRegisteredBulletinComments, deleteBulletinComment } from '../../firebase/BulletinRepository';
 import BulletinBoardItem from '../../components/BulletinBoardItem';
 import BulletinItemDetailModel from '../../modals/BulletinItemDetailModal';
 import BulletinBoardComment from '../../components/BulletinBoardComment';
@@ -44,7 +44,7 @@ const RegisteredBulletinComments = ({navigation}) => {
     const onDeletePost = async (post) => {
         if(selectedItemToDelete === post.id){
             setLoading(true);
-            const ret = await deleteBulletinItemById({uid: user.uid, historyBulletinItemId: post.id, bulletinItemId: post.bulletinItemId, commentId: post.commentId});
+            const ret = await deleteBulletinComment({uid: user.uid, historyBulletinItemId: post.id, bulletinItemId: post.bulletinItemId, commentId: post.commentId});
             setLoading(false);
 
             if(ret){

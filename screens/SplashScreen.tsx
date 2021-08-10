@@ -28,17 +28,21 @@ const SplashScreen = () => {
             currentUser = auth().currentUser;
             userToken = await SecureStore.getItemAsync('userToken');
 
-            console.log('currentUser', currentUser);
-
+            
             if(!currentUser && !isEmpty(userToken)){
                 const userCredintial =  await auth().signInWithCustomToken(userToken);
-    
+                
                 currentUser = userCredintial.user;
             }
-
-            dispatch(setUser(currentUser));
+            
+            console.log('currentUser', currentUser);
         }catch(ex){
-            console.log(ex);
+            Sentry.captureException(`getToken: ${ex}`);
+        }
+        
+        if(currentUser){
+            dispatch(setUser(currentUser));
+        }else{
             userToken = null;
             await SecureStore.setItemAsync('userToken', '');
         }

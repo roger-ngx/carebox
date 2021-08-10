@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import Modal from 'react-native-modal';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
+import { Snackbar } from 'react-native-paper';
 
 import TitleNavigationBar from 'components/TitleNavigationBar';
 import ProfileImageUpload from 'components/ProfileImageUpload';
@@ -14,8 +15,11 @@ const UserProfileEdit = ({isVisible, onClose}) => {
 
     const user = useSelector(state => state.user.userProfileData)
 
+    if(!user) return null;
+
     const [ profileImageUri, setProfileImageUri ] = useState();
     const [ userInfo, setUserInfo ] = useState();
+    const [ saved, setSaved ] = useState(false);
 
     const [ processing, setProcessing ] = useState(false);
 
@@ -24,6 +28,7 @@ const UserProfileEdit = ({isVisible, onClose}) => {
         console.log('uid', user.uid)
         try{
             await updateUserInfo({uid: user.uid, profileImageUri, userInfo});
+            setSaved(true);
         }catch(ex){
             console.log('onUpdateProfile', ex);
         }
@@ -38,7 +43,6 @@ const UserProfileEdit = ({isVisible, onClose}) => {
             hasBackdrop={false}
             onBackButtonPress={onClose}
             animationIn='slideInRight'
-            animationOut='slideOutLeft'
             useNativeDriver={true}
         >
             <SafeAreaView style={{flex: 1, padding: 20, backgroundColor: 'white'}}>
@@ -51,6 +55,16 @@ const UserProfileEdit = ({isVisible, onClose}) => {
                 </ScrollView>
                 <RoundButton text='완료' onPress={onUpdateProfile} loading={processing}/>
             </SafeAreaView>
+            <Snackbar
+                visible={saved}
+                wrapperStyle={{marginBottom: 100}}
+                duration={2000}
+                onDismiss={() => setSaved(false)}
+            >
+                <Text style={{textAlign: 'center', color: 'white'}}>
+                    정보를 저장했습니다
+                </Text>
+            </Snackbar>
         </Modal>
     )
 }

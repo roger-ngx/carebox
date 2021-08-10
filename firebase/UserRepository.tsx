@@ -78,7 +78,7 @@ export async function login(phoneNumber){
             return uid;
         }
     }catch(ex){
-        Sentry.captureException(`login: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`login: ${ex}`);
     }
     return null;
 }
@@ -93,7 +93,7 @@ export async function subscribeForUserInformation(userId, dispatch){
     }
         
     function onError(error) {
-        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+        Sentry.captureException(`subscribeForUserInformation: ${error}`);
     }
 
     return firestore().collection('users').doc(userId).onSnapshot(onResult, onError);    
@@ -109,7 +109,7 @@ export async function subscribeForNotifications(userId, dispatch){
     }
         
     function onError(error) {
-        Sentry.captureException(`subscribeForUserInformation: ${JSON.stringify(error)}`);
+        Sentry.captureException(`subscribeForUserInformation: ${error}`);
     }
 
     return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
@@ -126,7 +126,7 @@ export async function markReadingNotification({uid, notificationId}){
             updatedAt: firestore.FieldValue.serverTimestamp()
         });    
     }catch(ex){
-        Sentry.captureException(`markReadingNotification: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`markReadingNotification: ${ex}`);
     }
 }
 
@@ -139,7 +139,7 @@ export async function updateUserPushToken(userId, pushToken){
         })
         return true;
     }catch(ex){
-        Sentry.captureException(`updateUserPushToken: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`updateUserPushToken: ${ex}`);
     }
     return false;
 }
@@ -187,7 +187,7 @@ export async function getRegisteredComments(uid){
         const ret = await firestore().collection('history').doc(uid).collection('comments').get();
         return map(ret.docs, doc => ({id: doc.id, ...doc.data()}))
     }catch(ex){
-        Sentry.captureException(`getRegisteredComments: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`getRegisteredComments: ${ex}`);
     }
 } 
 
@@ -197,7 +197,7 @@ export async function signOut(){
         await SecureStore.deleteItemAsync('userToken');
         return true;
     }catch(ex){
-        Sentry.captureException(`signOut: ${JSON.stringify(ex)}`);
+        Sentry.captureException(`signOut: ${ex}`);
     }
     return false;
 }
