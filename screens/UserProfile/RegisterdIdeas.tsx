@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Divider } from 'react-native-paper';
 import { FlatList, View, TouchableOpacity, Text, Animated, ActivityIndicator, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
@@ -72,6 +73,7 @@ const RegisterdIdeas = ({navigation}) => {
                     onBackPress={() => navigation.pop()}
                 />
             </View>
+            <Divider />
 
             {
                 size(ideas)===0 ?
@@ -104,6 +106,7 @@ const RegisterdIdeas = ({navigation}) => {
                     )}
                     keyExtractor={item => item.id}
                     style={{padding: 20}}
+                    ListFooterComponent={() => <View style={{height: 100}} />}
                 />
             }
 

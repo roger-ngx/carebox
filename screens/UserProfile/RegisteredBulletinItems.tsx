@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { Icon } from 'react-native-elements';
 import { remove, size } from 'lodash';
+import { Divider } from 'react-native-elements';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
 import { getRegisteredBulletinItems, deleteBulletinItemById } from '../../firebase/BulletinRepository';
@@ -80,6 +81,7 @@ const RegisteredBulletinItems = ({navigation}) => {
                     onBackPress={() => navigation.pop()}
                 />
             </View>
+            <Divider />
 
             {
                 !size(items) ?

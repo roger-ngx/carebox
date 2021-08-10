@@ -66,6 +66,7 @@ const RegisteredComments = ({navigation}) => {
                     onBackPress={() => navigation.pop()}
                 />
             </View>
+            <Divider />
 
             <View style={{flex: 1}}>
             {
@@ -125,6 +126,7 @@ const RegisteredComments = ({navigation}) => {
                     </View>)}
                     keyExtractor={item => item.id}
                     style={{padding: 20}}
+                    ListFooterComponent={() => <View style={{height: 100}} />}
                 />
             }
             </View>
