@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { size, isEmpty, filter, find, throttle, includes } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Updates from 'expo-updates';
+import { UpdateEventType } from 'expo-updates';
 import { getTrackingStatus, requestTrackingPermission } from 'react-native-tracking-transparency';
 
 import PickedIdeaListHeader from 'components/PickedIdeaListHeader';
@@ -19,7 +20,6 @@ import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
 import { acceptPicking, getPickedIdeas, rejectPicking } from '../firebase/IdeaRepository';
 import RoundButton from '../components/RoundButton';
-import { UpdateEventType } from 'expo-updates';
 import BannerModal from '../modals/BannerModal';
 
 export default function Home({navigation}) {
@@ -71,24 +71,6 @@ export default function Home({navigation}) {
     }
   }, []);
 
-  // const requestAppTracking = async() => {
-  //   try{
-  //     const { granted } = await getTrackingPermissionsAsync();
-
-  //     Sentry.captureException(`requestAppTracking: ${granted}`);
-
-  //     if (!granted) {
-  //       const { status } = await requestTrackingPermissionsAsync();
-
-  //       if (status==='granted') {
-  //         // Your app is authorized to track the user or their device
-  //       }
-  //     }
-  //   }catch(ex){
-  //     Sentry.captureException(`requestAppTracking: ${ex}`);
-  //   }
-  // }
-
   const requestAppTracking = async() => {
     if(Platform.OS === 'ios'){
       const trackingStatus = await getTrackingStatus();
@@ -103,7 +85,6 @@ export default function Home({navigation}) {
       appState.current.match(/inactive|background/) &&
       nextAppState === "active"
     ) {
-      console.log("App has come to the foreground!");
       hasNewExpoUpdate && (await Updates.reloadAsync());
     }
 
@@ -112,7 +93,10 @@ export default function Home({navigation}) {
   };
 
   const expoUpdateListenner = () => {
+
     const eventSubscription =  Updates.addListener(async e => {
+      Sentry.captureMessage(`UpdateEventType: ${JSON.stringify(e)}`);
+
       if(e.type === UpdateEventType.UPDATE_AVAILABLE){
         const ret = await Updates.checkForUpdateAsync();
         if(ret.isAvailable){

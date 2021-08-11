@@ -2,17 +2,17 @@ import React from 'react';
 import { TouchableOpacity, Text } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 
-const RoundButton = ({text, onPress, loading, ...props}) => {
+const RoundButton = ({text, onPress, loading, containerStyle, ...props}) => {
 
     return (
         <TouchableOpacity
-            style={{
+            style={[{
                 backgroundColor: '#4A7CFF',
                 paddingVertical: 16,
                 borderRadius: 50,
                 width: '100%',
                 alignSelf: 'flex-end'
-            }}
+            }, containerStyle]}
             onPress={onPress}
             {...props}
         >

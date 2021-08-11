@@ -24,7 +24,7 @@ const PhotoUploadButton = ({count, max, onReturnUri}) => {
     
             uri && onReturnUri(uri)
         }catch(ex){
-            console.log(ex);
+            Sentry.captureException(`pickImage: ${ex}`);
         }
 
         setLoadingImage(false);
@@ -42,7 +42,7 @@ const PhotoUploadButton = ({count, max, onReturnUri}) => {
         >
             {
                 loadingImage ?
-                <ActivityIndicator size='small' />
+                <ActivityIndicator size='small' color='#A1A1A1'/>
                 :
                 <Icon
                     name='photo-camera'

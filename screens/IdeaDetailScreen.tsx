@@ -14,11 +14,12 @@ import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const IdeaDetailScreen = ({idea}) => {
     if(!idea) return null;
+
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
     const user = useSelector(state => state.user.currentUser);
 
-    const { id, detail, images, links } = idea;
+    const { id, detail={}, images, links } = idea;
 
     const [ showingCommentRegistrationModal, setShowingCommentRegistrationModal ] = useState(false);
 

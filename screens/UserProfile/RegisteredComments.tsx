@@ -3,7 +3,7 @@ import { FlatList, View, Text, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { remove, size } from 'lodash';
-import { ActivityIndicator } from 'react-native-paper';
+import { ActivityIndicator, Snackbar } from 'react-native-paper';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
 import { getRegisteredComments } from '../../firebase/UserRepository';
@@ -16,9 +16,11 @@ const RegisteredComments = ({navigation}) => {
 
     const [comments, setComments] = useState([]);
     const [ selectedComment, setSelectedComment ] = useState();
+    const [ selectedIndex, setSelectedIndex ] = useState();
     const [ loading, setLoading ] = useState(false);
-
+    const [ showSnackbar, setShowSnackbar ] = useState(true);
     const [ openCommentEditModal, setOpenCommentEditModal ] = useState(false);
+    const [ toastText, setToastText ] = useState();
 
     const user = useSelector(state => state.user.currentUser);
 
@@ -33,22 +35,27 @@ const RegisteredComments = ({navigation}) => {
         }
     }
 
-    const editComment = (comment) => {
+    const editComment = (comment, index) => {
+        setSelectedIndex(index);
         setSelectedComment(comment);
         setOpenCommentEditModal(true);
     }
 
-    const deleteComment = async ({id, ideaId, commentId}) => {
+    const deleteComment = async (item) => {
+        const {id, ideaId, commentId} = item;
         if(!ideaId || !commentId){
             return;
         }
         setLoading(true);
+
+        setSelectedComment(item);
 
         try{
             const ret = await deleteIdeaComment({ownerUid: user.uid, historyCommentId:id, ideaId, ideaCommentId: commentId});
             if(ret){
                 remove(comments, comment => comment.id === id);
                 setComments([...comments]);
+                setToastText('코멘트를 삭제했어요.')
             }
         }catch(ex){
             console.log('deleteComment', ex);
@@ -78,7 +85,7 @@ const RegisteredComments = ({navigation}) => {
                 :
                 <FlatList
                     data={comments}
-                    renderItem={({item}) => (<View style={{backgroundColor: 'white', marginBottom: 20, borderRadius: 10}}>
+                    renderItem={({item, index}) => (<View style={{backgroundColor: 'white', marginBottom: 20, borderRadius: 10}}>
                         <NewIdea idea={item.idea} />
                         <View style={{padding: 20, paddingTop: 0}}>
                             <Divider />
@@ -96,7 +103,7 @@ const RegisteredComments = ({navigation}) => {
                                         alignItems: 'center',
                                         marginRight: 16
                                     }}
-                                    onPress={() => editComment(item.comment)}
+                                    onPress={() => editComment({id:item.id, ...item.comment, commentId: item.commentId}, index)}
                                     disabled={loading}
                                 >
                                     <Text style={{color: '#6B7A8E'}}>수정</Text>
@@ -115,7 +122,7 @@ const RegisteredComments = ({navigation}) => {
                                     disabled={loading}
                                 >
                                     {
-                                        (loading && setSelectedComment.id===item.id) ?
+                                        (loading && selectedComment && selectedComment.id===item.id) ?
                                         <ActivityIndicator size='small' color='#6B7A8E' />
                                         :
                                         <Text style={{color: '#6B7A8E'}}>삭제</Text>
@@ -134,10 +141,30 @@ const RegisteredComments = ({navigation}) => {
                 openCommentEditModal &&
                 <CommentRegistrationModal
                     ideaId={selectedComment.ideaId}
-                    onClose={() => setOpenCommentEditModal(false)}
+                    onClose={(editedComment) => {
+                        setOpenCommentEditModal(false);
+                        if(editedComment){
+                            console.log('editedComment', editedComment);
+
+                            comments[selectedIndex] = {...comments[selectedIndex], comment: editedComment};
+                            setComments([...comments]);
+                            setToastText('코멘트를 저장했어요.')
+                        }
+                    }}
                     initData={selectedComment}
+                    editMode={true}
                 />
             }
+
+            <Snackbar
+                visible={!!toastText}
+                onDismiss={() => setToastText()}
+                duration={2000}
+            >
+                <Text style={{textAlign: 'center', color: 'white'}}>
+                    {toastText}
+                </Text>
+            </Snackbar>
         </SafeAreaView>
     )
 }

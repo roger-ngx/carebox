@@ -96,7 +96,7 @@ const RegisterdIdeas = ({navigation}) => {
                                 disabled={loading}
                             >
                                 {
-                                    loading ?
+                                    (loading && selectedItemToDelete === item.id) ?
                                     <ActivityIndicator size='small' color='#787878' />
                                     :
                                     <Icon name='delete' color={selectedItemToDelete === item.id ? '#1379FF' : '#787878'} />

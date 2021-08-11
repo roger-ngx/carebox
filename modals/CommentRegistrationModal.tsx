@@ -11,11 +11,11 @@ import CBDropDownPicker from 'components/CBDropDownPicker';
 import CBTextInput from 'components/CBTextInput';
 import PhotoUploadButton from 'components/PhotoUploadButton';
 import RoundButton from 'components/RoundButton';
-import { addCommentToIdea } from '../firebase/IdeaRepository';
+import { addCommentToIdea, editIdeaComment } from '../firebase/IdeaRepository';
 import CommentImagesUploader from '../components/CommentImagesUploader';
 import { useSelector } from 'react-redux';
 
-const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
+const CommentRegistrationModal = ({ideaId, onClose, initData, editMode=false}) => {
 
     const [ practicalityRate, setPracticalityRate ] = useState(0);
     const [ creativityRate, setCreativityRate ] = useState(0);
@@ -30,7 +30,7 @@ const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
 
     useEffect(() => {
         if(!isEmpty(initData)){
-            const { practicalityRate, creativityRate, valuableRate, scamper, content, links, images } = initData;
+            const { practicalityRate, creativityRate, valuableRate, scamper, content, links, images, commentId } = initData;
 
             setPracticalityRate(practicalityRate);
             setCreativityRate(creativityRate);
@@ -59,13 +59,22 @@ const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
             scamper, content, links, avgRating
         }
 
-        const ret = await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
-        setProcessing(false);
-        if(!ret){
-            return Alert.alert('add comment failed', '');
+        let ret = 0;
+
+        if(editMode){
+            ret = await editIdeaComment({ideaId, commentId: initData.commentId, historyCommentId: initData.id, ownerId: owner.uid, commentDoc, imageUris});
+        }else{
+            ret = await addCommentToIdea({ideaId, owner, imageUris, commentDoc});
         }
 
-        onClose();
+        setProcessing(false);
+        if(ret===0){
+            return Alert.alert('add comment failed', '');
+        } else  if(ret===-1){
+            return Alert.alert('the idea was deleted', '');
+        }
+
+        onClose(ret===1 && commentDoc);
     }
 
     useEffect(() => {
@@ -207,6 +216,7 @@ const CommentRegistrationModal = ({ideaId, onClose, initData}) => {
                         text='등록'
                         onPress={onAddCommentToIdea}
                         loading={processing}
+                        containerStyle={{marginBottom: 10}}
                     />
                 }
             </SafeAreaView>

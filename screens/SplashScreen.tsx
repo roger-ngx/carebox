@@ -7,6 +7,7 @@ import { isEmpty } from 'lodash';
 
 import { setAuthToken, setLoadingToken } from '../stores/slices/tokenSlice';
 import { setUser } from '../stores/slices/userSlice';
+import { getUserAuthToken } from '../firebase/UserRepository';
 
 const SplashScreen = () => {
 
@@ -41,7 +42,13 @@ const SplashScreen = () => {
         }
         
         if(currentUser){
-            dispatch(setUser(currentUser));
+            const authToken = await getUserAuthToken(currentUser.uid);
+            if(authToken === userToken){
+                dispatch(setUser(currentUser));
+            }else{
+                userToken = null;
+                await SecureStore.setItemAsync('userToken', '');
+            }
         }else{
             userToken = null;
             await SecureStore.setItemAsync('userToken', '');
@@ -63,6 +70,7 @@ const SplashScreen = () => {
             <Image
                 style={{flex: 1}}
                 source={require('assets/images/splash.png')}
+                resizeMode='contain'
             />
         </View>
     )

@@ -166,6 +166,24 @@ export async function getLikedIdeas(uid){
     }
 }
 
+export async function getUserAuthToken(uid){
+    if(!uid) return null;
+
+    try{
+
+        const ret = await firestore().collection('users')
+        .doc(uid)
+        .get();
+
+        if(ret.exists){
+            return ret.data().authToken;
+        }
+    }catch(ex){
+        Sentry.captureException(`getUserAuthToken: ${ex}`);
+    }
+    return null;
+}
+
 export async function getRegisteredIdeas(uid){
     try{
         console.log('uid', uid);

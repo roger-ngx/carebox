@@ -320,7 +320,7 @@ const IdeaCommentScreen = ({idea}) => {
                         <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
                             <NewIdeaHead owner={comment.owner}/>
                             {
-                                isIdeaOwner &&
+                                isIdeaOwner && (comment.owner.uid !== idea.ownerId) &&
                                 <CBButton
                                     text={pickButtonText(comment.pickStatus)}
                                     onPress={() => setShowingConfirmToPick(comment)}

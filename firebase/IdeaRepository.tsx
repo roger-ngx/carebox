@@ -147,6 +147,72 @@ export async function addIdeaListenner(ideaId, dispatch){
     return firestore().collection('ideas').doc(ideaId).onSnapshot(onResult, onError);
 }
 
+export async function editIdeaComment({ideaId, commentId, historyCommentId, ownerId, commentDoc, imageUris}){
+    console.log('editIdeaComment', ideaId, commentId, ownerId, historyCommentId);
+
+    if(!ideaId || !ownerId || !commentId) return false;
+
+
+    const { avgRating, practicalityRate, creativityRate, valuableRate } = commentDoc;
+
+    const batch = firestore().batch();
+
+    try{
+        const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
+        if(!ideaDoc.exists){
+            return -1;
+        }
+
+        //this one is for editting comment (which some images were uploaded to firebase)
+        const uploadedFirebaseImages = remove(imageUris, (image:string) => startsWith(image, 'https'));
+
+        const imagePaths = map(imageUris, uri => {
+            const uuid = uuidv4();
+
+            return `/images/${owner.uid}/ideas/comments/${uuid}.png`;
+        })
+
+        const imageUrls =  await uploadImages(imageUris, imagePaths);
+
+        const doc = {
+            ...commentDoc,
+            ideaId,
+            isActive: true,
+            images: [...imageUrls, ...uploadedFirebaseImages],
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+        }
+
+        const { rating } = ideaDoc.data();
+
+        remove(rating, rate => rate.uid === ownerId);
+        rating.push({ avgRating, practicalityRate, creativityRate, valuableRate, uid: ownerId })
+
+        batch.update(
+            firestore().collection('ideas').doc(ideaId),
+            {
+                rating,
+                updatedAt: firestore.FieldValue.serverTimestamp()
+            }
+        )
+
+        batch.update(firestore().collection('ideas').doc(ideaId).collection('comments').doc(commentId), doc);
+
+        batch.update(
+            firestore().collection('history').doc(ownerId).collection('comments').doc(historyCommentId),
+            {
+                comment: commentDoc,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            }
+        );
+
+        await batch.commit();
+        return 1;
+    }catch(ex){
+        Sentry.captureException(`editIdeaComment: ${ex}`);
+        return 0;
+    }
+}
+
 export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
     if(!ideaId || !owner) return false;
@@ -160,7 +226,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
     try{
         const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
         if(!ideaDoc.exists){
-            return false;
+            return -1;
         }
         const ideaData = ideaDoc.data();
 
@@ -196,16 +262,6 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
 
         batch.set(firestore().collection('ideas').doc(ideaId).collection('comments').doc(), doc);
 
-        // batch.set(
-        //     firestore().collection('history').doc(owner.uid).collection('comments').doc(),
-        //     {
-        //         ideaId: ideaDoc.id,
-        //         comment: doc,
-        //         idea: ideaData
-        //     }
-        // )
-
-
         //inform to the idea's owner a new comment 
         batch.set(
             firestore().collection('users').doc(ideaData.ownerId).collection('notifications').doc(),
@@ -219,10 +275,10 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
         )
 
         await batch.commit();
-        return true;
+        return 1;
     }catch(ex){
         Sentry.captureException(`addCommentToIdea: ${ex}`);
-        return false;
+        return 0;
     }
 }
 

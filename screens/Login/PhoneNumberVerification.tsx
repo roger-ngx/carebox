@@ -56,6 +56,22 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
     return (
         <View style={{flex: 1, width: '100%', padding: 24, marginTop: 60}}>
+            {
+                step===2 &&
+                <View
+                    style={{position: 'absolute', top: -32, left: 16}}
+                >
+                    <TouchableOpacity
+                        style={{padding: 8}}
+                        onPress={() => setStep(1)}
+                    >
+                        <Icon
+                            name='arrow-back-ios'
+                            color='#666'
+                        />
+                    </TouchableOpacity>
+                </View>
+            }
 
             <ScrollView
                 style={{
