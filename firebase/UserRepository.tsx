@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import { map, isEmpty } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
-import { setUserProfileData, setUserNotifications } from '../stores/slices/userSlice';
+import { setUserProfileData, setUserNotifications, setUserRegisteredComments } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function checkNicknameExists(nickName){
@@ -207,7 +207,26 @@ export async function getRegisteredComments(uid){
     }catch(ex){
         Sentry.captureException(`getRegisteredComments: ${ex}`);
     }
+}
+
+export async function subscribeForRegisteredComments(uid, dispatch){
+
+    function onResult(snapshot) {
+        console.log('Got registerd comments.');
+
+        const registeredComments = map(snapshot.docs, doc => ({id: doc.id, ...doc.data()}))
+
+        dispatch(setUserRegisteredComments(registeredComments));
+    }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForRegisteredComments: ${error}`);
+    }
+
+    return firestore().collection('history').doc(uid).collection('comments').onSnapshot(onResult, onError);
 } 
+
+
 
 export async function signOut(){
     try{

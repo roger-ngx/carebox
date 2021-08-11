@@ -10,7 +10,6 @@ const CommentImagesUploader = ({imageUris, onImagesChange}) => {
     const [ images, setImages ] = useState([])
 
     useEffect(() => {
-        console.log(imageUris);
         !isEmpty(imageUris) && setImages(imageUris);
     }, [imageUris]);
 
@@ -32,8 +31,10 @@ const CommentImagesUploader = ({imageUris, onImagesChange}) => {
                             key={image}
                             uri={image}
                             onDelete={() => {
-                                images.splice(index, 1);
-                                setImages([...images])
+                                const temp = [...images];
+
+                                temp.splice(index, 1);
+                                setImages(temp)
                             }}
                         />
                     </View>

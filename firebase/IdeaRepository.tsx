@@ -163,16 +163,18 @@ export async function editIdeaComment({ideaId, commentId, historyCommentId, owne
             return -1;
         }
 
-        //this one is for editting comment (which some images were uploaded to firebase)
-        const uploadedFirebaseImages = remove(imageUris, (image:string) => startsWith(image, 'https'));
+        const uris = [...imageUris];
 
-        const imagePaths = map(imageUris, uri => {
+        //this one is for editting comment (which some images were uploaded to firebase)
+        const uploadedFirebaseImages = remove(uris, (image:string) => startsWith(image, 'https'));
+
+        const imagePaths = map(uris, uri => {
             const uuid = uuidv4();
 
-            return `/images/${owner.uid}/ideas/comments/${uuid}.png`;
+            return `/images/${ownerId}/ideas/comments/${uuid}.png`;
         })
 
-        const imageUrls =  await uploadImages(imageUris, imagePaths);
+        const imageUrls =  await uploadImages(uris, imagePaths);
 
         const doc = {
             ...commentDoc,
@@ -184,8 +186,8 @@ export async function editIdeaComment({ideaId, commentId, historyCommentId, owne
 
         const { rating } = ideaDoc.data();
 
-        remove(rating, rate => rate.uid === ownerId);
-        rating.push({ avgRating, practicalityRate, creativityRate, valuableRate, uid: ownerId })
+        const index = findIndex(rating, rate => rate.uid === ownerId);
+        (index >= 0) && (rating[index] = { avgRating, practicalityRate, creativityRate, valuableRate, uid: ownerId });
 
         batch.update(
             firestore().collection('ideas').doc(ideaId),
@@ -200,7 +202,7 @@ export async function editIdeaComment({ideaId, commentId, historyCommentId, owne
         batch.update(
             firestore().collection('history').doc(ownerId).collection('comments').doc(historyCommentId),
             {
-                comment: commentDoc,
+                comment: {...commentDoc, images: [...imageUrls, ...uploadedFirebaseImages]},
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
             }
         );

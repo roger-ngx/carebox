@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, View, Text, TouchableOpacity, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { remove, size } from 'lodash';
 import { ActivityIndicator, Snackbar } from 'react-native-paper';
 
 import TitleNavigationBar from '../../components/TitleNavigationBar';
-import { getRegisteredComments } from '../../firebase/UserRepository';
+import { getRegisteredComments, subscribeForRegisteredComments } from '../../firebase/UserRepository';
 import { Divider } from 'react-native-elements';
 import NewIdea from '../../components/Idea/NewIdea';
 import CommentRegistrationModal from '../../modals/CommentRegistrationModal';
@@ -14,18 +14,30 @@ import { deleteIdeaComment } from '../../firebase/IdeaRepository';
 
 const RegisteredComments = ({navigation}) => {
 
-    const [comments, setComments] = useState([]);
+    
+    const [ comments, setComments ] = useState([]);
     const [ selectedComment, setSelectedComment ] = useState();
     const [ selectedIndex, setSelectedIndex ] = useState();
     const [ loading, setLoading ] = useState(false);
     const [ showSnackbar, setShowSnackbar ] = useState(true);
     const [ openCommentEditModal, setOpenCommentEditModal ] = useState(false);
     const [ toastText, setToastText ] = useState();
-
+    
     const user = useSelector(state => state.user.currentUser);
+    const registeredComments = useSelector(state => state.user.userRegisteredComments);
 
     useEffect(() => {
-        user && getComments(user.uid);
+        setComments(registeredComments || []);
+    }, [registeredComments]);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        if(user){
+            const unsubscribe = subscribeForRegisteredComments(user.uid, dispatch);
+
+            return () => (typeof unsubscribe === 'function') && unsubscribe();
+        }
     }, [user]);
 
     const getComments = async (uid) => {
@@ -146,7 +158,10 @@ const RegisteredComments = ({navigation}) => {
                         if(editedComment){
                             console.log('editedComment', editedComment);
 
-                            comments[selectedIndex] = {...comments[selectedIndex], comment: editedComment};
+                            const comment = comments[selectedIndex];
+
+                            comments[selectedIndex] = {...comment, comment: {...comment.comment, ...editedComment}};
+
                             setComments([...comments]);
                             setToastText('코멘트를 저장했어요.')
                         }

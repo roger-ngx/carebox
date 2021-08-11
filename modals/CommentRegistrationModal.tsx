@@ -86,12 +86,12 @@ const CommentRegistrationModal = ({ideaId, onClose, initData, editMode=false}) =
             isVisible={true}
             style={{margin: 0}}
             avoidKeyboard={true}
-            onBackButtonPress={onClose}
+            onBackButtonPress={() => onClose()}
         >
             <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
                 <TouchableOpacity
                     style={{padding: 0, alignSelf: 'flex-end', padding: 8}}
-                    onPress={onClose}
+                    onPress={() => onClose()}
                 >
                     <Icon
                         name='close'
