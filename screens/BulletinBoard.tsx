@@ -63,23 +63,23 @@ const BulletinBoard = ({navigation}) => {
                 자유게시판
             </Text>
         </View>
+        <View style={{backgroundColor: 'white', flexDirection: 'row'}}>
+            {
+                map(FILTERS, filter => (
+                        <TouchableOpacity
+                            style={{flex: 1, paddingVertical: 12}}
+                            onPress={() => setCurrentFilter(filter)}
+                        >
+                            <FilterItem text={filter} active={currentFilter===filter} />
+                        </TouchableOpacity>
+                    )
+                )
+            }
+        </View>
+        <Divider />
         {
             size(currentBoards) > 0 ?
             <>
-                <View style={{backgroundColor: 'white', flexDirection: 'row'}}>
-                    {
-                        map(FILTERS, filter => (
-                                <TouchableOpacity
-                                    style={{flex: 1, paddingVertical: 12}}
-                                    onPress={() => setCurrentFilter(filter)}
-                                >
-                                    <FilterItem text={filter} active={currentFilter===filter} />
-                                </TouchableOpacity>
-                            )
-                        )
-                    }
-                </View>
-                <Divider />
                 <View style={{flex: 1, width: '100%', paddingHorizontal: 20}}>
                     <FlatList
                         style={{width: '100%', paddingTop: 20}}

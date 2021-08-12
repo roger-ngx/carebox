@@ -17,7 +17,7 @@ const ProfileImageUpload = ({imageUrl, containerStyle, onImageChange}) => {
         try{
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditting: true,
+                allowsEditing: true,
                 aspect: [ 1, 1 ]
             })
     

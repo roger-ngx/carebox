@@ -29,7 +29,8 @@ const IdeaImageUpload = ({onImageChanged}) => {
         try{
             const result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditting: true,
+                allowsEditing: true,
+                aspect: [ 1, 1 ]
             })
     
             const { uri } = await ImageManipulator.manipulateAsync(
