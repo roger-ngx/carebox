@@ -65,8 +65,6 @@ const LoginWithPhoneNumber = ({navigation}) => {
             }
 
             dispatch(setAuthToken(authToken));
-
-            Sentry.captureException(JSON.stringify(currentUser));
         }catch(ex){
             Sentry.captureException(`getAuthToken: ${ex}`);
         }

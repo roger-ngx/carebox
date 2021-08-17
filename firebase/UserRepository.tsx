@@ -72,7 +72,7 @@ export async function login(phoneNumber){
 
         const { uid, authToken} = data;
 
-        if(authToken){
+        if(uid && authToken){
             await auth().signInWithCustomToken(authToken);
             await SecureStore.setItemAsync('userToken', authToken);
             return uid;
