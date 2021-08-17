@@ -13,7 +13,7 @@ import { likeIdea } from '../../firebase/IdeaRepository';
 const IdeaBody = ({idea}) => {
     if(!idea) return null;
 
-    const currentUser = useSelector(state => state.user.currentUser);
+    const currentUser = useSelector(state => state.user.currentUser) || {};
 
     const {category, scampers, subject, createdAt, likes, commentCount=0, rating } = idea;
 

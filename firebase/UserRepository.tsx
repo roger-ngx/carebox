@@ -131,6 +131,7 @@ export async function markReadingNotification({uid, notificationId}){
 }
 
 export async function updateUserPushToken(userId, pushToken){
+    if(!userId) return false;
     try{
         await firestore().collection('users').doc(userId)
         .update({

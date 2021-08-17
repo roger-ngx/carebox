@@ -25,6 +25,8 @@ const LoginWithPhoneNumber = ({navigation}) => {
     const dispatch = useDispatch();
 
     const onFinishVerification = async (uid, isNewUser, phoneNumber) => {
+        if(!uid) return false;
+
         if(isNewUser){
             setUid(uid);
             setPhoneNumber(phoneNumber);
@@ -37,6 +39,7 @@ const LoginWithPhoneNumber = ({navigation}) => {
     }
 
     const createPushToken = async (uid) => {
+        if(!uid) return;
         try{
             const token = await messaging().getToken();
             return await updateUserPushToken(uid, token);

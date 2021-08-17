@@ -31,7 +31,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
             setConfirmation(confirmation);
             setStep(2);
         }catch(e){
-            console.log('signInWithPhoneNumber', e);
+            Sentry.captureException(`signInWithPhoneNumber-${e}`);
             Alert.alert('An internal error has occurred, please try again.');
         }
 
@@ -56,7 +56,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
     return (
         <View style={{flex: 1, width: '100%', padding: 24, marginTop: 60}}>
-            {
+            {/* {
                 step===2 &&
                 <View
                     style={{position: 'absolute', top: -32, left: 16}}
@@ -71,7 +71,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                         />
                     </TouchableOpacity>
                 </View>
-            }
+            } */}
 
             <ScrollView
                 style={{
