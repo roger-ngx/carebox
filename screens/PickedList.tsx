@@ -3,40 +3,43 @@ import { View, FlatList, TouchableOpacity, Linking, Text } from 'react-native';
 import Profile from 'components/Profile';
 import { Icon } from 'react-native-elements';
 
-const PickedUser = ({user}) => (
+const PickedUser = ({user, showContact}) => (
     <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
         <Profile user={user} avatarType='circle'/>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity
-                style={{
-                    padding: 8,
-                    marginRight: 8
-                }}
-                onPress={() => Linking.openURL(`sms:${user.phoneNumber}`)}
-            >
-                <Icon
-                    type='material-community'
-                    name='chat-processing-outline'
-                    color='#4A7CFF'
-                />
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={{
-                    padding: 8,
-                }}
-                onPress={() => Linking.openURL(`tel:${user.phoneNumber}`)}
-            >
-                <Icon
-                    type='material-community'
-                    name='phone'
-                    color='#4A7CFF'
-                />
-            </TouchableOpacity>
-        </View>
+        {
+            showContact &&
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <TouchableOpacity
+                    style={{
+                        padding: 8,
+                        marginRight: 8
+                    }}
+                    onPress={() => Linking.openURL(`sms:${user.phoneNumber}`)}
+                >
+                    <Icon
+                        type='material-community'
+                        name='chat-processing-outline'
+                        color='#4A7CFF'
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        padding: 8,
+                    }}
+                    onPress={() => Linking.openURL(`tel:${user.phoneNumber}`)}
+                >
+                    <Icon
+                        type='material-community'
+                        name='phone'
+                        color='#4A7CFF'
+                    />
+                </TouchableOpacity>
+            </View>
+        }
     </View>
 )
 
-const PickedList = ({picks}) => {
+const PickedList = ({showContact, picks}) => {
 
     if(!picks) return null;
 
@@ -45,7 +48,7 @@ const PickedList = ({picks}) => {
 
             <FlatList
                 data={picks}
-                renderItem={({item}) => (<PickedUser user={item} />)}
+                renderItem={({item}) => (<PickedUser showContact={showContact} user={item} />)}
                 keyExtractor={item=>item.uid}
                 ItemSeparatorComponent={() => (<View style={{height: 16}} />)}
             />

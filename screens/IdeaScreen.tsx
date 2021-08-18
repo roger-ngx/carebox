@@ -31,6 +31,7 @@ export default function IdeaScreen({route, navigation}) {
 
   const [ loading, setLoading ] = useState(true);
   const [ ideaData, setIdeaData ] = useState(idea || {});
+  const currentUser = useSelector(state => state.user.currentUser);
 
   const layout = useWindowDimensions();
 
@@ -69,7 +70,7 @@ export default function IdeaScreen({route, navigation}) {
   const renderScene = SceneMap({
     first: () => (<IdeaDetailScreen idea={currentIdea} />),
     second: () => (<IdeaCommentScreen idea={ideaData} />),
-    third: () => (<PickedList picks={currentIdea && filter(currentIdea.picks, pick => pick.status === 'ACCEPTED_TO_PICK')} />)
+    third: () => (<PickedList showContact={ideaData.ownerId===currentUser.uid} picks={currentIdea && filter(currentIdea.picks, pick => pick.status === 'ACCEPTED_TO_PICK')} />)
   });
 
   const [index, setIndex] = React.useState(0);
