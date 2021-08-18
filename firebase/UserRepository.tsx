@@ -227,8 +227,6 @@ export async function subscribeForRegisteredComments(uid, dispatch){
     return firestore().collection('history').doc(uid).collection('comments').onSnapshot(onResult, onError);
 } 
 
-
-
 export async function signOut(){
     try{
         await auth().signOut();
@@ -236,6 +234,26 @@ export async function signOut(){
         return true;
     }catch(ex){
         Sentry.captureException(`signOut: ${ex}`);
+    }
+    return false;
+}
+
+export async function withdraw(uid){
+    console.log('withdraw', uid);
+    if(!uid) return false;
+    try{
+
+        const withdrawUser = functions().httpsCallable('withdrawUser');
+        const {data} = await withdrawUser({uid});
+
+        console.log('data', data);
+
+        if(data && data.ret){
+            await SecureStore.deleteItemAsync('userToken');
+            return true;
+        }
+    }catch(ex){
+        Sentry.captureException(`withdraw: ${ex}`);
     }
     return false;
 }

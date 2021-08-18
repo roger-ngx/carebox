@@ -8,9 +8,10 @@ import { useSelector } from 'react-redux';
 import PickedIdea from '../../components/Idea/PickedIdea';
 import ProfileSettingItem from '../../components/ProfileSettingItem';
 import TitleNavigationBar from '../../components/TitleNavigationBar';
-import { getLikedIdeas, signOut } from '../../firebase/UserRepository';
+import { getLikedIdeas, signOut, withdraw } from '../../firebase/UserRepository';
+import { ActivityIndicator } from 'react-native-paper';
 
-const RoundButton =({text, onPress, containerStyle}) => (
+const RoundButton =({text, loading, onPress, containerStyle, ...props}) => (
     <TouchableOpacity
         style={[{
             borderRadius: 32,
@@ -20,23 +21,41 @@ const RoundButton =({text, onPress, containerStyle}) => (
             paddingHorizontal: 32
         }, containerStyle]}
         onPress={onPress}
+        {...props}
     >
-        <Text style={{fontSize: 16, color: '#6B7A8E'}}>{text}</Text>
+        {
+            loading ?
+            <ActivityIndicator size='small' color='#6B7A8E' />
+            :
+            <Text style={{fontSize: 16, color: '#6B7A8E'}}>{text}</Text>
+        }
     </TouchableOpacity>
 )
 
 const UserAccountSetting = ({navigation}) => {
+  const currentUser = useSelector(state => state.user.currentUser);
+  const [ loading, setLoading ] = useState(0);
+
     const goOut = async () => {
+        setLoading(1);
         const ret = await signOut();
         if(ret){
             Updates.reloadAsync();
         }else{
             Alert.alert('Error. Plz try again');
         }
+        setLoading();
     }
 
-    const membershipWidthraw = () => {
-
+    const membershipWidthraw = async () => {
+        setLoading(2);
+        if(currentUser){
+            const ret = await withdraw(currentUser.uid);
+            if(ret){
+                await Updates.reloadAsync();
+            }
+        }
+        setLoading();
     }
 
     return (
@@ -71,10 +90,14 @@ const UserAccountSetting = ({navigation}) => {
                         text='로그아웃'
                         containerStyle={{marginRight: 16}}
                         onPress={goOut}
+                        disabled={loading>0}
+                        loading={loading===1}
                     />
                     <RoundButton
                         text='계정삭제'
                         onPress={membershipWidthraw}
+                        disabled={loading>0}
+                        loading={loading===2}
                     />
                 </View>
             </View>

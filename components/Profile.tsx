@@ -4,8 +4,10 @@ import FastImage from 'react-native-fast-image'
 
 const Profile = ({user={}, avatarType='square'}) => {
 
+    if(!user) return null;
+
     const { nickName, yearsOnJob, department, profileImageUrl, grade } = user;
-    console.log('grade', grade);
+
     const gradeIcon = grade === 2 ? require('assets/icons/grade2.png') : require('assets/icons/grade1.png')
 
     return (

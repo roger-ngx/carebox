@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity, Alert, TextInput, ScrollView, Linking } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements';
-import { size } from 'lodash';
+import { size, throttle, trim } from 'lodash';
 import auth from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native-paper';
 import { login } from '../../firebase/UserRepository';
@@ -14,6 +14,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
     const [ verificationCode, setVerificationCode ] = useState();
     const [ isTextOnFocus, setTextOnFocus ] = useState(false);
     const [ isPolicyAgreed, setPolicyAgreed ] = useState(false);
+    const [ showCodeReissueButton, setShowCodeReissueButton ] = useState(false);
 
     async function signInWithPhoneNumber() {
         setLoading(true);
@@ -40,15 +41,23 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
     const confirmCode = async () => {
         setLoading(true);
+        setShowCodeReissueButton(false);
+
+        const code = trim(verificationCode);
+        if(code.length !== 6){
+            Alert.alert('인증번호가 6자리 까지 이에요.');
+            return;
+        }
 
         try{
-            const {additionalUserInfo, user} = await confirmation.confirm(verificationCode);
+            const {additionalUserInfo, user} = await confirmation.confirm(code);
             console.log('user', user);
 
             await onSuccess(user.uid, additionalUserInfo.isNewUser, user.phoneNumber);
         }catch(ex){
             console.log('confirmCode', ex);
-            Alert.alert('Wrong verification code.Press 재발송하기');
+            Alert.alert('Wrong verification code.please press 재발송하기 button.');
+            setShowCodeReissueButton(true);
         }
 
         setLoading(false);
@@ -167,37 +176,42 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             onFocus={() => setTextOnFocus(true)}
                             onBlur={() => setTextOnFocus(false)}
                             autoFocus
+                            maxLength={6}
                         />
 
-                        <View
-                            style={{
-                                flexDirection: 'row',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                marginTop: 24
-                            }}
-                        >
-                            <Text style={{marginRight: 16}}>
-                                인증번호가 오지 않았나요?
-                            </Text>
-                            <TouchableOpacity
+                        {
+                            showCodeReissueButton &&
+                            <View
                                 style={{
                                     flexDirection: 'row',
+                                    justifyContent: 'center',
                                     alignItems: 'center',
-                                }}
-                                onPress={() => {
-                                    signInWithPhoneNumber();
-                                    setVerificationCode();
+                                    marginTop: 24
                                 }}
                             >
-                                <Icon
-                                    type='material'
-                                    name='refresh'
-                                    size={14}
-                                />
-                                <Text>재발송하기</Text>
-                            </TouchableOpacity>
-                        </View>
+                                <Text style={{marginRight: 16}}>
+                                    인증번호가 오지 않았나요?
+                                </Text>
+                                <TouchableOpacity
+                                    style={{
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                    }}
+                                    disabled={loading}
+                                    onPress={throttle(() => {
+                                        signInWithPhoneNumber();
+                                        setVerificationCode();
+                                    }, 10000, {trailing: false})}
+                                >
+                                    <Icon
+                                        type='material'
+                                        name='refresh'
+                                        size={14}
+                                    />
+                                    <Text>재발송하기</Text>
+                                </TouchableOpacity>
+                            </View>
+                        }
                     </>
                 }
 
@@ -214,7 +228,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                         opacity: isPolicyAgreed ? 1 : 0.5
                     }}
                     disabled={(step===1&&size(phoneNumber)!==11) || loading || !isPolicyAgreed}
-                    onPress={step===1?signInWithPhoneNumber:confirmCode}
+                    onPress={throttle(step===1?signInWithPhoneNumber:confirmCode, 10000,  { trailing: false})}
                 >
                     {
                         loading ?

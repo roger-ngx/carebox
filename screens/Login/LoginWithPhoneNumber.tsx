@@ -27,6 +27,9 @@ const LoginWithPhoneNumber = ({navigation}) => {
     const onFinishVerification = async (uid, isNewUser, phoneNumber) => {
         if(!uid) return false;
 
+        const currentUser = auth().currentUser;
+        currentUser && dispatch(setUser(currentUser));
+
         if(isNewUser){
             setUid(uid);
             setPhoneNumber(phoneNumber);
@@ -50,9 +53,6 @@ const LoginWithPhoneNumber = ({navigation}) => {
 
     const getAuthToken = async(uid) => {
         try{
-            const currentUser = auth().currentUser;
-            currentUser && dispatch(setUser(currentUser));
-            
             let authToken = await SecureStore.getItemAsync('userToken');
             if(isEmpty(authToken)){
                 const refeshAuthToken = functions().httpsCallable('refeshAuthToken');

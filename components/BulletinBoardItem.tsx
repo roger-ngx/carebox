@@ -13,10 +13,11 @@ import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const BulletinBoardItem = ({item, containerStyle}) => {
     if(!item) return null;
+    const user = useSelector(state => state.user.currentUser);
+
+    if(!user) return null;
 
     const { createdAt, owner, type, images, commentCount } = item;
-
-    const user = useSelector(state => state.user.currentUser)
 
     const [ liked, setLiked ] = useState();
     const [ likeNumber, setLikeNumber ] = useState();
