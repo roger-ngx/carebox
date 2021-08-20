@@ -42,11 +42,11 @@ export async function updateUserInfo({uid, profileImageUri, userInfo}){
     return false;
 }
 
-export async function signUp({uid, nickName, gender, department, yearsOnJob, phoneNumber}){
+export async function signUp({nickName, gender, department, yearsOnJob, phoneNumber}){
     try{
         const signUp = functions().httpsCallable('signUp');
         const ret = await signUp({
-            uid, nickName, gender, department, yearsOnJob, phoneNumber
+            nickName, gender, department, yearsOnJob, phoneNumber
         })
         console.log(ret);
         const { authToken } = ret.data;
@@ -79,6 +79,38 @@ export async function login(phoneNumber){
         }
     }catch(ex){
         Sentry.captureException(`login: ${ex}`);
+    }
+    return null;
+}
+
+export async function requestForVerificationCode(phoneNumber){
+    if(isEmpty(phoneNumber)) return;
+
+    try{
+        const requestForVerificationCode = functions().httpsCallable('requestForVerificationCode');
+        const {data} = await requestForVerificationCode({phoneNumber});
+
+        // const {userStatus, verificationId} = data;
+
+        return data;
+    }catch(ex){
+        Sentry.captureException(`requestForVerificationCode: ${ex}`);
+    }
+    return null;
+}
+
+export async function verifyLoginCode({verificationCode, verificationId}){
+    if(isEmpty(verificationCode) || isEmpty(verificationId)) return;
+
+    try{
+        const verifyLoginCode = functions().httpsCallable('verifyLoginCode');
+        const {data} = await verifyLoginCode({ verificationCode, verificationId });
+
+        console.log('verifyLoginCode', data);
+
+        return data;
+    }catch(ex){
+        Sentry.captureException(`requestForVerificationCode: ${ex}`);
     }
     return null;
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import auth from '@react-native-firebase/auth';
 import functions from '@react-native-firebase/functions';
 import messaging from '@react-native-firebase/messaging';
-
+import { View, ActivityIndicator } from 'react-native';
 import { isEmpty } from 'lodash';
 
 import { useDispatch } from 'react-redux';
@@ -14,30 +14,41 @@ import { setUser } from '../../stores/slices/userSlice';
 import PhoneNumberVerification from './PhoneNumberVerification';
 import { setAuthToken } from '../../stores/slices/tokenSlice';
 import { updateUserPushToken } from '../../firebase/UserRepository';
+import LoadingModal from '../../modals/LoadingModal';
 
 const LoginWithPhoneNumber = ({navigation}) => {
 
-    const [ showUserInfoInput, setShowUserInfoInput ] = useState(false);
     const [ loading, setLoading ] = useState(false);
-    const [ uid, setUid ] = useState();
+    const [ isNewUser, setIsNewUser ] = useState();
     const [ phoneNumber, setPhoneNumber ] = useState();
 
     const dispatch = useDispatch();
 
-    const onFinishVerification = async (uid, isNewUser, phoneNumber) => {
-        if(!uid) return false;
+    const onFinishVerification = async ({isNewUser, phoneNumber, uid, authToken}) => {
+        if(!phoneNumber) return false;
 
-        const currentUser = auth().currentUser;
-        currentUser && dispatch(setUser(currentUser));
+        try{
+            if(isNewUser){
+                setPhoneNumber(phoneNumber);
+                setIsNewUser(true);
+            } else {
+                if(authToken){
+                    setLoading(true);
 
-        if(isNewUser){
-            setUid(uid);
-            setPhoneNumber(phoneNumber);
-        } else {
-            await getAuthToken(uid);
+                    const userCredential = await auth().signInWithCustomToken(authToken);
+                    dispatch(setUser(userCredential.user));
+
+                    await SecureStore.setItemAsync('userToken', authToken);
+                    await createPushToken(uid);
+                    dispatch(setAuthToken(authToken));
+
+                    setLoading(false);
+                }
+            }
+        }catch(ex){
+            Sentry.captureException(`onFinishVerification: ${ex}`);
         }
 
-        await createPushToken(uid);
         return true;
     }
 
@@ -61,7 +72,10 @@ const LoginWithPhoneNumber = ({navigation}) => {
 
                 authToken = ret.data.ret.authToken;
 
-                await SecureStore.setItemAsync('userToken', authToken);
+                if(authToken){
+                    await auth().signInWithCustomToken(authToken);
+                    await SecureStore.setItemAsync('userToken', authToken);
+                }
             }
 
             dispatch(setAuthToken(authToken));
@@ -80,8 +94,8 @@ const LoginWithPhoneNumber = ({navigation}) => {
             }}
         >
             {
-                uid ? (
-                    <UserInfoInput uid={uid} phoneNumber={phoneNumber} navigation={navigation}/>
+                isNewUser ? (
+                    <UserInfoInput phoneNumber={phoneNumber} navigation={navigation}/>
                 ) : (
                     <PhoneNumberVerification onSuccess={onFinishVerification}/>
                 )

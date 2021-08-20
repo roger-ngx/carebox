@@ -19,7 +19,7 @@ const JOBS = [
     { label:'외래', value:'외래' }
 ]
 
-const UserInfoInput = ({uid, phoneNumber, navigation}) => {
+const UserInfoInput = ({phoneNumber}) => {
     // const [ openJobSelection, setOpenJobSelection ] = useState(false);
 
     const [ nickName, setNickName ] = useState();
@@ -51,7 +51,7 @@ const UserInfoInput = ({uid, phoneNumber, navigation}) => {
         try{
 
             const ret = await signUp({
-                uid, nickName, gender, department, yearsOnJob, phoneNumber
+                nickName, gender, department, yearsOnJob, phoneNumber
             })
             setOpenConfirmModal(ret);
         }catch(ex){

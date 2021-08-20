@@ -4,12 +4,14 @@ import { CheckBox, Icon } from 'react-native-elements';
 import { size, throttle, trim } from 'lodash';
 import auth from '@react-native-firebase/auth';
 import { ActivityIndicator } from 'react-native-paper';
-import { login } from '../../firebase/UserRepository';
+import { login, requestForVerificationCode, verifyLoginCode } from '../../firebase/UserRepository';
 
 const PhoneNumberVerification = ({onSuccess}) => {
     const [ step, setStep ] = useState(1);
     const [ phoneNumber, setPhoneNumber ] = useState();
-    const [ confirmation, setConfirmation ] = useState();
+    const [ verificationId, setVerificationId ] = useState();
+    const [ isNewUser, setIsNewUser ] = useState();
+
     const [ loading, setLoading ] = useState(false);
     const [ verificationCode, setVerificationCode ] = useState();
     const [ isTextOnFocus, setTextOnFocus ] = useState(false);
@@ -22,18 +24,18 @@ const PhoneNumberVerification = ({onSuccess}) => {
         try{
             const number = phoneNumber.replace('0', '+82');
 
-            const uid = await login(number);
-            console.log(uid);
-            if(uid){
-                return await onSuccess(uid, false, phoneNumber);
+            const data = await requestForVerificationCode(number);
+            if(data){
+                const {userStatus, verificationId} = data;
+                if(userStatus && verificationId){
+                    setStep(2);
+                    setIsNewUser(userStatus==='NOT_EXIST_USER');
+                    setVerificationId(verificationId);
+                }
             }
-            
-            const confirmation = await auth().signInWithPhoneNumber(number);
-            setConfirmation(confirmation);
-            setStep(2);
+
         }catch(e){
             Sentry.captureException(`signInWithPhoneNumber-${e}`);
-            Alert.alert('An internal error has occurred, please try again.');
         }
 
         setLoading(false);
@@ -50,10 +52,12 @@ const PhoneNumberVerification = ({onSuccess}) => {
         }
 
         try{
-            const {additionalUserInfo, user} = await confirmation.confirm(code);
-            console.log('user', user);
+            const {status, uid, authToken} = await verifyLoginCode({verificationCode: code, verificationId})
+            console.log(status, uid, authToken);
 
-            await onSuccess(user.uid, additionalUserInfo.isNewUser, user.phoneNumber);
+            if(status === 'OK'){
+                await onSuccess({isNewUser, phoneNumber, uid, authToken});
+            }
         }catch(ex){
             console.log('confirmCode', ex);
             Alert.alert('Wrong verification code.please press 재발송하기 button.');
