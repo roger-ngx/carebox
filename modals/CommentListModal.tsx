@@ -58,6 +58,7 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
             animationIn='slideInRight'
             animationOut='slideOutLeft'
             useNativeDriver={true}
+            avoidKeyboard
         >
             <SafeAreaView style={{flex: 1, backgroundColor: 'white', paddingHorizontal: 20}}>
                 <View style={{marginBottom: 16}}>
@@ -66,7 +67,7 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
                         onBackPress={onClose}
                     />
                 </View>
-                <ScrollView>
+                <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={{flex: 1, marginBottom: 10}}>
                         <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>2.8점</Text></Text>
                         <RatingView {...{practicalityRate, creativityRate, valuableRate}}/>

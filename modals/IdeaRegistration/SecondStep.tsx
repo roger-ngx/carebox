@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { map, includes, remove } from 'lodash';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { map, includes, remove, size } from 'lodash';
 import { CheckBox, Icon } from 'react-native-elements';
+
 import InfoModal from '../InfoModal';
 import RoundButton from '../../components/RoundButton';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { size } from 'lodash';
 
 const SCAMPERS =[
     'S : 대체하기(소재, 방식, 원리)',
