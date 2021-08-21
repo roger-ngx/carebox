@@ -5,7 +5,7 @@ const ideaSlice = createSlice({
         ideaId: null,
         comments: null,
         selectedCommentId: null,
-        subComments: null,
+        subComments: {},
         currentIdea: null
     },
     reducers: {
@@ -16,7 +16,8 @@ const ideaSlice = createSlice({
             state.comments = action.payload;
         },
         setCommentReplies(state, action){
-            state.subComments = action.payload;
+            const { commentId, data } = action.payload;
+            state.subComments[`${commentId}`] = data;
         },
         setCurrentIdea(state, action){
             state.currentIdea = action.payload;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Modal from 'react-native-modal';
-import { split, map, includes, size } from 'lodash';
+import { split, map, includes, size, get } from 'lodash';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RatingView from '../components/RatingView';
 import OutlinedTag from '../components/OutlinedTag';
@@ -17,30 +17,21 @@ import CommentInput from '../components/CommentInput';
 
 const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitCommentReply}) => {
 
-    if(!parentComment) return null;
+    if(!parentComment || !user) return null;
 
-    const dispatch = useDispatch();
-
-    const replies = useSelector(state => state.idea.subComments);
-
-    const [ commentReplies, setCommentReplies ] = useState(replies || []);
+    const [ commentReplies, setCommentReplies ] = useState();
     const [ loading, setLoading ] = useState(false);
     
     const {
         id, ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
         scamper, content, links, images, likes
     } = parentComment;
+
+    const replies = useSelector(state => get(state, `idea.subComments[${id}]`));
     
-    console.log('sub replies', id, ideaId)
-
     useEffect(() => {
-        if(!ideaId) return;
-
-        const unsubscriber = addCommentRepliestListenner({ideaId, commentId: id, dispatch})
-        return () => {
-            typeof unsubscriber === 'function' && unsubscriber();
-        }
-    }, [ideaId])
+        setCommentReplies(replies || []);
+    }, [replies])
 
     const onSubmitReply = async reply => {
         setLoading(true);

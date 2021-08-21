@@ -3,7 +3,7 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import { get, isEmpty, map, forEach, set, findIndex } from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
-import { remove, startsWith } from 'lodash';
+import { remove, startsWith, size } from 'lodash';
 
 import { setIdeas } from "../stores/slices/userSlice";
 import { setComments, setCommentReplies, setCurrentIdea } from "../stores/slices/ideaSlice";
@@ -347,9 +347,9 @@ export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
         const docs = querySnapshot.docs;
         const replies = map(docs, doc => ({id: doc.id, ...doc.data()}))
 
-        console.log('comments', replies);
+        console.log('replies:', size(replies));
 
-        dispatch(setCommentReplies(replies));
+        dispatch(setCommentReplies({commentId, data: replies}));
     }
       
     function onError(error) {
@@ -684,21 +684,23 @@ export const deleteIdeaComment = async ({ownerUid, historyCommentId, ideaId, ide
     try{
 
         const ideaDoc = await firestore().collection('ideas').doc(ideaId).get();
-        const { rating } = ideaDoc.data();
-
-        remove(rating, rate => rate.uid === ownerUid);
-
-        batch.delete(firestore().collection('ideas').doc(ideaId).collection('comments').doc(ideaCommentId));
+        if(ideaDoc.exists){
+            const { rating } = ideaDoc.data();
+    
+            remove(rating, rate => rate.uid === ownerUid);
+    
+            batch.delete(firestore().collection('ideas').doc(ideaId).collection('comments').doc(ideaCommentId));
+            
+            batch.update(
+                firestore().collection('ideas').doc(ideaId),
+                {
+                    rating,
+                    commentCount: firestore.FieldValue.increment(-1),
+                    updatedAt: firestore.FieldValue.serverTimestamp()
+                }
+            )
+        }
         batch.delete(firestore().collection('history').doc(ownerUid).collection('comments').doc(historyCommentId));
-
-        batch.update(
-            firestore().collection('ideas').doc(ideaId),
-            {
-                rating,
-                commentCount: firestore.FieldValue.increment(-1),
-                updatedAt: firestore.FieldValue.serverTimestamp()
-            }
-        )
 
         await batch.commit();
     }catch(ex){

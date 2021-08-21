@@ -16,8 +16,6 @@ const JOBS = [
 
 const UserInfoInputForm = ({user={}, onUserInfoChange}) => {
 
-    const [ openJobSelection, setOpenJobSelection ] = useState(false);
-
     const [ nickName, setNickName ] = useState(user.nickName);
     const [ gender, setGender ] = useState(user.gender);
     const [ department, setDepartment ] = useState(user.department);

@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image'
 import { Divider } from 'react-native-elements';
 import CommentInputModal from '../modals/CommentInputModal';
 import { useDispatch, useSelector } from 'react-redux';
-import { includes, map, reduce, size, throttle, head } from 'lodash';
+import { includes, map, reduce, size, throttle, head, get } from 'lodash';
 
 import IdeaOverallRating from 'components/IdeaOverallRating';
 import NewIdeaHead from 'components/Idea/NewIdeaHead';
@@ -31,33 +31,33 @@ const Comment = ({user, comment, onShowComments}) => {
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
     
     const dispatch = useDispatch();
-
-    const replies = useSelector(state => state.idea.subComments);
-
+    
     const {
         id, ideaId, practicalityRate, creativityRate, valuableRate, avgRating,
         scamper, content, links, images, likes
     } = comment;
     
+    const replies = useSelector(state => get(state, `idea.subComments[${id}]`));
+
     const scamperSplits = scamper.split(' : ');
     
     useEffect(() => {
         getReplyCount();
-    }, [comment]);
 
-    useEffect(() => {
-        setLatestReply(head(replies));
-        setReplyCount(size(replies));
-    }, [replies]);
-
-    useEffect(() => {
-        if(!ideaId) return;
+        if(!comment) return;
 
         const unsubscriber = addCommentRepliestListenner({ideaId, commentId: id, dispatch})
         return () => {
             typeof unsubscriber === 'function' && unsubscriber();
         }
-    }, [ideaId])
+    }, [comment]);
+
+    useEffect(() => {
+
+        setLatestReply(head(replies));
+        setReplyCount(size(replies));
+    }, [replies]);
+
 
    const getReplyCount = async () => {
         const ret = await getIdeaCommentReplies(ideaId, comment.id);
@@ -316,7 +316,7 @@ const IdeaCommentScreen = ({idea}) => {
             <IdeaOverallRating overallRate={overallRate} isDisabled={true}/>
             {
                 map(comments, comment => (
-                    <View style={{padding: 20}}>
+                    <View style={{padding: 20}} key={comment.id}>
                         <View style={{width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20}}>
                             <NewIdeaHead owner={comment.owner}/>
                             {

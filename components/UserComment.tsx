@@ -5,6 +5,8 @@ import moment from 'moment';
 
 const UserComment = ({user, comment, createdTime}) => {
 
+    if(!user) return null;
+
     const { nickName, profileImageUrl } = user;
 
     const [ diffInMinites, setDiffInMinutes ] = useState();

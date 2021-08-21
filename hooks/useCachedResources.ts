@@ -19,7 +19,6 @@ export default function useCachedResources() {
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
         });
 
-        await Asset.loadAsync(require('../assets/images/banner.jpg'))
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         Sentry.captureException(`getBulletinItemById: ${JSON.stringify(e)}`);
