@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity, Alert, TextInput, ScrollView, Linking } from 'react-native';
 import { CheckBox, Icon } from 'react-native-elements';
 import { size, throttle, trim } from 'lodash';
@@ -11,12 +11,33 @@ const PhoneNumberVerification = ({onSuccess}) => {
     const [ phoneNumber, setPhoneNumber ] = useState();
     const [ verificationId, setVerificationId ] = useState();
     const [ isNewUser, setIsNewUser ] = useState();
+    const [ timeCountDown, setTimeCountDown ] = useState(180);
+    const [ timeCountDownText, setTimeCountDownText ] = useState('03:00');
 
     const [ loading, setLoading ] = useState(false);
     const [ verificationCode, setVerificationCode ] = useState();
     const [ isTextOnFocus, setTextOnFocus ] = useState(false);
     const [ isPolicyAgreed, setPolicyAgreed ] = useState(false);
     const [ showCodeReissueButton, setShowCodeReissueButton ] = useState(false);
+
+    useEffect(() => {
+        if(step === 2){
+            const interval = setInterval(() => timeCountDown > 0 && setTimeCountDown(timeCountDown => timeCountDown - 1), 1000);
+    
+            return () => clearInterval(interval);
+        }
+    }, [step]);
+
+    useEffect(() => {
+        if(timeCountDown < 150){
+            setShowCodeReissueButton(true);
+        }
+
+        const minutes = ('0' + ((timeCountDown / 60) | 0)).slice(-2);
+        const seconds = ('0' + timeCountDown % 60).slice(-2);
+
+        setTimeCountDownText(`${minutes}:${seconds}`);
+    }, [timeCountDown]);
 
     async function signInWithPhoneNumber() {
         setLoading(true);
@@ -34,8 +55,8 @@ const PhoneNumberVerification = ({onSuccess}) => {
                 }
             }
 
-        }catch(e){
-            Sentry.captureException(`signInWithPhoneNumber-${e}`);
+        }catch(ex){
+            Sentry.captureException(`signInWithPhoneNumber-${ex}`);
         }
 
         setLoading(false);
@@ -45,22 +66,26 @@ const PhoneNumberVerification = ({onSuccess}) => {
         setLoading(true);
         setShowCodeReissueButton(false);
 
-        const code = trim(verificationCode);
-        if(code.length !== 6){
+        const trimCode = trim(verificationCode);
+        if(trimCode.length !== 6){
             Alert.alert('인증번호가 6자리 까지 이에요.');
             return;
         }
 
         try{
-            const {status, uid, authToken} = await verifyLoginCode({verificationCode: code, verificationId})
+            const {status, uid, authToken, code} = await verifyLoginCode({verificationCode: trimCode, verificationId})
             console.log(status, uid, authToken);
 
             if(status === 'OK'){
                 await onSuccess({isNewUser, phoneNumber, uid, authToken});
+            } else {
+                Alert.alert('Wrong verification code. Please try again');
+                setShowCodeReissueButton(true);
             }
+
         }catch(ex){
-            console.log('confirmCode', ex);
-            Alert.alert('Wrong verification code.please press 재발송하기 button.');
+            Sentry.captureException(`confirmCode-${ex}`);
+            Alert.alert('Wrong verification code. Please press 재발송하기 button.');
             setShowCodeReissueButton(true);
         }
 
@@ -183,6 +208,8 @@ const PhoneNumberVerification = ({onSuccess}) => {
                             maxLength={6}
                         />
 
+                        <Text style={{textAlign: 'center', marginTop: 8, color: 'red'}}>{timeCountDownText}</Text>
+
                         {
                             showCodeReissueButton &&
                             <View
@@ -205,6 +232,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                                     onPress={throttle(() => {
                                         signInWithPhoneNumber();
                                         setVerificationCode();
+                                        setTimeCountDown(180);
                                     }, 10000, {trailing: false})}
                                 >
                                     <Icon
