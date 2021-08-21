@@ -7,6 +7,8 @@ import CommentImagesUploader from '../../components/CommentImagesUploader';
 
 const ForthStep = ({idea}) => {
 
+    console.log('idea', JSON.stringify(idea));
+
     const [ isNotUploadPhotoAndLink, setNotUploadPhotoAndLink ] = useState();
     const [ imageUris, setImageUris ] = useState(idea.idea.images.urls);
     const [ imageTitle, setImageTitle ] = useState(idea.idea.images.title)

@@ -4,12 +4,10 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 
 const ThirdStep = ({idea, onFocusChange}) => {
 
-    console.log('idea', idea);
-
     const [subject, setSubject] = useState(idea.idea.subject);
     const [problemObject, setProblemObject] = useState(idea.idea.detail.object);
     const [problemSituation, setProblemSituation] = useState(idea.idea.detail.situation);
-    const [problemSolution, setProblemSolution] = useState(idea.idea.detail.solution);
+    const [problemSolution, setProblemSolution] = useState(idea.idea.detail.solution || {});
     const [ isTextFocused, setTextFocused ] = useState(false);
 
     useEffect(() => {
@@ -24,7 +22,7 @@ const ThirdStep = ({idea, onFocusChange}) => {
         const detail = {
             object: problemObject,
             situation: problemSituation,
-            solution: problemSolution
+            solution: {...problemSolution}
         }
 
         idea.setIdeaDetail(detail);
