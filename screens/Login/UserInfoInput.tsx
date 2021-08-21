@@ -10,6 +10,7 @@ import CBDropDownPicker from 'components/CBDropDownPicker';
 import { checkNicknameExists, signUp } from '../../firebase/UserRepository';
 import { useDispatch } from 'react-redux';
 import { setAuthToken } from '../../stores/slices/tokenSlice';
+import { setUser } from '../../stores/slices/userSlice';
 
 const JOBS = [
     { label:'병동', value:'병동' },
@@ -50,10 +51,12 @@ const UserInfoInput = ({phoneNumber}) => {
 
         try{
 
-            const ret = await signUp({
+            const user = await signUp({
                 nickName, gender, department, yearsOnJob, phoneNumber
-            })
-            setOpenConfirmModal(ret);
+            });
+            dispatch(setUser(user));
+
+            setOpenConfirmModal(true);
         }catch(ex){
             console.log('signUp', ex);
             Alert.alert('Login failed', 'Plz try again');

@@ -52,9 +52,10 @@ export async function signUp({nickName, gender, department, yearsOnJob, phoneNum
         const { authToken } = ret.data;
 
         if(authToken){
-            await auth().signInWithCustomToken(authToken);
+            const userCredential = await auth().signInWithCustomToken(authToken);
+
             await SecureStore.setItemAsync('userToken', authToken);
-            return true;
+            return userCredential.user;
         }
     }catch(ex){
         Sentry.captureException(`signUp: ${ex}`);
