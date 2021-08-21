@@ -39,7 +39,7 @@ const IdeaRegistrationModal = ({onClose}) => {
         if(currentStep === 1){
             return !(isEmpty(idea.category) || isEmpty(idea.type));
         } else if(currentStep === 2){
-            return !isEmpty(idea.scampers);
+            return !idea.scamperRequired || !isEmpty(idea.scampers);
         } else if(currentStep === 3){
             return !(isEmpty(idea.subject) || isEmpty(idea.ideaDetail));
         }else{
@@ -112,6 +112,7 @@ const IdeaRegistrationModal = ({onClose}) => {
                             onPress={() => {
                                 if(currentStep > 1){
                                     setCurrentStep(currentStep -1);
+                                    setTextFocused(false);
                                 }
                             }}
                         >

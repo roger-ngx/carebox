@@ -100,41 +100,44 @@ const ThirdStep = ({idea, onFocusChange}) => {
                     />
                 </View>
 
-                <View
-                    style={{
-                        marginTop: 16
-                    }}
-                >
-                    <Text style={styles.headerTxt}>
-                        해결방법
-                    </Text>
+                {
+                    idea.scamperRequired &&
+                    <View
+                        style={{
+                            marginTop: 16
+                        }}
+                    >
+                        <Text style={styles.headerTxt}>
+                            해결방법
+                        </Text>
 
-                    {
-                        map(idea.scampers, scamper => (
-                            <View key={scamper} style={{marginBottom: 16}}>
-                                <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
-                                   {scamper}
-                                </Text>
+                        {
+                            map(idea.scampers, scamper => (
+                                <View key={scamper} style={{marginBottom: 16}}>
+                                    <Text style={{fontSize: 10, color: '#001240', marginBottom: 8}}>
+                                    {scamper}
+                                    </Text>
 
-                                <TextInput
-                                    placeholder={`- 무엇을 바꿀 수 있을까?\n- 그것 대신에 무엇을 활용할 수 있을까?\n- 그 대신 어떤 프로세스를 활용할 수 있을까?\n- 그 대신 어떤 다른 재료를 사용할 수 있을까?`}
-                                    style={[styles.textInput, {minHeight: 100}]}
-                                    multiline={true}
-                                    numberOfLines={5}
-                                    maxLength={2000}
-                                    value={get(problemSolution, `${scamper}`)}
-                                    onChangeText={(text) => {
-                                        set(problemSolution, `${scamper}`, text);
-                                        setProblemSolution({...problemSolution})
-                                    }}
-                                    textAlignVertical='top'
-                                    onFocus={() => setTextFocused(true)}
-                                    onBlur={() => setTextFocused(false)}
-                                />
-                            </View>
-                        ))
-                    }
-                </View>
+                                    <TextInput
+                                        placeholder={`- 무엇을 바꿀 수 있을까?\n- 그것 대신에 무엇을 활용할 수 있을까?\n- 그 대신 어떤 프로세스를 활용할 수 있을까?\n- 그 대신 어떤 다른 재료를 사용할 수 있을까?`}
+                                        style={[styles.textInput, {minHeight: 100}]}
+                                        multiline={true}
+                                        numberOfLines={5}
+                                        maxLength={2000}
+                                        value={get(problemSolution, `${scamper}`)}
+                                        onChangeText={(text) => {
+                                            set(problemSolution, `${scamper}`, text);
+                                            setProblemSolution({...problemSolution})
+                                        }}
+                                        textAlignVertical='top'
+                                        onFocus={() => setTextFocused(true)}
+                                        onBlur={() => setTextFocused(false)}
+                                    />
+                                </View>
+                            ))
+                        }
+                    </View>
+                }
             </View>
         </View>
     )

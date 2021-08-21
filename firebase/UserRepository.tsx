@@ -185,7 +185,7 @@ export async function requestPushNotificationPermission() {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   
     if (enabled) {
-      Sentry.captureException(`Authorization status: ${authStatus}`);
+    //   Sentry.captureException(`Authorization status: ${authStatus}`);
     }
 }
 

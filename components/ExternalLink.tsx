@@ -4,6 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Snackbar } from 'react-native-paper';
 
 const ExternalLink = ({title, link}) => {
+    if(!link && !title) return null;
 
     const [ showSnackbar, setShowSnackbar ] = useState(false);
 

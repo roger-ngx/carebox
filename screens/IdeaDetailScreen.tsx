@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import PickedIdea from '../components/Idea/PickedIdea';
 import { Divider, Icon } from 'react-native-elements';
-import { map, includes, size, keys, values, split } from 'lodash';
+import { map, includes, size, keys, values, split, isEmpty } from 'lodash';
 import IdeaCommentButtons from '../components/IdeaCommentButtons';
 import CommentRegistrationModal from '../modals/CommentRegistrationModal';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import OutlinedTag from '../components/OutlinedTag';
 import ImageGalleryModal from '../modals/ImageGalleryModal';
 
 const IdeaDetailScreen = ({idea}) => {
-    if(!idea) return null;
+    if(isEmpty(idea)) return null;
 
     const [ openGalleryModal, setOpenGalleryModal ] = useState(-1);
 
@@ -25,8 +25,6 @@ const IdeaDetailScreen = ({idea}) => {
 
     const solutionKeys = keys(detail.solution);
     const solutionValues = values(detail.solution);
-
-    console.log(images.urls);
 
     return (
         <View
@@ -65,7 +63,7 @@ const IdeaDetailScreen = ({idea}) => {
                 </View>
                 <Divider />
                 {
-                    size(images.urls) > 0 && <>
+                    images && size(images.urls) > 0 && <>
                         <View style={{padding: 20}}>
                             <Text style={{color: '#7D7D7D', marginBottom: 8}}>이미지</Text>
                             <ScrollView

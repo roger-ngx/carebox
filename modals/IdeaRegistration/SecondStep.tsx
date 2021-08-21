@@ -5,6 +5,7 @@ import { CheckBox, Icon } from 'react-native-elements';
 import InfoModal from '../InfoModal';
 import RoundButton from '../../components/RoundButton';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { size } from 'lodash';
 
 const SCAMPERS =[
     'S : 대체하기(소재, 방식, 원리)',
@@ -14,16 +15,27 @@ const SCAMPERS =[
     'P : 용도의 전환',
     'E : 제거하기',
     'R : 역발상',
-    '스캠퍼 기법을 사용하지 않고 진행할게요.'
 ]
 
 const SecondStep = ({idea}) => {
     const [ showModal, setShowModal ] = useState(false);
     const [ ideaScampers, setIdeaScampers ] = useState(idea.idea.scampers);
+    const [ scamperRequired, setScamperRequired ] = useState(idea.idea.scamperRequired);
 
     useEffect(() => {
         idea.setScampers(ideaScampers);
+        if(size(ideaScampers)){
+            setScamperRequired(true);
+        }
     }, [ideaScampers])
+
+    useEffect(() => {
+        if(!scamperRequired){
+            idea.setScampers([]);
+            setIdeaScampers([]);
+        }
+        idea.setScamperRequired(scamperRequired);
+    }, [scamperRequired]);
 
     return(
         <View>
@@ -64,6 +76,21 @@ const SecondStep = ({idea}) => {
                         />
                     ))
                 }
+                <CheckBox
+                    title='스캠퍼 기법을 사용하지 않고 진행할게요.'
+                    containerStyle={{
+                        backgroundColor: 'transparent',
+                        borderWidth: 0,
+                        marginLeft: 0,
+                        marginTop: 0,
+                        paddingLeft: 0,
+                        paddingTop: 0
+                    }}
+                    size={24}
+                    textStyle={{fontSize: 15, fontWeight: 'normal', color: '#334F74'}}
+                    checked={!scamperRequired}
+                    onPress={() => setScamperRequired(!scamperRequired)}
+                />
             </View>
             <InfoModal isVisible={showModal}>
                 <View style={{backgroundColor: 'white', width: '100%'}}>

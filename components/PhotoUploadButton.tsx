@@ -3,6 +3,7 @@ import { TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { Icon } from 'react-native-elements';
 import * as ImagePicker from 'expo-image-picker';
 import * as ImageManipulator from 'expo-image-manipulator';
+import { throttle } from 'lodash';
 
 const PhotoUploadButton = ({count, max, onReturnUri}) => {
 
@@ -39,7 +40,8 @@ const PhotoUploadButton = ({count, max, onReturnUri}) => {
                 borderRadius: 4,
                 justifyContent: 'center', alignItems: 'center'
             }}
-            onPress={pickImage}
+            disabled={loadingImage}
+            onPress={throttle(pickImage, 1000, {trailing: false})}
         >
             {
                 loadingImage ?

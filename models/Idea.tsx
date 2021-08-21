@@ -4,7 +4,7 @@ interface IIdea {
     scamper: string,
     subject: string,
     detail: object,
-    image: {},
+    images: {},
     links: string[]
 }
 
@@ -26,9 +26,10 @@ export default class Idea {
         scampers: [],
         subject: '',
         detail: {},
-        image: {},
+        images: {},
         links: [],
-        imageAndLinkRequired: true
+        imageAndLinkRequired: true,
+        scamperRequired: true
     };
 
     constructor()
@@ -101,5 +102,13 @@ export default class Idea {
     }
     setImageAndLinkRequired(required){
         return this.idea.imageAndLinkRequired = required;
+    }
+
+    get scamperRequired(){
+        return this.idea.scamperRequired;
+    }
+
+    setScamperRequired(required){
+        this.idea.scamperRequired = required;
     }
 }

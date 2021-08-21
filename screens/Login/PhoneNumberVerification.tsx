@@ -29,7 +29,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
     }, [step]);
 
     useEffect(() => {
-        if(timeCountDown < 150){
+        if(timeCountDown < 120){
             setShowCodeReissueButton(true);
         }
 
@@ -68,6 +68,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
         const trimCode = trim(verificationCode);
         if(trimCode.length !== 6){
+            setLoading(false);
             Alert.alert('인증번호가 6자리 까지 이에요.');
             return;
         }
@@ -94,7 +95,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
 
     return (
         <View style={{flex: 1, width: '100%', padding: 24, marginTop: 60}}>
-            {/* {
+            {
                 step===2 &&
                 <View
                     style={{position: 'absolute', top: -32, left: 16}}
@@ -109,7 +110,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                         />
                     </TouchableOpacity>
                 </View>
-            } */}
+            }
 
             <ScrollView
                 style={{

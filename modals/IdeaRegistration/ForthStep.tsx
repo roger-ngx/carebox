@@ -8,8 +8,8 @@ import CommentImagesUploader from '../../components/CommentImagesUploader';
 const ForthStep = ({idea}) => {
 
     const [ isNotUploadPhotoAndLink, setNotUploadPhotoAndLink ] = useState();
-    const [ imageUris, setImageUris ] = useState(idea.idea.image.urls);
-    const [ imageTitle, setImageTitle ] = useState(idea.idea.image.title)
+    const [ imageUris, setImageUris ] = useState(idea.idea.images.urls);
+    const [ imageTitle, setImageTitle ] = useState(idea.idea.images.title)
     
     useEffect(() => {
         idea.setImageAndLinkRequired(!isNotUploadPhotoAndLink);

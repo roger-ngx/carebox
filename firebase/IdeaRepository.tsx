@@ -57,7 +57,7 @@ export const removeIdea = async (id) => {
 
     try{
         await firestore().collection('ideas').doc(id)
-        .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});
+        .update({isAvailable: false, updatedAt: firestore.FieldValue.serverTimestamp()});
     }catch(ex){
         Sentry.captureException(`removeIdea: ${ex}`);
     }
@@ -71,7 +71,7 @@ export const removeIdeaComment = async (ideaId, commentId) => {
     try{
         await firestore().collection('ideas').doc(ideaId)
         .collection('comments').doc(commentId)
-        .update({isActive: false, updatedAt: firestore.FieldValue.serverTimestamp()});        
+        .update({isAvailable: false, updatedAt: firestore.FieldValue.serverTimestamp()});        
     }catch(ex){
         Sentry.captureException(`removeIdeaComment: ${ex}`);
     }
@@ -79,26 +79,31 @@ export const removeIdeaComment = async (ideaId, commentId) => {
 
 export async function addNewIdea(idea, owner){
     try{
-        const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
 
-        const {images} = idea;
+        const {images, imageAndLinkRequired} = idea;
         console.log(idea);
 
-        if(!isEmpty(images)){
-            const ownerId = idea.ownerId;
+        if(imageAndLinkRequired){
+            if(!isEmpty(images)){
+                const ownerId = idea.ownerId;
 
-            const imagePaths = map(images.urls, url => {
-                const uuid = uuidv4();
-    
-                return `/images/${ownerId}/ideas/${uuid}.jpg`;
-            })
+                const imagePaths = map(images.urls, url => {
+                    const uuid = uuidv4();
+        
+                    return `/images/${ownerId}/ideas/${uuid}.jpg`;
+                })
 
-            const downloadUrls = await uploadImages(images.urls, imagePaths);
+                const downloadUrls = await uploadImages(images.urls, imagePaths);
 
-            set(images, 'urls', downloadUrls);
+                set(images, 'urls', downloadUrls);
+            }
+        }else{
+            idea.images = [];
+            idea.links = [];
         }
 
-        const ret = await addNewIdea({idea: {...idea, images, owner}});
+        const addNewIdea = firebase.functions().httpsCallable('addNewIdea');
+        const ret = await addNewIdea({idea: {...idea, owner}});
 
         if(get(ret, 'data.ret')){
             return true;
@@ -122,7 +127,7 @@ export async function addIdeasListenner(dispatch){
         Sentry.captureException(`addIdeasListenner: ${error}`);
     }
 
-    return firestore().collection('ideas').orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
+    return firestore().collection('ideas').where('isAvailable', '==', true).orderBy('createdAt', 'desc').onSnapshot(onResult, onError);
 }
 
 export async function getPickedIdeas(uid){
@@ -179,7 +184,7 @@ export async function editIdeaComment({ideaId, commentId, historyCommentId, owne
         const doc = {
             ...commentDoc,
             ideaId,
-            isActive: true,
+            isAvailable: true,
             images: [...imageUrls, ...uploadedFirebaseImages],
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
         }
@@ -247,7 +252,7 @@ export async function addCommentToIdea({ideaId, owner, commentDoc, imageUris}){
             ...commentDoc,
             ideaId,
             owner,
-            isActive: true,
+            isAvailable: true,
             images: [...imageUrls, ...uploadedFirebaseImages],
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -294,6 +299,7 @@ export async function addReplyToComment({ideaId, owner, commentId, reply}){
             owner,
             createdAt: firestore.FieldValue.serverTimestamp(),
             updatedAt: firestore.FieldValue.serverTimestamp(),
+            isAvailable: true
         }
 
         await firestore()
@@ -326,7 +332,9 @@ export function addIdeaCommentsListenner(ideaId, dispatch){
 
     return firestore()
     .collection('ideas').doc(ideaId)
-    .collection('comments').orderBy('createdAt', 'desc')
+    .collection('comments')
+    .where('isAvailable', '==', true)
+    .orderBy('createdAt', 'desc')
     .onSnapshot(onResult, onError);
 }
 
@@ -351,7 +359,9 @@ export function addCommentRepliestListenner({ideaId, commentId, dispatch}){
     return firestore()
     .collection('ideas').doc(ideaId)
     .collection('comments').doc(commentId)
-    .collection('replies').orderBy('createdAt', 'desc')
+    .collection('replies')
+    .where('isAvailable', '==', true)
+    .orderBy('createdAt', 'desc')
     .onSnapshot(onResult, onError);
 }
 
