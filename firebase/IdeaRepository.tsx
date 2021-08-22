@@ -299,7 +299,9 @@ export async function addReplyToComment({ideaId, owner, commentId, reply}){
             owner,
             createdAt: firestore.FieldValue.serverTimestamp(),
             updatedAt: firestore.FieldValue.serverTimestamp(),
-            isAvailable: true
+            isAvailable: true,
+            commentId,
+            ideaId
         }
 
         await firestore()
