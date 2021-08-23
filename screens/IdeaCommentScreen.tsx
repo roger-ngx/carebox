@@ -66,7 +66,8 @@ const Comment = ({user, comment, onShowComments}) => {
     }
 
     const likeComment = () => {
-        likeIdeaComment({ideaId, commentId: comment.id, uid: user.uid, isLike: true})
+        const isLiked = includes(likes, user.uid);
+        likeIdeaComment({ideaId, commentId: comment.id, uid: user.uid, isLike: !isLiked})
     }
 
     const onSubmitCommentReply = async (commentId, reply) => {
