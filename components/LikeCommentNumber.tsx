@@ -7,7 +7,10 @@ const LikeCommentNumber = ({liked, likeNumber=0, commentNumber=0, onLikeComment}
 
     return (
         <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity onPress={throttle(onLikeComment, 1000, {trailing: false})}>
+            <TouchableOpacity
+                onPress={onLikeComment&&throttle(onLikeComment, 1000, {trailing: false})}
+                disabled={typeof onLikeComment !== 'function'}
+            >
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
                     <Icon name={liked ? 'favorite' : 'favorite-border'} color={liked?'#EB1616':'#9F9F9F'}/>
                     <Text style={{color: '#434A3F', marginLeft: 2}}>{likeNumber}</Text>
