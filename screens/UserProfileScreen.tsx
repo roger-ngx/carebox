@@ -8,6 +8,9 @@ import { Divider } from 'react-native-elements';
 import UserProfileEdit from './UserProfileEdit';
 import ProfileSettingItem from '../components/ProfileSettingItem';
 import { useSelector } from 'react-redux';
+import Constants from 'expo-constants';
+
+const { version } = Constants.manifest;
 
 const UserProfileScreen = ({navigation}) => {
 
@@ -16,7 +19,7 @@ const UserProfileScreen = ({navigation}) => {
     const [ showingProfileEditModal, setShowingProfileEditModal ] = useState(false);
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+        <SafeAreaView edges={['top']} style={{flex: 1, backgroundColor: 'white'}}>
             <ScrollView style={{flex: 1, paddingHorizontal: 20}}>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 16}}>
                     <Text style={{color: '#334F74', fontWeight: 'bold', fontSize: 18}}>마이페이지</Text>
@@ -63,6 +66,7 @@ const UserProfileScreen = ({navigation}) => {
                     onPress={() => navigation.navigate('UserAccountSetting')}
                 />
             </ScrollView>
+            <Text style={{textAlign: 'center', color: '#666', marginBottom: 10}}>앱버전 {version}</Text>
 
             {
                 showingProfileEditModal &&

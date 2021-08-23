@@ -27,20 +27,25 @@ const IdeaImageUpload = ({onImageChanged}) => {
         setLoadingImage(true);
 
         try{
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [ 1, 1 ]
-            })
-    
-            const { uri } = await ImageManipulator.manipulateAsync(
-                result.uri,
-                [{ resize: {width: 800, height: 800}}]
-            )
-    
-            uri && setIdeaImage({uri})
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status == 'granted') {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [ 1, 1 ]
+                })
+        
+                const { uri } = await ImageManipulator.manipulateAsync(
+                    result.uri,
+                    [{ resize: {width: 800, height: 800}}]
+                )
+        
+                uri && setIdeaImage({uri})
+            } else {
+                Sentry.captureMessage('no photo permission')
+            }
         }catch(ex){
-            console.log(ex);
+            Sentry.captureException(`pickImage: ${ex}`);
         }
 
         setLoadingImage(false);

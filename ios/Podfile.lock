@@ -267,7 +267,7 @@ PODS:
     - UMCore
   - EXStructuredHeaders (1.1.1):
     - UMCore
-  - EXUpdates (0.8.2):
+  - EXUpdates (0.8.3):
     - EXStructuredHeaders
     - EXUpdatesInterface
     - React-Core
@@ -738,26 +738,26 @@ PODS:
     - React-Core
     - SDWebImage (~> 5.8)
     - SDWebImageWebPCoder (~> 0.6.1)
-  - RNFBApp (12.3.0):
+  - RNFBApp (12.4.0):
     - Firebase/CoreOnly (= 8.4.0)
     - React-Core
-  - RNFBAuth (12.3.0):
+  - RNFBAuth (12.4.0):
     - Firebase/Auth (= 8.4.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (12.3.0):
+  - RNFBFirestore (12.4.0):
     - Firebase/Firestore (= 8.4.0)
     - React-Core
     - RNFBApp
-  - RNFBFunctions (12.3.0):
+  - RNFBFunctions (12.4.0):
     - Firebase/Functions (= 8.4.0)
     - React-Core
     - RNFBApp
-  - RNFBMessaging (12.3.0):
+  - RNFBMessaging (12.4.0):
     - Firebase/Messaging (= 8.4.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (12.3.0):
+  - RNFBStorage (12.4.0):
     - Firebase/Storage (= 8.4.0)
     - React-Core
     - RNFBApp
@@ -811,7 +811,7 @@ PODS:
   - Sentry/Core (7.1.4)
   - UMAppLoader (2.2.0)
   - UMCore (7.1.1)
-  - UMReactNativeAdapter (6.3.4):
+  - UMReactNativeAdapter (6.3.5):
     - ExpoModulesCore
     - React-Core
     - UMCore
@@ -1089,7 +1089,7 @@ SPEC CHECKSUMS:
   EXSecureStore: 1aa80d49a3a101418bbd2675e2a0d32dceea10c2
   EXSplashScreen: 6208ca88470ff5979fd49a08ef3feb01143a2b79
   EXStructuredHeaders: e52b880264d15b8ad07d36670226c29476af6334
-  EXUpdates: dcc9d0432e1ad0a3f51b8721375401b4708bf7a1
+  EXUpdates: 546e487a8232ecfc4fddc58d74de19d7f3348703
   EXUpdatesInterface: b68e78b912a03fff7901a5f46ec200c45e3506a5
   EXWebBrowser: 76783ba5dcb8699237746ecf41a9643d428a4cc5
   FBLazyVector: 3bb422f41b18121b71783a905c10e58606f7dc3e
@@ -1153,12 +1153,12 @@ SPEC CHECKSUMS:
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPicker: 61c7a0645b9e4ac67960aa7f22a3effcecfdfb8d
   RNFastImage: a7384db75df352500261e8e8f1ac2026def26102
-  RNFBApp: 64c90ab78b6010ed5c3ade026dfe5ff6442c21fd
-  RNFBAuth: 59fe503707ab7bd2c2790ac5b7a11d4e14b44452
-  RNFBFirestore: 52169edf8775af42dd8c84f14a6ca963316b30d7
-  RNFBFunctions: 7c3fa6ccb073ae4975d3fd212acb017ce85c9784
-  RNFBMessaging: 35a027803f202ecaf911e66a940ca0c5690cb6a0
-  RNFBStorage: f61af0a8c39c38e828747af586f63d450e99866a
+  RNFBApp: 97b2da195d4606716b284a7c8a988dd8ed5cec41
+  RNFBAuth: 63a3ca8a290937f73fa90d3bf37766458ce03e17
+  RNFBFirestore: 9ff0a5bac2c5acddb8de7a64d4d8eb38c49604bf
+  RNFBFunctions: f347581b902d72311588ffe51498a469d9135382
+  RNFBMessaging: ee81245484ef7e835975d09c2cd4000dfa2ae5e7
+  RNFBStorage: b1d69650fc4220804b082165c10023abc5efcca5
   RNGestureHandler: a479ebd5ed4221a810967000735517df0d2db211
   RNReanimated: d9da990fc90123f4ffbfdda93d00fc15174863a8
   RNScreens: 21b73c94c9117e1110a79ee0ee80c93ccefed8ce
@@ -1169,7 +1169,7 @@ SPEC CHECKSUMS:
   Sentry: 1d3eb1a25f8c5333c88dd5603904a6d461cd9fcf
   UMAppLoader: 21af63390e55c82e037fb9752d93114a80ecf16e
   UMCore: 2f671796d7439604a1cf8ac7bbe5809cd5c50437
-  UMReactNativeAdapter: 684b07b79d5fe52b496d2b50bfe31f68d7daf71a
+  UMReactNativeAdapter: f808906d586a16cebdc3844d86e1bdb8f114a873
   UMTaskManagerInterface: 2be431101b73604e64fbfffcf759336f9d8fccbb
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 

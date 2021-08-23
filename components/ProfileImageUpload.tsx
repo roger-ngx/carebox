@@ -15,23 +15,28 @@ const ProfileImageUpload = ({imageUrl, containerStyle, onImageChange}) => {
         setLoadingImage(true);
 
         try{
-            const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: true,
-                aspect: [ 1, 1 ]
-            })
-    
-            const { uri } = await ImageManipulator.manipulateAsync(
-                result.uri,
-                [{ resize: {width: 400, height: 400}}]
-            )
-    
-            if(uri){
-                setProfileImage({uri});
-                onImageChange(uri);
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status == 'granted') {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                    allowsEditing: true,
+                    aspect: [ 1, 1 ]
+                })
+        
+                const { uri } = await ImageManipulator.manipulateAsync(
+                    result.uri,
+                    [{ resize: {width: 400, height: 400}}]
+                )
+        
+                if(uri){
+                    setProfileImage({uri});
+                    onImageChange(uri);
+                }
+            } else {
+                Sentry.captureMessage('no photo permission')
             }
         }catch(ex){
-            console.log(ex);
+            Sentry.captureException(`pickImage: ${ex}`);
         }
 
         setLoadingImage(false);
