@@ -92,19 +92,16 @@ export default function Home({navigation}) {
     console.log("AppState", appState.current);
   };
 
-  const expoUpdateListenner = () => {
-
-    const eventSubscription =  Updates.addListener(async e => {
-      Sentry.captureMessage(`UpdateEventType: ${JSON.stringify(e)}`);
-
-      if(e.type === UpdateEventType.UPDATE_AVAILABLE){
-        const ret = await Updates.checkForUpdateAsync();
-        if(ret.isAvailable){
-          const ret = await Updates.fetchUpdateAsync();
-          setHasNewExpoUpdate(ret.isNew);
-        }
+  const expoUpdateListenner = async() => {
+    try{
+      const ret = await Updates.checkForUpdateAsync();
+      if(ret.isAvailable){
+        await Updates.fetchUpdateAsync();
+        setHasNewExpoUpdate(true);
       }
-    })
+    }catch(ex){
+      Sentry.captureException(`expoUpdateListenner: ${ex}`);
+    }
   }
 
   useEffect(() => {
