@@ -14,7 +14,7 @@ import PickedIdea from 'components/Idea/PickedIdea';
 import NewIdea from 'components/Idea/NewIdea';
 import IdeaRegistrationModal from 'modals/IdeaRegistrationModal';
 import { addIdeasListenner } from 'firebase/IdeaRepository';
-import { requestPushNotificationPermission, subscribeForUserInformation, subscribeForNotifications, markReadingNotification } from '../firebase/UserRepository';
+import { requestPushNotificationPermission, subscribeForUserInformation, subscribeForNotifications, markReadingNotification, subscribeForPublicNotifications } from '../firebase/UserRepository';
 import { Icon } from 'react-native-elements';
 import InfoModal from '../modals/InfoModal';
 import CBButton from '../components/CBButton';
@@ -56,7 +56,6 @@ export default function Home({navigation}) {
 
   useEffect(() => {
     if(!__DEV__){
-      expoUpdateListenner();
       AppState.addEventListener("change", _handleAppStateChange);
     }
 
@@ -85,7 +84,7 @@ export default function Home({navigation}) {
       appState.current.match(/inactive|background/) &&
       nextAppState === "active"
     ) {
-      hasNewExpoUpdate && (await Updates.reloadAsync());
+      hasNewExpoUpdate ? (await Updates.reloadAsync()) : expoUpdateListenner();
     }
 
     appState.current = nextAppState;
@@ -149,10 +148,12 @@ export default function Home({navigation}) {
       if(uid){
         const userDataUnsubscriber = await subscribeForUserInformation(uid, dispatch);
         const userNotificationsUnsubscriber = await subscribeForNotifications(uid, dispatch);
+        const publicNotificationsUnsubscriber = await subscribeForPublicNotifications(dispatch);
 
         return () => {
           (typeof userDataUnsubscriber === 'function') && userDataUnsubscriber();
           (typeof userNotificationsUnsubscriber === 'function') && userNotificationsUnsubscriber();
+          (typeof publicNotificationsUnsubscriber === 'function') && publicNotificationsUnsubscriber();
         }
       }
     }

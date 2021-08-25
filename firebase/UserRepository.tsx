@@ -6,7 +6,7 @@ import messaging from '@react-native-firebase/messaging';
 import auth from '@react-native-firebase/auth';
 import { map, isEmpty } from 'lodash';
 import * as SecureStore from 'expo-secure-store';
-import { setUserProfileData, setUserNotifications, setUserRegisteredComments } from '../stores/slices/userSlice';
+import { setUserProfileData, setUserNotifications, setUserRegisteredComments, setPublicNotifications } from '../stores/slices/userSlice';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function checkNicknameExists(nickName){
@@ -146,6 +146,22 @@ export async function subscribeForNotifications(userId, dispatch){
     }
 
     return firestore().collection('users').doc(userId).collection('notifications').onSnapshot(onResult, onError);    
+}
+
+export async function subscribeForPublicNotifications(dispatch){
+    function onResult(snapShot) {
+        console.log('Got User notifications data.');
+
+        const notifications = map(snapShot.docs, doc => ({id: doc.id, ...doc.data()}));
+
+        dispatch(setPublicNotifications(notifications));
+    }
+        
+    function onError(error) {
+        Sentry.captureException(`subscribeForUserInformation: ${error}`);
+    }
+
+    return firestore().collection('notifications').where('available', '==', true).onSnapshot(onResult, onError);    
 }
 
 export async function markReadingNotification({uid, notificationId}){

@@ -6,7 +6,8 @@ const userSlice = createSlice({
         userProfileData: null,
         ideas: null,
         userNotifications: null,
-        userRegisteredComments: null
+        userRegisteredComments: null,
+        publicNotifications: null
     },
     reducers: {
         setUser(state, action){
@@ -26,9 +27,12 @@ const userSlice = createSlice({
         },
         setUserRegisteredComments(state, action){
             state.userRegisteredComments = action.payload;
-        }
+        },
+        setPublicNotifications(state, action){
+            state.publicNotifications = action.payload;
+        },
     }
 })
 
-export const  { setUser, setUserProfileData, setIdeas, addIdea, setUserNotifications, setUserRegisteredComments } = userSlice.actions;
+export const  { setUser, setUserProfileData, setIdeas, addIdea, setUserNotifications, setUserRegisteredComments, setPublicNotifications } = userSlice.actions;
 export default userSlice.reducer;

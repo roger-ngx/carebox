@@ -89,12 +89,12 @@ const NotificationItem = ({item, navigation}) => {
         setTime(`${ret|0}${unit} 전`);
     }, [diffInMinites]);
 
-        const { id, ideaId, commentUser,commentOwner, ideaOwner, unRead, type } = item;
+        const { id, ideaId, commentUser,commentOwner, ideaOwner, unRead, type, available } = item;
 
         if(type==='ADMIN'){
             return (
                 <TouchableOpacity
-                    style={{flexDirection: 'row', alignItems: 'center', backgroundColor: unRead ? '#eee' : 'white', paddingVertical: 16, paddingHorizontal: 20}}
+                    style={{flexDirection: 'row', alignItems: 'center', backgroundColor: (unRead || available) ? '#eee' : 'white', paddingVertical: 16, paddingHorizontal: 20}}
                     onPress={() => readNotification({notificationId: id, unRead})}
                 >
                     <Image
@@ -137,9 +137,10 @@ const NotificationItem = ({item, navigation}) => {
 
 const NotificationScreen = ({navigation}) => {
 
-    const notifications = useSelector(state => state.user.userNotifications);
+    const notifications = useSelector(state => state.user.userNotifications) || [];
+    const publicNotifications = useSelector(state => state.user.publicNotifications) || [];
 
-    const items = orderBy(notifications, ['createdAt'], ['desc']);
+    const items = orderBy([...notifications, ...publicNotifications], ['createdAt'], ['desc']);
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>

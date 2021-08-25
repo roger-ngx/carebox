@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.0</string>
+	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -72,7 +72,7 @@
 		</dict>
 	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give carebox permission to access your photos</string>
+	<string>사진 등록을 위한 라이브러리 접근 권한 필요합니다</string>
 	<key>NSUserTrackingUsageDescription</key>
 	<string>허용 시 carebox 개인화된 추천 정보를 받으실 수 있습니다</string>
 	<key>UIAppFonts</key>
