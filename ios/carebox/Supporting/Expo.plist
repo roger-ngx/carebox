@@ -7,7 +7,7 @@
 	<key>EXUpdatesEnabled</key>
 	<true/>
 	<key>EXUpdatesLaunchWaitMs</key>
-	<integer>0</integer>
+	<integer>10000</integer>
 	<key>EXUpdatesReleaseChannel</key>
 	<string>prod-eject-4</string>
 	<key>EXUpdatesSDKVersion</key>

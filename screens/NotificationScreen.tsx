@@ -32,7 +32,7 @@ const NotificationItem = ({item, navigation}) => {
             unRead && await markReadingNotification({uid: user.uid, notificationId});
             ideaId && navigation.navigate('Idea', {ideaId: ideaId})
         }catch(ex){
-            console.log(ex);
+            Sentry.captureException(`readNotification: ${ex}`);
         }
     }
 

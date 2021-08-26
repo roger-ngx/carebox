@@ -13,7 +13,9 @@
       "backgroundColor": "#1379FF"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "enabled": true,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 10000
     },
     "assetBundlePatterns": [
       "**/*"
@@ -22,7 +24,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.carebox",
       "infoPlist": {
-        "NSUserTrackingUsageDescription": "Allow this app to collect app-related data that can be used for tracking you or your device."
+        "NSUserTrackingUsageDescription": "허용 시 carebox 개인화된 추천 정보를 받으실 수 있습니다"
       }
     },
     "android": {

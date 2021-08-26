@@ -54,12 +54,16 @@ const UserInfoInput = ({phoneNumber}) => {
             const user = await signUp({
                 nickName, gender, department, yearsOnJob, phoneNumber
             });
-            dispatch(setUser(user));
+            if(!isEmpty(user)){
+                dispatch(setUser(user));
+                setOpenConfirmModal(true);
+            } else {
+                Alert.alert('로그인 문제가 발생했어요', '잠시후 해보세요');
+            }
 
-            setOpenConfirmModal(true);
         }catch(ex){
-            console.log('signUp', ex);
-            Alert.alert('Login failed', 'Plz try again');
+            Alert.alert('로그인 문제가 발생했어요', '잠시후 해보세요');
+            Sentry.captureException(`userSignUp: ${ex}`);
         }
         setLoading(false);
     }
@@ -71,6 +75,8 @@ const UserInfoInput = ({phoneNumber}) => {
 
         setNicknameExists(ret.data.isExists);
     }
+
+    const signUpDisabled = loading || !gender || !nickName || !department;
 
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
@@ -184,9 +190,10 @@ const UserInfoInput = ({phoneNumber}) => {
                             borderRadius: 50,
                             width: '100%',
                             alignSelf: 'flex-end',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            opacity: signUpDisabled ? 0.5 : 1
                         }}
-                        disabled={loading}
+                        disabled={signUpDisabled}
                         onPress={userSignUp}
                     >
                         {
