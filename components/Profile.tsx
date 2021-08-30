@@ -2,13 +2,29 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import FastImage from 'react-native-fast-image'
 
+const getGradeIcon = grade => {
+    switch(grade){
+        case 1:
+            return require(`assets/icons/grade1.png`);
+
+        case 2:
+            return require(`assets/icons/grade2.png`);
+
+        case 3:
+            return require(`assets/icons/grade3.png`);
+
+        case 4:
+            return require(`assets/icons/grade4.png`);
+    }
+}
+
 const Profile = ({user={}, avatarType='square'}) => {
 
     if(!user) return null;
 
     const { nickName, yearsOnJob, department, profileImageUrl, grade } = user;
 
-    const gradeIcon = grade === 2 ? require('assets/icons/grade2.png') : require('assets/icons/grade1.png')
+    const gradeIcon = getGradeIcon(grade);
 
     return (
         <View
@@ -25,7 +41,7 @@ const Profile = ({user={}, avatarType='square'}) => {
             <View style={{marginLeft: 8, alignItems: 'flex-start'}}>
                 <View style={{flexDirection: 'row', marginBottom: 2, alignItems: 'center'}}>
                     <Text style={{fontSize: 18, marginRight: 2, color: '#334F74'}}>{nickName}</Text>
-                    <Image style={{width: 16, height: 16}} source={gradeIcon} />
+                    <Image style={{height: 16, width: 16}} source={gradeIcon} resizeMode='contain'/>
                 </View>
                 <Text style={{color: '#334F74'}}>{yearsOnJob}년차 ∙ {department}</Text>
             </View>
