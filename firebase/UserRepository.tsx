@@ -222,11 +222,11 @@ export async function getUserAuthToken(uid){
     try{
 
         const ret = await firestore().collection('users')
-        .doc(uid)
-        .get();
+        .doc(uid).get();
 
         if(ret.exists){
-            return ret.data().authToken;
+            const data = ret.data();
+            return !data.leftAt && data.authToken;
         }
     }catch(ex){
         Sentry.captureException(`getUserAuthToken: ${ex}`);
