@@ -48,7 +48,7 @@ const PickedList = ({showContact, picks}) => {
 
             <FlatList
                 data={picks}
-                renderItem={({item}) => (<PickedUser showContact={showContact} user={item} />)}
+                renderItem={({item}) => (<Profile user={item} avatarType='circle'/>)}
                 keyExtractor={item=>item.uid}
                 ItemSeparatorComponent={() => (<View style={{height: 16}} />)}
             />

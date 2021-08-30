@@ -23,7 +23,7 @@ const AppMainFunction = ({index, title, content, icon, containerStyle}) => (
     </View>
 )
 
-const ScamperItem = ({category, title, contents, containerStyle}) => (
+const ScamperItem = ({category, title, contents, containerStyle, headerStyle}) => (
     <View style={[{width: '100%', backgroundColor: 'white', borderRadius: 20, padding: 16, alignItems: 'center'}, containerStyle]}>
         <View
             style={{
@@ -33,13 +33,13 @@ const ScamperItem = ({category, title, contents, containerStyle}) => (
             }}
         >
             <View
-                style={{
+                style={[{
                     paddingVertical: 10,
                     paddingHorizontal: 16,
                     borderRadius: 50,
                     backgroundColor: '#01113A',
                     alignSelf: 'flex-start',
-                }}
+                }, headerStyle]}
             >
                 <Text style={{alignItems: 'center', color: 'white', fontWeight: 'bold', fontSize: 16}}>{category}</Text>
             </View>
@@ -50,7 +50,7 @@ const ScamperItem = ({category, title, contents, containerStyle}) => (
             <Divider style={{marginVertical: 16 }}/>
             <View style={{alignItems: 'center'}}>
                 {
-                    map(contents, content => (<Text style={{textAlign: 'center', color: '#2E2E2E', lineHeight: 24, alignItems: 'center'}}>&#x2022; {content}</Text>))
+                    map(contents, content => (<Text key={content} style={{textAlign: 'center', color: '#2E2E2E', lineHeight: 24, alignItems: 'center'}}>&#x2022; {content}</Text>))
                 }
             </View>
         </View>
@@ -101,7 +101,7 @@ const BannerModal = ({onClose}) => (
 
                     <AppMainFunction
                         index='01'
-                        title='아이디어 등록'
+                        title='내 아이디어 등록'
                         content={<Text style={{color: '#2E2E2E'}}>평소에 발견한 문제점을 아이디어로 등록해보세요. <Text style={{fontWeight: 'bold'}}>SCAMPER</Text> 기법을 활용하여 아이디어를 도출해 볼 수 있습니다.</Text>}
                         icon={require('assets/icons/idea.png')}
                         containerStyle={{marginBottom: 24}}
@@ -109,7 +109,7 @@ const BannerModal = ({onClose}) => (
 
                     <AppMainFunction
                         index='02'
-                        title='아이디어 참여'
+                        title='다른 사람 아이디어 참여하기'
                         content={<Text style={{color: '#2E2E2E'}}>아이디어가 더 발전할 수 있도록, 아이디어를 평가해보세요. 코멘트와 별점을 남길 수 있습니다.</Text>}
                         icon={require('assets/icons/collaboration.png')}
                         containerStyle={{marginBottom: 24}}
@@ -118,7 +118,7 @@ const BannerModal = ({onClose}) => (
                     <AppMainFunction
                         index='03'
                         title='팀 결성'
-                        content={<Text style={{color: '#2E2E2E'}}>내 아이디어에 마음에 드는 코멘트가 있다면 Pick을 해보세요. 상대방이 수락하면 팀이 결성됩니다.</Text>}
+                        content={<Text style={{color: '#2E2E2E'}}>내 아이디어에 마음에 드는 코멘트가 있다면 <Text style={{color: '#F24B59'}}>Pick</Text>을 해보세요. <Text style={{color: '#F24B59'}}>상대방이 수락하면 팀이 결성</Text>됩니다.</Text>}
                         icon={require('assets/icons/united.png')}
                         containerStyle={{marginBottom: 24}}
                     />
@@ -134,7 +134,7 @@ const BannerModal = ({onClose}) => (
                 <View style={{backgroundColor: '#FFFCBD', alignItems: 'center', paddingHorizontal: 20, paddingVertical: 36}}>
                     <View style={{alignItems: 'center'}}>
                         <Text style={{color: '#01113A', fontWeight: 'bold', marginBottom: 12}}>carebox가 추천하는 디자인 기법</Text>
-                        <Text style={{color: '#01113A', fontWeight: 'bold', fontSize: 28, marginBottom: 24}}>“SCAMPER”</Text>
+                        <Image source={require('assets/images/SCAMPER.png')} style={{height: 32, marginBottom: 24}} resizeMode='contain' />
                         <Text style={{color: '#01113A'}}>7가지 규칙으로 아이디어를 도출해낸다!</Text>
                     </View>
                     <View style={{width: '100%'}}>
@@ -143,42 +143,49 @@ const BannerModal = ({onClose}) => (
                             title={`기존의 것을 다른것으로 대체함으로써\n고정적인 시각을 새롭게\n바라볼 수 있도록 하는 질문.`}
                             contents={['무엇을 바꿀 수 있을까?', '그것 대신에 무엇을 활용할 수 있을까?', '그 대신 어떤 프로세스를 활용할 수 있을까?', '그 대신 어떤 다른 재료를 사용할 수 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#F24B59'}}
                         />
                         <ScamperItem
                             category='Combine / 결합하기'
                             title={`두 가지 이상의 것을 결합하여 새로운 것을\n도출할 수 있도록 하는 질문.`}
                             contents={['무엇을 조합할 수 있을까?', '어떻게 일부를 연결할 수 있을까?', '어떤 목적을 서로 조합할 수 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#7B51A6'}}
                         />
                         <ScamperItem
                             category='Adapt / 응용하기'
                             title={`어떤 것을 다른 목적과 조건에 맞게\n응용해 볼 수 있도록 하는 질문.`}
                             contents={['그것이 시사하는 다른 아이디어는 무엇일까?', '그것과 비슷한 것 중에 현재 문제에 응용할 수 있는 게 있을까?', '과거에 비슷한 상황이 있었을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#2522B0'}}
                         />
                         <ScamperItem
                             category='Modify / 수정하기'
                             title={`어떤 것의 특성이나 변형하고 확대, 축소하여\n새로운 것을 생각해 볼 수 있도록 하는 질문.`}
                             contents={['어떻게 수정할 수 있을까?', '색이나 형태를 어떻게 바꿀 수 있을까?', '무엇을 늘릴 수 있을까? / 크게 확장할 수 있을까?', '무엇을 줄일 수 있을까? / 작게 줄일 수 있을까?', '무엇을 현대화 할 수 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#0F5AF2'}}
                         />
                         <ScamperItem
                             category='Put to other users / 전용하기'
                             title={`어떤 것을 전혀 다른 용도로 생각해 볼 수 있도록 하는 질문.`}
                             contents={['현재 상태에서 어떤 다른 목적으로 활용할 수 있을까?', '수정하면 어떤 목적으로 활용할 수 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#E8AE00'}}
                         />
                         <ScamperItem
                             category='Eliminate / 제거하기'
                             title={`어떤 것의 일부 또는 제거가 가능한\n기능들을 찾아보는 질문.`}
                             contents={['무엇을 제거할 수 있을까?', '제거해도 작동하는 것에는 무엇이 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#F24B4B'}}
                         />
                         <ScamperItem
                             category='Rearrange / 재배열하기'
                             title={`어떤 것의 순서, 위치, 기능, 모양등을 재정렬하여\n새로운 것을 생각해 볼 수 있도록 하는 질문.`}
                             contents={['패턴을 바꿔도 작동할까?', '무엇을 교체할 수 있을까?', '무엇을 재배열할 수 있을까?']}
                             containerStyle={{marginBottom: 24, marginTop: 32}}
+                            headerStyle={{backgroundColor: '#01113A'}}
                         />
                     </View>
                 </View>
