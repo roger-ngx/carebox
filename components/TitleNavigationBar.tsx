@@ -28,7 +28,7 @@ const TitleNavigationBar = ({onBackPress, title, containerStyle}) => {
                     fontSize: 18,
                     fontWeight: 'bold',
                     color: '#334F74',
-                    marginLeft: -24
+                    marginLeft: -40
                 }}
             >
                 {title}

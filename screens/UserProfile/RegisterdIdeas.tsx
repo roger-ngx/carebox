@@ -47,7 +47,7 @@ const RegisterdIdeas = ({navigation}) => {
                 setOpenToast(true);
             }
         }else{
-            setToastContent('Press one more time to delete');
+            setToastContent('한 번 더 버튼을 눌러 삭제하세요');
             setSelectedItemToDelete(item.id);
             setOpenToast(true);
         }

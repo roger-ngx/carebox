@@ -27,8 +27,9 @@ export default function Home({navigation}) {
   const currentUser = useSelector(state => state.user.currentUser);
   const storeIdeas = useSelector(state => state.user.ideas);
   const notifications = useSelector(state => state.user.userNotifications);
-
   const unreadNotificationCount = size(filter(notifications, notification => notification.unRead));
+
+  const publicNotifications = useSelector(state => state.user.publicNotifications);
 
   const dispatch = useDispatch();
 
@@ -234,7 +235,7 @@ export default function Home({navigation}) {
             name='notifications-none'
           />
           {
-            unreadNotificationCount > 0 &&
+            unreadNotificationCount > 0 ?
             <View
               style={{
                 position: 'absolute',
@@ -249,6 +250,21 @@ export default function Home({navigation}) {
             >
               <Text style={{fontWeight: '900', color: 'white', textAlign: 'center'}}>{unreadNotificationCount}</Text>
             </View>
+            :
+            (
+              size(publicNotifications) > 0 &&
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: 18,
+                  right: 20,
+                  backgroundColor: 'red',
+                  width: 8,
+                  height: 8,
+                  borderRadius: 8,
+                }}
+              />
+            )
           }
           </>
         </TouchableOpacity>

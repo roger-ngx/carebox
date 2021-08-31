@@ -5,14 +5,7 @@ import { isEmpty } from 'lodash';
 
 import CBDropDownPicker from 'components/CBDropDownPicker';
 import { checkNicknameExists } from '../../firebase/UserRepository';
-
-const JOBS = [
-    { label:'병동', value:'병동' },
-    { label:'중환자실', value:'중환자실' },
-    { label:'수술실', value:'수술실' },
-    { label:'검사실', value:'검사실' },
-    { label:'외래', value:'외래' }
-]
+import { JOBS } from 'constants/values';
 
 const UserInfoInputForm = ({user={}, onUserInfoChange}) => {
 

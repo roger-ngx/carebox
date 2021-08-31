@@ -11,26 +11,7 @@ import { checkNicknameExists, signUp } from '../../firebase/UserRepository';
 import { useDispatch } from 'react-redux';
 import { setAuthToken } from '../../stores/slices/tokenSlice';
 import { setUser } from '../../stores/slices/userSlice';
-
-const JOBS = [
-    { label:'병동', value:'병동' },
-    { label:'중환자실', value:'중환자실' },
-    { label:'수술실', value:'수술실' },
-    { label:'검사실', value:'검사실' },
-    { label:'외래', value:'외래' },
-    { label:'신투석실', value:'신투석실' },
-    { label:'행정', value:'행정' },
-    { label:'교육', value:'교육' },
-    { label:'연구', value:'연구' },
-    { label:'응급센터', value:'응급센터' },
-    { label:'PA', value:'PA' },
-    { label:'전담간호사', value:'전담간호사' },
-    { label:'감염관리', value:'감염관리' },
-    { label:'분만실', value:'분만실' },
-    { label:'간호학생', value:'간호학생' },
-    { label:'암센터', value:'암센터' },
-    { label:'기타직종', value:'기타직종' },
-]
+import { JOBS } from 'constants/values';
 
 const UserInfoInput = ({phoneNumber}) => {
     // const [ openJobSelection, setOpenJobSelection ] = useState(false);

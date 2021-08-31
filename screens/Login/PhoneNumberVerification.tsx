@@ -80,13 +80,13 @@ const PhoneNumberVerification = ({onSuccess}) => {
             if(status === 'OK'){
                 await onSuccess({isNewUser, phoneNumber, uid, authToken});
             } else {
-                Alert.alert('Wrong verification code. Please try again');
+                Alert.alert('인증번호가 잘못되었습니다. 다시 시도해 주세요');
                 setShowCodeReissueButton(true);
             }
 
         }catch(ex){
             Sentry.captureException(`confirmCode-${ex}`);
-            Alert.alert('Wrong verification code. Please press 재발송하기 button.');
+            Alert.alert('인증번호가 잘못되었습니다. 다시 시도해 주세요');
             setShowCodeReissueButton(true);
         }
 
@@ -119,7 +119,7 @@ const PhoneNumberVerification = ({onSuccess}) => {
                 }}
             >
                 <Text style={{fontSize: 28, fontWeight: 'bold', color: '#001240', marginBottom: 48,}}>
-                    {`간호사님,\n케어박스가 처음이시군요!`}
+                    {`안녕하세요!\n케어박스입니다.`}
                 </Text>
                 {
                     step === 1 &&
