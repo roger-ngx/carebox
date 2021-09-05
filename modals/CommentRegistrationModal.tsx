@@ -172,31 +172,15 @@ const CommentRegistrationModal = ({ideaId, onClose, initData, editMode=false}) =
                             </TouchableOpacity>
                         </View>
                         {
-                            map(externalLinks, (link, index) => (<View key={link} style={{marginBottom: 24}}>
-                                <TextInput
-                                    placeholder='title 입력해 주세요.'
-                                    style={{
-                                        borderTopRightRadius: 4, 
-                                        borderTopLeftRadius: 4, 
-                                        borderColor: '#9C9C9C',
-                                        borderWidth: 1,
-                                        borderBottomWidth: 0,
-                                        padding: 12,
-                                        height: 50
-                                    }}
-                                    value={externalLinkTitles[index]}
-                                    onChangeText={text => {
-                                        externalLinkTitles[index] = text
-                                        setExternalLinkTitles([...externalLinkTitles]);
-                                    }}
-                                />
+                            map(externalLinkTitles, (link, index) => (<View key={index} style={{marginBottom: 24}}>
                                 <TextInput
                                     placeholder='url 입력해 주세요.'
                                     style={{
                                         borderColor: '#9C9C9C',
                                         borderWidth: 1,
-                                        borderBottomRightRadius: 4, 
-                                        borderBottomLeftRadius: 4, 
+                                        borderTopRightRadius: 4, 
+                                        borderTopLeftRadius: 4,
+                                        borderBottomWidth: 0,
                                         padding: 12,
                                         height: 50
                                     }}
@@ -204,6 +188,22 @@ const CommentRegistrationModal = ({ideaId, onClose, initData, editMode=false}) =
                                     onChangeText={text => {
                                         externalLinks[index]=text
                                         setExternalLinks([...externalLinks]);
+                                    }}
+                                />
+                                <TextInput
+                                    placeholder='설명을 입력해 주세요.'
+                                    style={{
+                                        borderBottomRightRadius: 4, 
+                                        borderBottomLeftRadius: 4, 
+                                        borderColor: '#9C9C9C',
+                                        borderWidth: 1,
+                                        padding: 12,
+                                        height: 50
+                                    }}
+                                    value={externalLinkTitles[index]}
+                                    onChangeText={text => {
+                                        externalLinkTitles[index] = text
+                                        setExternalLinkTitles([...externalLinkTitles]);
                                     }}
                                 />
                             </View>))
