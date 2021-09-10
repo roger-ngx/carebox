@@ -69,7 +69,9 @@ const CommentListModal = ({user, parentComment, isVisible, onClose, onSubmitComm
                 </View>
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={{flex: 1, marginBottom: 10}}>
-                        <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>2.8점</Text></Text>
+                        <Text style={{fontWeight: 'bold', fontSize: 16, color: '#434A3F', marginBottom: 8}}>
+                            종합평점 <Text style={{fontWeight: 'bold', fontSize: 16, color: '#1379FF'}}>{avgRating}점</Text>
+                        </Text>
                         <RatingView {...{practicalityRate, creativityRate, valuableRate}}/>
                     </View>
                     <View style={{marginBottom: 10}}>
